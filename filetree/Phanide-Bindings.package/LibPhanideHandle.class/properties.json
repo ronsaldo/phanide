@@ -1,0 +1,13 @@
+{
+	"commentStamp" : "",
+	"super" : "FFIExternalObject",
+	"category" : "Phanide-Bindings",
+	"classinstvars" : [ ],
+	"pools" : [
+		"LibPhanidePool"
+	],
+	"classvars" : [ ],
+	"instvars" : [ ],
+	"name" : "LibPhanideHandle",
+	"type" : "normal"
+}

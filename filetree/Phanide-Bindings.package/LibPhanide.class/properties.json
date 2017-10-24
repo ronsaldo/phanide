@@ -1,0 +1,13 @@
+{
+	"commentStamp" : "",
+	"super" : "FFILibrary",
+	"category" : "Phanide-Bindings",
+	"classinstvars" : [ ],
+	"pools" : [
+		"LibPhanidePool"
+	],
+	"classvars" : [ ],
+	"instvars" : [ ],
+	"name" : "LibPhanide",
+	"type" : "normal"
+}

@@ -1,0 +1,15 @@
+{
+	"commentStamp" : "",
+	"super" : "SharedPool",
+	"category" : "Phanide-Bindings",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [
+		"phanide_context_t",
+		"phanide_event_t",
+		"phanide_process_t"
+	],
+	"instvars" : [ ],
+	"name" : "LibPhanidePool",
+	"type" : "normal"
+}
