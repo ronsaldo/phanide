@@ -32,18 +32,28 @@ typedef struct phanide_process_s phanide_process_t;
 typedef enum phanide_event_type_e
 {
     PHANIDE_EVENT_TYPE_NONE = 0,
-    PHANIDE_EVENT_TYPE_PROCESS_FINISHED
+    PHANIDE_EVENT_TYPE_PROCESS_FINISHED,
+    PHANIDE_EVENT_TYPE_PROCESS_PIPE_READY,
 }phanide_event_type_t;
+
+typedef struct phanide_event_process_pipe_s
+{
+    phanide_event_type_t type;
+    phanide_process_t *process;
+    uint32_t pipeIndex;
+} phanide_event_process_pipe_t;
 
 typedef struct phanide_event_process_finished_s
 {
     phanide_event_type_t type;
+    phanide_process_t *process;
     int32_t exitCode;
-}phanide_event_process_finished_t;
+} phanide_event_process_finished_t;
 
 typedef union phanide_event_s
 {
     phanide_event_type_t type;
+    phanide_event_process_pipe_t processPipe;
     phanide_event_process_finished_t processFinished;
 } phanide_event_t;
 
@@ -56,8 +66,7 @@ PHANIDE_CORE_EXPORT phanide_process_t *phanide_process_spawn(phanide_context_t *
 PHANIDE_CORE_EXPORT phanide_process_t *phanide_process_spawnInPath(phanide_context_t *context, const char *file, const char **argv);
 PHANIDE_CORE_EXPORT phanide_process_t *phanide_process_spawnShell(phanide_context_t *context, const char *command);
 
-PHANIDE_CORE_EXPORT void phanide_process_wait(phanide_process_t *process);
-PHANIDE_CORE_EXPORT void phanide_process_timedWait(phanide_process_t *process, int timeout);
+PHANIDE_CORE_EXPORT void phanide_process_free(phanide_process_t *process);
 PHANIDE_CORE_EXPORT void phanide_process_terminate(phanide_process_t *process);
 PHANIDE_CORE_EXPORT void phanide_process_kill(phanide_process_t *process);
 

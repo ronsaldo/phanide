@@ -24,11 +24,11 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/;${CMAKE_MODULE_PATH}")
 # Turn warnings and use C++ 2011.
 if (${CMAKE_C_COMPILER_ID} STREQUAL MSVC)
 	# using Visual Studio C++
-	set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} /W4")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /W4")
 else()
-	set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 	if(UNIX)
-        set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread")
     endif()
 
 	# Export symbols from applications.

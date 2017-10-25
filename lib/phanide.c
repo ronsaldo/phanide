@@ -24,6 +24,7 @@ struct phanide_context_s
 static void *phanide_processThreadEntry(void *arg);
 static int phanide_createContextIOPrimitives(phanide_context_t *context);
 static void phanide_wakeUpSelect(phanide_context_t *context);
+static void phanide_context_destroyIOData(phanide_context_t *context);
 
 PHANIDE_CORE_EXPORT phanide_context_t *
 phanide_createContext(void)
@@ -77,12 +78,9 @@ phanide_destroyContext(phanide_context_t *context)
     phanide_mutex_destroy(&context->eventQueueMutex);
     phanide_condition_destroy(&context->pendingEventCondition);
 
-#if USE_EPOLL
-
-#endif
-
+    phanide_context_destroyIOData(context);
+    phanide_linked_list_freeData(&context->eventQueue);
     free(context);
-    printf("Destroy context done.\n");
 }
 
 /* Events */
@@ -102,7 +100,7 @@ phanide_pollEvent(phanide_context_t *context, phanide_event_t *event)
     }
 
     phanide_mutex_unlock(&context->eventQueueMutex);
-    return 0;
+    return result;
 }
 
 PHANIDE_CORE_EXPORT int
@@ -127,7 +125,7 @@ phanide_waitEvent(phanide_context_t *context, phanide_event_t *event)
     }
 
     phanide_mutex_unlock(&context->eventQueueMutex);
-    return 0;
+    return result;
 }
 
 PHANIDE_CORE_EXPORT int
