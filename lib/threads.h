@@ -58,6 +58,11 @@ inline int phanide_condition_wait(phanide_condition_t *cond, phanide_mutex_t *mu
     return pthread_cond_wait(cond, mutex);
 }
 
+inline int phanide_condition_signal(phanide_condition_t *cond)
+{
+    return pthread_cond_signal(cond);
+}
+
 inline int phanide_condition_broadcast(phanide_condition_t *cond)
 {
     return pthread_cond_broadcast(cond);

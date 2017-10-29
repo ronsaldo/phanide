@@ -266,11 +266,28 @@ phanide_process_free(phanide_process_t *process)
     if(process->used)
     {
         if(process->stdinPipe)
+        {
+#ifdef USE_EPOLL
+            epoll_ctl(process->context->io.epollFD, EPOLL_CTL_DEL, process->stdinPipe, NULL);
+#endif
             close(process->stdinPipe);
+        }
+
         if(process->stdoutPipe)
+        {
+#ifdef USE_EPOLL
+            epoll_ctl(process->context->io.epollFD, EPOLL_CTL_DEL, process->stdoutPipe, NULL);
+#endif
             close(process->stdoutPipe);
+        }
+
         if(process->stderrPipe)
+        {
+#ifdef USE_EPOLL
+            epoll_ctl(process->context->io.epollFD, EPOLL_CTL_DEL, process->stderrPipe, NULL);
+#endif
             close(process->stderrPipe);
+        }
 
         if(process->childPid)
         {
@@ -472,11 +489,11 @@ phanide_process_pipeHungUpOrError(phanide_process_t *process, int pipeIndex)
     epoll_ctl(process->context->io.epollFD, EPOLL_CTL_DEL, process->pipes[pipeIndex], NULL);
 #else
 #endif
-    /* TODO: Move this into a sigchld handler, with a signal safe mutex. */
     --process->remainingPipes;
     if(process->remainingPipes != 0)
         return;
 
+    /* Time to bury the child. */
     int status;
     waitpid(process->childPid, &status, 0);
     process->exitCode = WEXITSTATUS(status);
@@ -485,6 +502,18 @@ phanide_process_pipeHungUpOrError(phanide_process_t *process, int pipeIndex)
     /* There is no need to keep the stdin pipe. */
     close(process->stdinPipe);
     process->stdinPipe = 0;
+
+    /* Push a process finished event. */
+    {
+        phanide_event_t event = {
+            .processFinished = {
+                .type = PHANIDE_EVENT_TYPE_PROCESS_FINISHED,
+                .process = process,
+                .exitCode = process->exitCode,
+            }
+        };
+        phanide_pushEvent(process->context, &event);
+    }
 }
 
 PHANIDE_CORE_EXPORT phanide_process_t *
@@ -552,6 +581,86 @@ phanide_process_terminate(phanide_process_t *process)
 PHANIDE_CORE_EXPORT void
 phanide_process_kill(phanide_process_t *process)
 {
+}
+
+PHANIDE_CORE_EXPORT intptr_t
+phanide_process_pipe_read(phanide_process_t *process, phanide_pipe_index_t pipe, void *buffer, size_t offset,  size_t count)
+{
+    if(!process)
+        return PHANIDE_PIPE_ERROR;
+
+    phanide_mutex_lock(&process->context->io.processListMutex);
+
+    /* Get the pipe file descriptor. */
+    int fd = process->pipes[pipe];
+    if(fd == 0)
+    {
+        phanide_mutex_unlock(&process->context->io.processListMutex);
+        return PHANIDE_PIPE_ERROR_CLOSED;
+    }
+
+    /* Read from the pipe. */
+    ssize_t result;
+    {
+        result = read(fd, ((char*)buffer) + offset, count);
+    } while(result < 0 && errno == EINTR);
+
+    if(errno == EWOULDBLOCK)
+        phanide_process_setPipeReadPolling(1, process, pipe);
+    phanide_mutex_unlock(&process->context->io.processListMutex);
+
+    /* Convert the error code. */
+    if(result < 0)
+    {
+        switch(errno)
+        {
+        case EWOULDBLOCK:
+            return PHANIDE_PIPE_ERROR_WOULD_BLOCK;
+        default:
+            return PHANIDE_PIPE_ERROR;
+        }
+    }
+
+    return result;
+}
+
+PHANIDE_CORE_EXPORT intptr_t
+phanide_process_pipe_write(phanide_process_t *process, phanide_pipe_index_t pipe, const void *buffer, size_t offset, size_t count)
+{
+    if(!process)
+        return PHANIDE_PIPE_ERROR;
+
+    phanide_mutex_lock(&process->context->io.processListMutex);
+
+    /* Get the pipe file descriptor. */
+    int fd = process->pipes[pipe];
+    if(fd == 0)
+    {
+        phanide_mutex_unlock(&process->context->io.processListMutex);
+        return PHANIDE_PIPE_ERROR_CLOSED;
+    }
+
+    /* Read from the pipe. */
+    ssize_t result;
+    {
+        result = write(fd, ((char*)buffer) + offset, count);
+    } while(result < 0 && errno == EINTR);
+
+    phanide_mutex_unlock(&process->context->io.processListMutex);
+
+    /* Convert the error code. */
+    if(result < 0)
+    {
+        switch(errno)
+        {
+        case EWOULDBLOCK:
+            return PHANIDE_PIPE_ERROR_WOULD_BLOCK;
+        default:
+            return PHANIDE_PIPE_ERROR;
+        }
+    }
+
+    return result;
 }
 
 static void

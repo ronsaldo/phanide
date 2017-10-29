@@ -139,7 +139,7 @@ phanide_pushEvent(phanide_context_t *context, phanide_event_t *event)
 
     phanide_linked_list_pushBack(&context->eventQueue, (phanide_linked_list_node_t *)node);
 
-    phanide_condition_broadcast(&context->pendingEventCondition);
+    phanide_condition_signal(&context->pendingEventCondition);
     phanide_mutex_unlock(&context->eventQueueMutex);
     return 0;
 }

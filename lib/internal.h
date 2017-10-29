@@ -44,7 +44,7 @@ phanide_linked_list_removeNode(phanide_linked_list_t *list, phanide_linked_list_
     if(node->next)
         node->next->previous = node->previous;
     else
-        list->last = node;
+        list->last = node->previous;
     node->previous = NULL;
     node->next = NULL;
 }
