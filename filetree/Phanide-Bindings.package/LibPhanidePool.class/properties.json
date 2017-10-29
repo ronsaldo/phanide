@@ -1,11 +1,22 @@
 {
 	"commentStamp" : "",
 	"super" : "SharedPool",
-	"category" : "Phanide-Bindings",
+	"category" : "Phanide-Bindings-Bindings",
 	"classinstvars" : [ ],
 	"pools" : [ ],
 	"classvars" : [
+		"PHANIDE_EVENT_TYPE_NONE",
+		"PHANIDE_EVENT_TYPE_PROCESS_FINISHED",
+		"PHANIDE_EVENT_TYPE_PROCESS_PIPE_READY",
+		"PHANIDE_PIPE_ERROR",
+		"PHANIDE_PIPE_ERROR_CLOSED",
+		"PHANIDE_PIPE_ERROR_WOULD_BLOCK",
+		"PHANIDE_PIPE_INDEX_STDERR",
+		"PHANIDE_PIPE_INDEX_STDIN",
+		"PHANIDE_PIPE_INDEX_STDOUT",
 		"phanide_context_t",
+		"phanide_event_process_finished_t",
+		"phanide_event_process_pipe_t",
 		"phanide_event_t",
 		"phanide_process_t"
 	],

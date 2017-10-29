@@ -1,0 +1,17 @@
+{
+	"commentStamp" : "",
+	"super" : "FFIExternalStructure",
+	"category" : "Phanide-Bindings-Bindings",
+	"classinstvars" : [ ],
+	"pools" : [
+		"LibPhanidePool"
+	],
+	"classvars" : [
+		"OFFSET_EXITCODE",
+		"OFFSET_PROCESS",
+		"OFFSET_TYPE"
+	],
+	"instvars" : [ ],
+	"name" : "LibPhanideEventProcessFinished",
+	"type" : "normal"
+}

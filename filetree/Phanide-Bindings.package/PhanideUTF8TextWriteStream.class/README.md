@@ -1,0 +1,1 @@
+I am a stream that encodes text with UTF-8 and writes it into a decorated stream.

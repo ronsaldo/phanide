@@ -1,0 +1,19 @@
+{
+	"commentStamp" : "RonieSalgado 10/28/2017 21:39",
+	"super" : "Stream",
+	"category" : "Phanide-Bindings-Driver",
+	"classinstvars" : [ ],
+	"pools" : [
+		"LibPhanidePool"
+	],
+	"classvars" : [ ],
+	"instvars" : [
+		"process",
+		"index",
+		"ready",
+		"readyCondition",
+		"mutex"
+	],
+	"name" : "PhanideProcessPipe",
+	"type" : "normal"
+}

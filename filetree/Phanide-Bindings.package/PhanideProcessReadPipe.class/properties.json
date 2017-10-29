@@ -1,0 +1,11 @@
+{
+	"commentStamp" : "RonieSalgado 10/28/2017 21:38",
+	"super" : "PhanideProcessPipe",
+	"category" : "Phanide-Bindings-Driver",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [ ],
+	"name" : "PhanideProcessReadPipe",
+	"type" : "normal"
+}

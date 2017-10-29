@@ -1,0 +1,23 @@
+{
+	"commentStamp" : "RonieSalgado 10/28/2017 21:40",
+	"super" : "Object",
+	"category" : "Phanide-Bindings-Driver",
+	"classinstvars" : [
+		"uniqueInstance"
+	],
+	"pools" : [
+		"LibPhanidePool"
+	],
+	"classvars" : [
+		"EventDispatchMap"
+	],
+	"instvars" : [
+		"context",
+		"session",
+		"eventFetchingProcess",
+		"processDictionaryMutex",
+		"processDictionary"
+	],
+	"name" : "PhanideDriver",
+	"type" : "normal"
+}

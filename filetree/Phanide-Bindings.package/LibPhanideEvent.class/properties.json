@@ -1,0 +1,15 @@
+{
+	"commentStamp" : "",
+	"super" : "FFIExternalUnion",
+	"category" : "Phanide-Bindings-Bindings",
+	"classinstvars" : [ ],
+	"pools" : [
+		"LibPhanidePool"
+	],
+	"classvars" : [
+		"padding16"
+	],
+	"instvars" : [ ],
+	"name" : "LibPhanideEvent",
+	"type" : "normal"
+}

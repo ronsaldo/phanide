@@ -1,0 +1,19 @@
+{
+	"instance" : {
+		"initializeForNewSession" : "RonieSalgado 10/28/2017 19:04",
+		"checkSession" : "RonieSalgado 10/28/2017 18:32",
+		"initialize" : "RonieSalgado 10/28/2017 18:30",
+		"spawnShell:" : "RonieSalgado 10/28/2017 19:00",
+		"onProcessPipeEvent:" : "RonieSalgado 10/28/2017 22:57",
+		"processEvent:" : "RonieSalgado 10/28/2017 18:44",
+		"createEventFetchingProcess" : "RonieSalgado 10/28/2017 18:35",
+		"onProcessFinishedEvent:" : "RonieSalgado 10/28/2017 19:01",
+		"getProcessFromHandle:" : "RonieSalgado 10/28/2017 19:01",
+		"eventFetchingIteration" : "RonieSalgado 10/28/2017 18:39",
+		"eventFetchingProcessEntry" : "RonieSalgado 10/28/2017 18:38"
+	},
+	"class" : {
+		"initialize" : "RonieSalgado 10/28/2017 18:43",
+		"uniqueInstance" : "RonieSalgado 10/28/2017 18:30"
+	}
+}

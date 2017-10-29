@@ -1,0 +1,14 @@
+{
+	"commentStamp" : "RonieSalgado 10/28/2017 22:27",
+	"super" : "Stream",
+	"category" : "Phanide-Bindings-Streams",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [
+		"stream",
+		"flushOnNewLines"
+	],
+	"name" : "PhanideUTF8TextWriteStream",
+	"type" : "normal"
+}

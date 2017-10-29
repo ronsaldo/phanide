@@ -1,0 +1,14 @@
+{
+	"commentStamp" : "RonieSalgado 10/28/2017 19:07",
+	"super" : "Object",
+	"category" : "Phanide-Bindings-Driver",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [
+		"mutex",
+		"waitingQueue"
+	],
+	"name" : "PhanideCondition",
+	"type" : "normal"
+}

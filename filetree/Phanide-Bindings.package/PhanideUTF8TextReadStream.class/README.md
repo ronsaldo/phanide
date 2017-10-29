@@ -1,0 +1,1 @@
+I am a stream that decodes UTF8 binary data from a decorated stream.

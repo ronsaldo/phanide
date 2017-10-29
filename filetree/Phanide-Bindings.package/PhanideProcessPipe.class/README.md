@@ -1,0 +1,1 @@
+I represent a pipe from a process.

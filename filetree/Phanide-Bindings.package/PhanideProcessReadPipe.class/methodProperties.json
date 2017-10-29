@@ -1,0 +1,13 @@
+{
+	"instance" : {
+		"read:into:" : "RonieSalgado 10/28/2017 21:37",
+		"textStream" : "RonieSalgado 10/28/2017 21:44",
+		"next:" : "RonieSalgado 10/28/2017 21:15",
+		"next" : "RonieSalgado 10/28/2017 21:15",
+		"read:into:offset:" : "RonieSalgado 10/28/2017 21:37",
+		"next:into:" : "RonieSalgado 10/28/2017 21:30",
+		"readInto:startingAt:count:" : "RonieSalgado 10/28/2017 22:08",
+		"bufferedStream" : "RonieSalgado 10/28/2017 21:44"
+	},
+	"class" : { }
+}
