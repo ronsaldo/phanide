@@ -1,0 +1,1 @@
+I am a parser for an output record from the GDB Machine Interface.

@@ -1,0 +1,1 @@
+I represent the result for a gdb command.

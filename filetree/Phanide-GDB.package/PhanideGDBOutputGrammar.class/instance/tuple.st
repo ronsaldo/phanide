@@ -1,0 +1,3 @@
+accessing
+tuple
+	^ emptyTuple / nonEmptyTuple

@@ -1,0 +1,11 @@
+{
+	"commentStamp" : "RonieSalgado 11/1/2017 20:12",
+	"super" : "PhanideGDBEventHandler",
+	"category" : "Phanide-GDB-FrontEnd",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [ ],
+	"name" : "PhanideGDBTranscriptOutputEventHandler",
+	"type" : "normal"
+}

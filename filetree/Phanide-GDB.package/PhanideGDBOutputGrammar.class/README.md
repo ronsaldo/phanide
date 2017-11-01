@@ -1,0 +1,1 @@
+I am a grammar for an output record from the GDB Machine Interface.

@@ -1,0 +1,11 @@
+{
+	"commentStamp" : "RonieSalgado 11/1/2017 18:45",
+	"super" : "PhanideGDBStreamRecord",
+	"category" : "Phanide-GDB-Output",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [ ],
+	"name" : "PhanideGDBLogStreamRecord",
+	"type" : "normal"
+}

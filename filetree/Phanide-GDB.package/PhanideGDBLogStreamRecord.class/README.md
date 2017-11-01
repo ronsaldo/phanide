@@ -1,0 +1,1 @@
+I represent a logging message by gdb that can be produced by the internals of gdb.

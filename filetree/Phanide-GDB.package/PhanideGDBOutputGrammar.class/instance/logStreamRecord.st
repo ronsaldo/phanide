@@ -1,0 +1,3 @@
+records
+logStreamRecord
+	^ '&' asParser , cstring

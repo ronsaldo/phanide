@@ -1,0 +1,1 @@
+I represent the output from some gdb stream.

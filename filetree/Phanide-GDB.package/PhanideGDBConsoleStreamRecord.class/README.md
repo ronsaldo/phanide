@@ -1,0 +1,1 @@
+I represent the console output from a gdb CLI command.

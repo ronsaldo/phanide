@@ -1,0 +1,3 @@
+records
+consoleStreamRecord
+	^ '~' asParser , cstring

@@ -1,0 +1,1 @@
+I represent an asynchronous gdb notification.
