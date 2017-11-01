@@ -1,7 +1,7 @@
 {
 	"commentStamp" : "RonieSalgado 10/28/2017 19:07",
 	"super" : "Object",
-	"category" : "Phanide-Bindings-Driver",
+	"category" : "Phanide-Bindings-Syncronization",
 	"classinstvars" : [ ],
 	"pools" : [ ],
 	"classvars" : [ ],
@@ -9,6 +9,6 @@
 		"mutex",
 		"waitingQueue"
 	],
-	"name" : "PhanideCondition",
+	"name" : "PhanideConditionVariable",
 	"type" : "normal"
 }

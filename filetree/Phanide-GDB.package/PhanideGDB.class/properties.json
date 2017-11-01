@@ -11,7 +11,11 @@
 		"mutex",
 		"outputReadingProcess",
 		"stdin",
-		"eventHandler"
+		"eventHandler",
+		"tokenCountMutex",
+		"tokenCount",
+		"pendingCommands",
+		"pendingCommandsMutex"
 	],
 	"name" : "PhanideGDB",
 	"type" : "normal"

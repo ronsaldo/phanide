@@ -1,3 +1,3 @@
-as yet unclassified
+commands
 cli: aString
-	stdin nextPutAll: aString; lf
+	^ self cli: aString withResult: self newFutureCommandResult

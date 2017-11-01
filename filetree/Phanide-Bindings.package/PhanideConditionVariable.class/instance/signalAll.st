@@ -1,5 +1,5 @@
 communication
-broadcast
+signalAll
 	mutex critical: [
 		waitingQueue do: #resume.
 		waitingQueue removeAll

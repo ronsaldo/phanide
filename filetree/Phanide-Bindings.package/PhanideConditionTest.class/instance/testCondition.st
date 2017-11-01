@@ -1,7 +1,7 @@
 tests
 testCondition
 	| condition mutex entry leave |
-	condition := PhanideCondition new.
+	condition := PhanideConditionVariable new.
 	mutex := Semaphore forMutualExclusion.
 	entry := false.
 	leave := false.

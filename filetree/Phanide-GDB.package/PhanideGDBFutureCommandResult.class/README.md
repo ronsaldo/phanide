@@ -1,0 +1,1 @@
+I am a GDB future command result. I am a future that holds a token.

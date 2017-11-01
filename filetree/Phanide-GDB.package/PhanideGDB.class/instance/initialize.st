@@ -1,4 +1,8 @@
 initialization
 initialize
 	super initialize.
-	eventHandler := PhanideGDBTranscriptOutputEventHandler new
+	eventHandler := PhanideGDBTranscriptOutputEventHandler new.
+	
+	tokenCountMutex := Semaphore forMutualExclusion.
+	tokenCount := 0.
+	

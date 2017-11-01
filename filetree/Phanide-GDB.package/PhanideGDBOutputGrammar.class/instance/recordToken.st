@@ -1,3 +1,3 @@
 accessing
 recordToken
-	^ #digit asParser plus
+	^ #digit asParser plus flatten

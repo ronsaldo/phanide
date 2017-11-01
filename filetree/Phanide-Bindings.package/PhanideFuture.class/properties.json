@@ -1,0 +1,16 @@
+{
+	"commentStamp" : "RonieSalgado 11/1/2017 20:22",
+	"super" : "Object",
+	"category" : "Phanide-Bindings-Syncronization",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [
+		"value",
+		"mutex",
+		"ready",
+		"readyCondition"
+	],
+	"name" : "PhanideFuture",
+	"type" : "normal"
+}

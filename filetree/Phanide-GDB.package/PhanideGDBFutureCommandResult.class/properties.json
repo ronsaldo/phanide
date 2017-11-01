@@ -1,0 +1,13 @@
+{
+	"commentStamp" : "RonieSalgado 11/1/2017 20:43",
+	"super" : "PhanideFuture",
+	"category" : "Phanide-GDB-FrontEnd",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [
+		"token"
+	],
+	"name" : "PhanideGDBFutureCommandResult",
+	"type" : "normal"
+}

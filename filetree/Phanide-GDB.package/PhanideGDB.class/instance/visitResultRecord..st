@@ -4,4 +4,9 @@ visitResultRecord: record
 	record token ifNil: [ ^ self ].
 	
 	tokenValue := record token asInteger.
-	self flag: 'TODO: Dispatch the pending records'
+	pendingCommandsMutex critical: [
+		pendingCommands at: tokenValue ifPresent: [ :result |
+			pendingCommands removeKey: tokenValue.
+			result value: record
+		].
+	].
