@@ -1,0 +1,14 @@
+{
+	"commentStamp" : "",
+	"super" : "PhanideBrowserComponent",
+	"category" : "Phanide-Browser",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [
+		"fileReference",
+		"text"
+	],
+	"name" : "PhanideBrowserTextFileEditor",
+	"type" : "normal"
+}

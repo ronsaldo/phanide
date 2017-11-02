@@ -1,0 +1,20 @@
+{
+	"instance" : {
+		"label" : "RonieSalgado 11/2/2017 00:46",
+		"setupAnchor" : "RonieSalgado 11/2/2017 01:07",
+		"anchor:" : "RonieSalgado 11/2/2017 01:13",
+		"icon" : "RonieSalgado 11/2/2017 00:46",
+		"name" : "RonieSalgado 11/2/2017 01:06",
+		"initializeWithBrowser:" : "RonieSalgado 11/2/2017 01:39",
+		"installLocation" : "RonieSalgado 11/2/2017 00:45",
+		"name:" : "RonieSalgado 11/2/2017 01:06",
+		"defaultName" : "RonieSalgado 11/2/2017 01:07",
+		"browser" : "RonieSalgado 11/2/2017 01:06",
+		"defaultLabel" : "RonieSalgado 11/2/2017 01:07",
+		"anchor" : "RonieSalgado 11/2/2017 01:06"
+	},
+	"class" : {
+		"for:" : "RonieSalgado 11/2/2017 01:39",
+		"isPermanentComponent" : "RonieSalgado 11/2/2017 01:04"
+	}
+}

@@ -1,0 +1,17 @@
+{
+	"commentStamp" : "",
+	"super" : "ComposableModel",
+	"category" : "Phanide-Browser",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [
+		"leftTabs",
+		"bottomTabs",
+		"mainTabs",
+		"componentDictionary",
+		"baseDirectory"
+	],
+	"name" : "PhanideBrowserModel",
+	"type" : "normal"
+}

@@ -1,0 +1,3 @@
+testing
+isPermanentComponent
+	^ false

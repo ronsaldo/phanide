@@ -1,0 +1,14 @@
+{
+	"commentStamp" : "",
+	"super" : "PhanideBrowserComponent",
+	"category" : "Phanide-Browser",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [
+		"tree",
+		"nodeBlock"
+	],
+	"name" : "PhanideBrowserFileTreeTab",
+	"type" : "normal"
+}
