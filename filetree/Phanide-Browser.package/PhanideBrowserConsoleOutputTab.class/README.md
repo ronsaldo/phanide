@@ -1,0 +1,1 @@
+I represent a console output UI interface.

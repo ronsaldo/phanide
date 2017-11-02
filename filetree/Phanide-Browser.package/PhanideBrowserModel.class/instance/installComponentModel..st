@@ -1,4 +1,4 @@
-as yet unclassified
+named components
 installComponentModel: aComponentModel
 	| anchorHolder |
 	self registerNamedComponent: aComponentModel.

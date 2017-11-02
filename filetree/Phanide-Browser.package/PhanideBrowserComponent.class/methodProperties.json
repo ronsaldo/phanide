@@ -1,15 +1,19 @@
 {
 	"instance" : {
-		"label" : "RonieSalgado 11/2/2017 00:46",
+		"label" : "RonieSalgado 11/2/2017 02:32",
 		"setupAnchor" : "RonieSalgado 11/2/2017 01:07",
 		"anchor:" : "RonieSalgado 11/2/2017 01:13",
+		"onAnchorDoubleClick" : "RonieSalgado 11/2/2017 03:13",
 		"icon" : "RonieSalgado 11/2/2017 00:46",
 		"name" : "RonieSalgado 11/2/2017 01:06",
 		"initializeWithBrowser:" : "RonieSalgado 11/2/2017 01:39",
 		"installLocation" : "RonieSalgado 11/2/2017 00:45",
-		"name:" : "RonieSalgado 11/2/2017 01:06",
+		"destroyBrowserComponent" : "RonieSalgado 11/2/2017 02:54",
+		"label:" : "RonieSalgado 11/2/2017 02:31",
 		"defaultName" : "RonieSalgado 11/2/2017 01:07",
+		"name:" : "RonieSalgado 11/2/2017 02:49",
 		"browser" : "RonieSalgado 11/2/2017 01:06",
+		"makeActive" : "RonieSalgado 11/2/2017 02:35",
 		"defaultLabel" : "RonieSalgado 11/2/2017 01:07",
 		"anchor" : "RonieSalgado 11/2/2017 01:06"
 	},

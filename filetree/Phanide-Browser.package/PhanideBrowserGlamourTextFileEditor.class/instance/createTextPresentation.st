@@ -1,0 +1,3 @@
+initialization
+createTextPresentation
+	^ GLMRubricTextPresentation new

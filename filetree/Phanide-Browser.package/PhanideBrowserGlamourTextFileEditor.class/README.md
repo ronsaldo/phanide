@@ -1,0 +1,1 @@
+I represent a text file editor.that uses a glamour presentation.

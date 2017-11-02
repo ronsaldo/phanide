@@ -1,3 +1,3 @@
 accessing
-label
+defaultLabel
 	^ 'Files'

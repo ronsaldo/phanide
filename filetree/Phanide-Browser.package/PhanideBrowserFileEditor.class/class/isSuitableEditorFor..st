@@ -1,0 +1,3 @@
+testing
+isSuitableEditorFor: aFileReference
+	^ false

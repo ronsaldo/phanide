@@ -1,10 +1,13 @@
 {
 	"instance" : {
+		"onNewTreeSelection:" : "RonieSalgado 11/2/2017 02:20",
 		"tree" : "RonieSalgado 11/2/2017 00:53",
 		"defaultName" : "RonieSalgado 11/2/2017 01:05",
-		"initializeWidgets" : "RonieSalgado 11/2/2017 01:48",
+		"initializePresenter" : "RonieSalgado 11/2/2017 02:17",
+		"defaultLabel" : "RonieSalgado 11/2/2017 02:43",
+		"initializeWidgets" : "RonieSalgado 11/2/2017 02:15",
 		"installLocation" : "RonieSalgado 11/2/2017 00:52",
-		"label" : "RonieSalgado 11/2/2017 00:54"
+		"onDoubleClick:" : "RonieSalgado 11/2/2017 02:22"
 	},
 	"class" : {
 		"defaultSpec" : "RonieSalgado 11/2/2017 00:53",

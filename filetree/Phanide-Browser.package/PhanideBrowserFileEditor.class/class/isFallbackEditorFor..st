@@ -1,0 +1,3 @@
+testing
+isFallbackEditorFor: aFileReference
+	^ false

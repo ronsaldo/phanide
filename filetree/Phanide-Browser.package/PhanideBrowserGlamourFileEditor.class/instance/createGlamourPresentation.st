@@ -1,0 +1,3 @@
+initialization
+createGlamourPresentation
+	self subclassResponsibility

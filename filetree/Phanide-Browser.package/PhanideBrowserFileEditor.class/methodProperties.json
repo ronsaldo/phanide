@@ -1,0 +1,25 @@
+{
+	"instance" : {
+		"unsavedChanges:" : "RonieSalgado 11/2/2017 04:53",
+		"fileReference" : "RonieSalgado 11/2/2017 02:24",
+		"fileReference:" : "RonieSalgado 11/2/2017 03:38",
+		"onAnchorDoubleClick" : "RonieSalgado 11/2/2017 03:55",
+		"temporaryEditor" : "RonieSalgado 11/2/2017 03:08",
+		"labelSuffix" : "RonieSalgado 11/2/2017 03:10",
+		"installLocation" : "RonieSalgado 11/2/2017 02:28",
+		"unsavedChanges" : "RonieSalgado 11/2/2017 03:11",
+		"initialize" : "RonieSalgado 11/2/2017 03:10",
+		"fileChanged" : "RonieSalgado 11/2/2017 03:46",
+		"makeDirty" : "RonieSalgado 11/2/2017 03:55",
+		"defaultLabel" : "RonieSalgado 11/2/2017 03:10",
+		"makeTemporaryEditorPermanent" : "RonieSalgado 11/2/2017 03:55",
+		"temporaryEditor:" : "RonieSalgado 11/2/2017 03:09",
+		"labelPrefix" : "RonieSalgado 11/2/2017 03:10",
+		"updateLabel" : "RonieSalgado 11/2/2017 03:10"
+	},
+	"class" : {
+		"isSuitableEditorFor:" : "RonieSalgado 11/2/2017 02:25",
+		"isFallbackEditorFor:" : "RonieSalgado 11/2/2017 02:25",
+		"editorForFile:" : "RonieSalgado 11/2/2017 03:45"
+	}
+}

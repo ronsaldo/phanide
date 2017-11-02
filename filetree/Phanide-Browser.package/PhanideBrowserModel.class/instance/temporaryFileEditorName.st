@@ -1,0 +1,3 @@
+files
+temporaryFileEditorName
+	^ #temporaryFileEditor

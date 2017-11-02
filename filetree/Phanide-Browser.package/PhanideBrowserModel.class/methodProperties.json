@@ -1,17 +1,23 @@
 {
 	"instance" : {
 		"baseDirectory" : "RonieSalgado 11/2/2017 01:35",
+		"openFileViewTemporarily:" : "RonieSalgado 11/2/2017 03:08",
 		"bottomTabs" : "RonieSalgado 11/2/2017 00:37",
 		"title" : "RonieSalgado 11/2/2017 00:39",
+		"removeComponent:" : "RonieSalgado 11/2/2017 02:53",
 		"leftTabs" : "RonieSalgado 11/2/2017 00:37",
 		"extent" : "RonieSalgado 11/2/2017 00:39",
 		"mainTabs" : "RonieSalgado 11/2/2017 00:37",
 		"populateComponent:" : "RonieSalgado 11/2/2017 01:39",
 		"initializeWidgets" : "RonieSalgado 11/2/2017 01:11",
+		"openFileView:" : "RonieSalgado 11/2/2017 03:14",
 		"populateComponents" : "RonieSalgado 11/2/2017 01:11",
 		"registerNamedComponent:" : "RonieSalgado 11/2/2017 00:57",
+		"temporaryFileEditorName" : "RonieSalgado 11/2/2017 02:46",
 		"installComponentModel:" : "RonieSalgado 11/2/2017 01:39",
-		"initializeWithDirectory:" : "RonieSalgado 11/2/2017 01:32"
+		"makeTemporaryEditorPermanent:" : "RonieSalgado 11/2/2017 03:14",
+		"initializeWithDirectory:" : "RonieSalgado 11/2/2017 01:32",
+		"component:renamedFrom:into:" : "RonieSalgado 11/2/2017 02:50"
 	},
 	"class" : {
 		"new" : "RonieSalgado 11/2/2017 01:19",

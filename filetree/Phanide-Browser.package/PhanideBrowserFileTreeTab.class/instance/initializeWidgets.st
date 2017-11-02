@@ -2,7 +2,7 @@ initialization
 initializeWidgets
 	"Code taken from: http://forum.world.st/Spec-gt-TreeModel-Updating-the-tree-selection-after-a-deletion-td4909894.html"
 	
-	tree := self newTree.
+	tree := self instantiate: SearchableTree.
 	
 	nodeBlock := [:fileReference |
 		|node|
@@ -25,6 +25,7 @@ initializeWidgets
 		node content: fileReference.
 	].
 	tree
+		multiSelection: true;
 		roots: {nodeBlock value: browser baseDirectory};
 		displayBlock: [ :item | item basename ];
 		whenBuiltDo: [ tree selectedItem: (tree roots first selected: true; takeHighlight; yourself) ]

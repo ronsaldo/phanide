@@ -1,3 +1,3 @@
 accessing
 label
-	^ 'Untitled'
+	^ label ifNil: [ label := self defaultLabel ]

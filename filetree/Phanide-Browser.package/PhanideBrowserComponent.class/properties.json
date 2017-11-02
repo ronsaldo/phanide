@@ -1,7 +1,7 @@
 {
-	"commentStamp" : "",
+	"commentStamp" : "RonieSalgado 11/2/2017 03:40",
 	"super" : "ComposableModel",
-	"category" : "Phanide-Browser",
+	"category" : "Phanide-Browser-UI",
 	"classinstvars" : [ ],
 	"pools" : [ ],
 	"classvars" : [ ],

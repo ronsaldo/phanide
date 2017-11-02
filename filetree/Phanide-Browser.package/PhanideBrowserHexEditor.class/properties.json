@@ -1,0 +1,11 @@
+{
+	"commentStamp" : "RonieSalgado 11/2/2017 03:51",
+	"super" : "PhanideBrowserFileEditor",
+	"category" : "Phanide-Browser-UI",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [ ],
+	"name" : "PhanideBrowserHexEditor",
+	"type" : "normal"
+}
