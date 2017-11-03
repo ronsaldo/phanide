@@ -1,0 +1,14 @@
+{
+	"commentStamp" : "RonieSalgado 11/3/2017 02:13",
+	"super" : "PhanideBrowserFileEditor",
+	"category" : "Phanide-Browser-UI",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [
+		"morph",
+		"morphModel"
+	],
+	"name" : "PhanideBrowserMorphFileEditor",
+	"type" : "normal"
+}

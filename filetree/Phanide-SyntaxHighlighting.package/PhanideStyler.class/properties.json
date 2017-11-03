@@ -1,0 +1,17 @@
+{
+	"commentStamp" : "RonieSalgado 11/3/2017 03:11",
+	"super" : "Object",
+	"category" : "Phanide-SyntaxHighlighting-Regex",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [
+		"StylerDictionary",
+		"StylerExtensionDictionary"
+	],
+	"instvars" : [
+		"name",
+		"extensions"
+	],
+	"name" : "PhanideStyler",
+	"type" : "normal"
+}

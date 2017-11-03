@@ -1,0 +1,13 @@
+{
+	"commentStamp" : "RonieSalgado 11/3/2017 03:55",
+	"super" : "SHTextStyler",
+	"category" : "Phanide-SyntaxHighlighting-Rubric",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [
+		"styler"
+	],
+	"name" : "PhanideShoutStylerAdapter",
+	"type" : "normal"
+}

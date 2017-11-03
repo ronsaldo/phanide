@@ -1,0 +1,15 @@
+{
+	"instance" : {
+		"states" : "RonieSalgado 11/2/2017 13:15",
+		"scanText:with:" : "RonieSalgado 11/2/2017 13:24",
+		"initialize" : "RonieSalgado 11/2/2017 13:18",
+		"scanStream:with:" : "RonieSalgado 11/2/2017 13:28",
+		"states:" : "RonieSalgado 11/2/2017 13:15",
+		"initialState:" : "RonieSalgado 11/2/2017 13:15",
+		"parse:" : "RonieSalgado 11/2/2017 13:15",
+		"initialState" : "RonieSalgado 11/2/2017 13:15"
+	},
+	"class" : {
+		"parse:" : "RonieSalgado 11/2/2017 13:13"
+	}
+}

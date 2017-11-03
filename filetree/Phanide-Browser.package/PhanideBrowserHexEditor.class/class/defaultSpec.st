@@ -1,3 +1,3 @@
 specs
 defaultSpec
-	^ SpecLayout composed
+	^ self specLayout

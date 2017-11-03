@@ -1,0 +1,12 @@
+{
+	"instance" : {
+		"setupMorph" : "RonieSalgado 11/3/2017 04:22",
+		"save" : "RonieSalgado 11/3/2017 02:43",
+		"fileChanged" : "RonieSalgado 11/3/2017 04:11",
+		"initializePresenter" : "RonieSalgado 11/3/2017 05:35",
+		"createMorph" : "RonieSalgado 11/3/2017 04:08"
+	},
+	"class" : {
+		"isFallbackEditorFor:" : "RonieSalgado 11/3/2017 02:21"
+	}
+}

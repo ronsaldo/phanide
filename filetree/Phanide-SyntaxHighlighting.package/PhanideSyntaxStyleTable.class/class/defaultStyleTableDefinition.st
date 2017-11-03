@@ -1,0 +1,3 @@
+style tables
+defaultStyleTableDefinition
+	^ self darkStyleTableDefinition

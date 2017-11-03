@@ -1,0 +1,13 @@
+{
+	"commentStamp" : "RonieSalgado 11/3/2017 03:11",
+	"super" : "PhanideStyler",
+	"category" : "Phanide-SyntaxHighlighting-Regex",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [
+		"lexer"
+	],
+	"name" : "PhanideRegexStyler",
+	"type" : "normal"
+}

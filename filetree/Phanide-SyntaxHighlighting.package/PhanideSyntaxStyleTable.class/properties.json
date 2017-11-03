@@ -1,0 +1,15 @@
+{
+	"commentStamp" : "RonieSalgado 11/3/2017 00:23",
+	"super" : "Object",
+	"category" : "Phanide-SyntaxHighlighting-Style",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [
+		"CurrentStyleTable"
+	],
+	"instvars" : [
+		"styles"
+	],
+	"name" : "PhanideSyntaxStyleTable",
+	"type" : "normal"
+}

@@ -1,0 +1,1 @@
+I represent a style table. I am used for doing syntax highlighting.

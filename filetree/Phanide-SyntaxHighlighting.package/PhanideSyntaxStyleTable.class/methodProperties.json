@@ -1,0 +1,16 @@
+{
+	"instance" : {
+		"parse:" : "RonieSalgado 11/3/2017 00:21",
+		"parseStyleDefinition:" : "RonieSalgado 11/3/2017 00:23",
+		"applyStyle:on:from:to:" : "RonieSalgado 11/3/2017 00:28"
+	},
+	"class" : {
+		"darkStyleTableDefinition" : "RonieSalgado 11/3/2017 01:55",
+		"noteCompilationOf:meta:" : "RonieSalgado 11/3/2017 00:38",
+		"findCurrentStyleTable" : "RonieSalgado 11/3/2017 00:19",
+		"reset" : "RonieSalgado 11/3/2017 00:39",
+		"current" : "RonieSalgado 11/3/2017 00:19",
+		"defaultStyleTableDefinition" : "RonieSalgado 11/3/2017 00:19",
+		"parse:" : "RonieSalgado 11/3/2017 00:20"
+	}
+}
