@@ -1,0 +1,1 @@
+I represent a character class. A character is a set of characters.

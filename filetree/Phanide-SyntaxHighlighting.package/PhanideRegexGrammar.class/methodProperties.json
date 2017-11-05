@@ -1,0 +1,23 @@
+{
+	"instance" : {
+		"term" : "RonieSalgado 11/3/2017 15:52",
+		"alternations" : "RonieSalgado 11/3/2017 15:46",
+		"characterClassEscapeSequence" : "RonieSalgado 11/4/2017 01:46",
+		"characterClass" : "RonieSalgado 11/3/2017 15:28",
+		"characterRangeBound" : "RonieSalgado 11/4/2017 01:45",
+		"characterClassCharacter" : "RonieSalgado 11/4/2017 01:39",
+		"characterRange" : "RonieSalgado 11/4/2017 01:47",
+		"characterTerm" : "RonieSalgado 11/5/2017 04:33",
+		"parent" : "RonieSalgado 11/3/2017 15:27",
+		"anyMetaCharacter" : "RonieSalgado 11/3/2017 15:35",
+		"escapeSequence" : "RonieSalgado 11/5/2017 02:07",
+		"namedCharacterClass" : "RonieSalgado 11/3/2017 15:35",
+		"characterClassSingleCharacter" : "RonieSalgado 11/4/2017 01:49",
+		"sequence" : "RonieSalgado 11/3/2017 15:33",
+		"start" : "RonieSalgado 11/3/2017 15:21",
+		"characterClassElement" : "RonieSalgado 11/4/2017 01:48",
+		"repetition" : "RonieSalgado 11/3/2017 15:34",
+		"repetitionOperator" : "RonieSalgado 11/3/2017 15:36"
+	},
+	"class" : { }
+}

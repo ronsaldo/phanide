@@ -1,0 +1,1 @@
+I am a character class that accepts according to a predicate.

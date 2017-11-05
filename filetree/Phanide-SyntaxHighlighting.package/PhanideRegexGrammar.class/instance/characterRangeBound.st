@@ -1,0 +1,3 @@
+accessing
+characterRangeBound
+	^ characterClassEscapeSequence / characterClassCharacter

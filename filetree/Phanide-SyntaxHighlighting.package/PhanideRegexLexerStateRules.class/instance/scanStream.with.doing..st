@@ -1,28 +1,22 @@
 as yet unclassified
 scanStream: aStream with: startState doing: aBlock
-	| startPosition abortPosition |
+
+	| finalState startPosition endPosition tokenStartPosition rule |
 	startPosition := aStream position.
-	[ aStream atEnd ] whileFalse: [ 
-		abortPosition := aStream position.
-		rules do: [ :rule |
-			(rule matchStream: aStream) ifTrue: [
-				abortPosition ~= startPosition ifTrue: [
-					aStream position: abortPosition.
-					aBlock value: nil value: self value: startPosition + 1 value: abortPosition.
-					^ startState
-				] ifFalse: [
-					aBlock value: rule value: self value: startPosition + 1 value: aStream position.
-					^ rule newState ifNil: [ startState ]
-				]
-			]
-		].
-	
-		aStream position = abortPosition ifTrue: [
-			aStream next
-		].
+	[
+		tokenStartPosition := aStream position.
+		finalState := combinedRegex simulateStreamForPrefix: aStream.
+		endPosition := aStream position.
+	] doWhileFalse: [ finalState bestAcceptingState <= rules size or: [aStream atEnd]].
+
+	startPosition ~= tokenStartPosition ifTrue: [
+		aBlock value: nil value: self value: startPosition + 1 value: tokenStartPosition
 	].
-	
-	aStream position ~= startPosition ifTrue: [
-		aBlock value: nil value: self value: startPosition + 1 value: aStream position
+
+	(finalState bestAcceptingState <= rules size) ifTrue: [
+		rule := rules at: finalState bestAcceptingState.
+		aBlock value: rule value: self value: tokenStartPosition + 1 value: endPosition.
+		^ rule newState ifNil: [ startState ]
 	].
+
 	^ startState

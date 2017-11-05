@@ -1,8 +1,10 @@
 {
 	"instance" : {
-		"parse:" : "RonieSalgado 11/3/2017 00:21",
+		"applyStyle:on:from:to:" : "RonieSalgado 11/3/2017 00:28",
+		"textAttributesForStyle:" : "RonieSalgado 11/5/2017 04:26",
 		"parseStyleDefinition:" : "RonieSalgado 11/3/2017 00:23",
-		"applyStyle:on:from:to:" : "RonieSalgado 11/3/2017 00:28"
+		"attributesForStyle:" : "RonieSalgado 11/5/2017 04:22",
+		"parse:" : "RonieSalgado 11/3/2017 00:21"
 	},
 	"class" : {
 		"darkStyleTableDefinition" : "RonieSalgado 11/3/2017 01:55",

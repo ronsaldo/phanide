@@ -1,0 +1,11 @@
+{
+	"commentStamp" : "RonieSalgado 11/5/2017 05:28",
+	"super" : "PhanideNFAStateTransition",
+	"category" : "Phanide-SyntaxHighlighting-Regex",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [ ],
+	"name" : "PhanideNFAStateEpsilonTransition",
+	"type" : "normal"
+}

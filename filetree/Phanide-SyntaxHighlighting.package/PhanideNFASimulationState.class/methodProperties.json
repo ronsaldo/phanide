@@ -1,0 +1,17 @@
+{
+	"instance" : {
+		"transitionAt:ifAbsentPut:" : "RonieSalgado 11/5/2017 05:24",
+		"bestAcceptingState" : "RonieSalgado 11/5/2017 02:22",
+		"acceptingStates:" : "RonieSalgado 11/5/2017 02:22",
+		"activeStates:" : "RonieSalgado 11/5/2017 00:20",
+		"activeStates" : "RonieSalgado 11/5/2017 00:20",
+		"initialize" : "RonieSalgado 11/5/2017 02:49",
+		"mutex:" : "RonieSalgado 11/5/2017 01:11",
+		"mutex" : "RonieSalgado 11/5/2017 01:11",
+		"acceptingStates" : "RonieSalgado 11/5/2017 02:13",
+		"isAccepting" : "RonieSalgado 11/5/2017 02:13"
+	},
+	"class" : {
+		"initialize" : "RonieSalgado 11/5/2017 03:00"
+	}
+}

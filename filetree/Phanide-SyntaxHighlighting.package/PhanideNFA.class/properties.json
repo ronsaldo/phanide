@@ -1,0 +1,22 @@
+{
+	"commentStamp" : "RonieSalgado 11/5/2017 04:04",
+	"super" : "Object",
+	"category" : "Phanide-SyntaxHighlighting-Regex",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [
+		"EscapeSequences",
+		"MetaCharacters",
+		"RepetitionTypeDictionary"
+	],
+	"instvars" : [
+		"initial",
+		"accepting",
+		"states",
+		"simulationStateCacheMutex",
+		"simulationStateCache",
+		"initialSimulationState"
+	],
+	"name" : "PhanideNFA",
+	"type" : "normal"
+}

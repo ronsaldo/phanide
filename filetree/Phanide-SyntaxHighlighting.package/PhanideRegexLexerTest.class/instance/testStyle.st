@@ -6,4 +6,4 @@ testStyle
 	lexer styleText: '/* Hello World */ 0123456 anIdentifier' withBlock: [ :style :start :stop |
 		styles add: { style . start . stop }
 	].
-	self assert: styles size equals: 7.
+	self assert: styles size equals: 7

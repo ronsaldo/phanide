@@ -1,0 +1,1 @@
+I am a state transition on epsilon. I can be triggered on nothing.

@@ -1,0 +1,1 @@
+I represent a state in a non-deterministic automata.

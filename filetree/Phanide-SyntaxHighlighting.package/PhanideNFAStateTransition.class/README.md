@@ -1,0 +1,1 @@
+I represent a non-deterministic state transition.

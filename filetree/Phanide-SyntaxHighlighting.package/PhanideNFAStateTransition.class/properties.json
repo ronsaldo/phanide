@@ -1,0 +1,13 @@
+{
+	"commentStamp" : "RonieSalgado 11/5/2017 05:25",
+	"super" : "Object",
+	"category" : "Phanide-SyntaxHighlighting-Regex",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [
+		"targets"
+	],
+	"name" : "PhanideNFAStateTransition",
+	"type" : "normal"
+}

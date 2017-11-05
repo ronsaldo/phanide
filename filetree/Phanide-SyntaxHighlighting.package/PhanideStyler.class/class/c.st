@@ -7,7 +7,7 @@ c
 			('//.*' singleLineComment)
 			
 			('\s*#\s*include\s<[^>]*>' preprocessor)
-			('\s*#\s*(define|if|ifdef|ifndef|else|endif|pragma|line)' preprocessor)
+			('\s*#\s*[A-Za-z_][A-Za-z_0-9]*' preprocessor)
 
 			('auto' keyword)
 			('break' keyword)
@@ -31,6 +31,7 @@ c
 			('while' keyword)
 
 			('static' keyword)
+			('const' keyword)
 			('register' keyword)
 			('volatile' keyword)
 			('restrict' keyword)
@@ -57,13 +58,27 @@ c
 			('_Static_assert' keyword)
 			('_Thread_local' keyword)
 
-			('[A-Za-z_][A-Za-z_0-9]*_t' type)
+			('[A-Za-z_][A-Za-z_0-9]*_t\s' type)
 
-			('''([^\\"]|\\.)*''' character)
+			('''([^\\'']|\\.)*''' character)
 			('"([^\\"]|\\.)*"' string)
 
 			('[A-Za-z_][A-Za-z_0-9]*' identifier)
-			('[0-9]+' number)
+			('[0-9]*\.[0-9]+([eE][+\-]?[0-9]+)?[A-Za-z]*' number)
+			('[0-9]+[A-Za-z]*' number)
+			
+			('[<>]=?' operator)
+			('==' operator)
+			('!=' operator)
+			('[+-/*%&|^]=?' operator)
+			('<<=' operator)
+			('>>=' operator)
+			('=' operator)
+			('!' operator)
+			('~' operator)
+			('\?' operator)
+			('::' operator)
+			
 			('\s+' space)
 		)
 	

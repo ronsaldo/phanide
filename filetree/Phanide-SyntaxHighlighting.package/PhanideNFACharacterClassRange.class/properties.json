@@ -1,0 +1,14 @@
+{
+	"commentStamp" : "RonieSalgado 11/5/2017 05:24",
+	"super" : "PhanideNFACharacterClass",
+	"category" : "Phanide-SyntaxHighlighting-Regex",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [
+		"start",
+		"stop"
+	],
+	"name" : "PhanideNFACharacterClassRange",
+	"type" : "normal"
+}

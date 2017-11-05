@@ -1,0 +1,11 @@
+{
+	"commentStamp" : "RonieSalgado 11/5/2017 04:08",
+	"super" : "PhanideRegexGrammar",
+	"category" : "Phanide-SyntaxHighlighting-Regex",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [ ],
+	"name" : "PhanideRegexParser",
+	"type" : "normal"
+}

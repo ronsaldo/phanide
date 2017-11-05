@@ -1,13 +1,13 @@
 {
 	"instance" : {
-		"name:" : "RonieSalgado 11/2/2017 13:08",
+		"combineRules" : "RonieSalgado 11/5/2017 03:49",
+		"parse:" : "RonieSalgado 11/5/2017 03:11",
 		"rules" : "RonieSalgado 11/2/2017 13:08",
 		"defaultStyle" : "RonieSalgado 11/2/2017 15:03",
-		"rules:" : "RonieSalgado 11/2/2017 13:08",
-		"scanStream:with:doing:" : "RonieSalgado 11/2/2017 15:03",
+		"scanStream:with:doing:" : "RonieSalgado 11/5/2017 03:56",
 		"defaultStyle:" : "RonieSalgado 11/2/2017 15:03",
-		"parse:" : "RonieSalgado 11/2/2017 15:04",
-		"name" : "RonieSalgado 11/2/2017 13:08"
+		"name" : "RonieSalgado 11/2/2017 13:08",
+		"name:" : "RonieSalgado 11/2/2017 13:08"
 	},
 	"class" : {
 		"parse:" : "RonieSalgado 11/2/2017 13:08"
