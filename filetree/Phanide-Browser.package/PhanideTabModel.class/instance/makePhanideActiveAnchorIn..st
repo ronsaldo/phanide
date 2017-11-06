@@ -1,4 +1,4 @@
-*Phanide-Browser
+phanide anchor
 makePhanideActiveAnchorIn: aPhanideBrowser
 	owner widget ifNotNil: [:widget |
 		widget widget ifNotNil: [ :morph |

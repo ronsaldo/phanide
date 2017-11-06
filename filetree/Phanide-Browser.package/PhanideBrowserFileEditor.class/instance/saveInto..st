@@ -1,0 +1,3 @@
+actions
+saveInto: targetFileReference
+	self subclassResponsibility

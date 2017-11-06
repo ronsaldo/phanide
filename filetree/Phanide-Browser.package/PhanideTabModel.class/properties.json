@@ -1,0 +1,13 @@
+{
+	"commentStamp" : "RonieSalgado 11/6/2017 00:58",
+	"super" : "TabModel",
+	"category" : "Phanide-Browser-Spec",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [
+		"okToCloseAction"
+	],
+	"name" : "PhanideTabModel",
+	"type" : "normal"
+}

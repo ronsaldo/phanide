@@ -1,0 +1,13 @@
+{
+	"instance" : {
+		"okToCloseAction:" : "RonieSalgado 11/6/2017 00:52",
+		"doubleClick:" : "RonieSalgado 11/6/2017 00:50",
+		"initialize" : "RonieSalgado 11/6/2017 00:52",
+		"okToCloseAction" : "RonieSalgado 11/6/2017 00:52",
+		"makePhanideActiveAnchorIn:" : "RonieSalgado 11/6/2017 00:50",
+		"model:" : "RonieSalgado 11/6/2017 00:48",
+		"destroyPhanideAnchorIn:" : "RonieSalgado 11/6/2017 00:49",
+		"okToClose" : "RonieSalgado 11/6/2017 00:52"
+	},
+	"class" : { }
+}

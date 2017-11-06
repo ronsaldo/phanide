@@ -1,0 +1,3 @@
+api
+closeable
+	^ false

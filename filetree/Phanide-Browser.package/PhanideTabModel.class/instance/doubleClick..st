@@ -1,5 +1,5 @@
-*Phanide-Browser
-phanideDoubleClick: aBlock
+api events
+doubleClick: aBlock
 	self whenBuiltDo: [ 
 		self widget ifNotNil: [:widget |
 			widget widget ifNotNil: [ :morph |
