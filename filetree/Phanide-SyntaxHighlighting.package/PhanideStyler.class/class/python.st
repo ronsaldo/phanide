@@ -5,7 +5,7 @@ python
 		(init foreground
 			('"""' string -> multiLineString)
 
-			('#:^phanideIsEndOfLine:*' singleLineComment)
+			('#.*' singleLineComment)
 			
 			('False' keyword)
 			('None' keyword)
@@ -40,6 +40,8 @@ python
 			('while' keyword)
 			('with' keyword)
 			('yield' keyword)
+			
+			('self' keyword)
 
 			('''([^\\'']|\\.)*''' string)
 			('"([^\\"]|\\.)*"' string)
