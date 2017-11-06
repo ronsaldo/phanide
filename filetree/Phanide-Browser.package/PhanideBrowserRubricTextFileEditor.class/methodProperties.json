@@ -1,9 +1,12 @@
 {
 	"instance" : {
+		"toggleBreakpointOnClickEvent:morph:" : "RonieSalgado 11/6/2017 02:06",
 		"saveInto:" : "RonieSalgado 11/6/2017 01:07",
-		"setupMorph" : "RonieSalgado 11/3/2017 04:22",
-		"fileChanged" : "RonieSalgado 11/3/2017 04:11",
-		"initializePresenter" : "RonieSalgado 11/6/2017 01:19",
+		"setupMorph" : "RonieSalgado 11/6/2017 01:48",
+		"textMenu" : "RonieSalgado 11/6/2017 01:42",
+		"toggleBreakpointAtLineIndex:" : "RonieSalgado 11/6/2017 02:07",
+		"fileChanged" : "RonieSalgado 11/6/2017 01:39",
+		"initializePresenter" : "RonieSalgado 11/6/2017 02:05",
 		"createMorph" : "RonieSalgado 11/3/2017 04:08"
 	},
 	"class" : {

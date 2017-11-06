@@ -1,4 +1,5 @@
 initialization
 setupMorph
 	morph
-		withLineNumbers
+		withLineNumbers;
+		withTextSegmentIcons
