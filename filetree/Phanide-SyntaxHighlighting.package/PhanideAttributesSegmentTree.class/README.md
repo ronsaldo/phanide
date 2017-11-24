@@ -1,0 +1,1 @@
+I am a segment tree that is used for building the RunArray for text attributes in a more efficient way.

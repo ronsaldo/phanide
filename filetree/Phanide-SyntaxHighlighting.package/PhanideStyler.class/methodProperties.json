@@ -5,10 +5,12 @@
 		"extensions:" : "RonieSalgado 11/3/2017 03:05",
 		"rubricEditingModeForFileReference:browserComponent:" : "RonieSalgado 11/6/2017 01:39",
 		"extensions" : "RonieSalgado 11/3/2017 03:05",
+		"textDecoratorInPresentation:fileReference:" : "RonieSalgado 11/23/2017 17:35",
 		"name" : "RonieSalgado 11/3/2017 03:05",
 		"name:" : "RonieSalgado 11/3/2017 03:05"
 	},
 	"class" : {
+		"styler:extensions:regex:" : "RonieSalgado 11/23/2017 17:27",
 		"stylerDictionary" : "RonieSalgado 11/3/2017 03:10",
 		"noteCompilationOf:meta:" : "RonieSalgado 11/3/2017 03:07",
 		"c" : "RonieSalgado 11/5/2017 05:20",
@@ -18,7 +20,7 @@
 		"registerStyler:" : "RonieSalgado 11/3/2017 03:09",
 		"stylerExtensionDictionary" : "RonieSalgado 11/3/2017 03:10",
 		"cpp" : "RonieSalgado 11/5/2017 05:20",
-		"python" : "RonieSalgado 11/5/2017 05:48",
-		"styler:extensions:regex:" : "RonieSalgado 11/3/2017 03:07"
+		"styler:extensions:commandHighlighter:" : "RonieSalgado 11/23/2017 17:29",
+		"python" : "RonieSalgado 11/5/2017 05:48"
 	}
 }

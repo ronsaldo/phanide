@@ -1,0 +1,17 @@
+{
+	"commentStamp" : "RonieSalgado 11/24/2017 13:16",
+	"super" : "Object",
+	"category" : "Phanide-SyntaxHighlighting-Commands",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [
+		"start",
+		"stop",
+		"value",
+		"left",
+		"right"
+	],
+	"name" : "PhanideAttributesSegmentTreeNode",
+	"type" : "normal"
+}
