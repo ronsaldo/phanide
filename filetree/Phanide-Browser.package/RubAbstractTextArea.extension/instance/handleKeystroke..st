@@ -7,7 +7,11 @@ handleKeystroke: anEvent
 
 	"Black list the arrows for spec."
 	(self allowsKeymapping and: [({Character arrowLeft . Character arrowRight} includes: anEvent keyCharacter) not])
-		ifTrue: [ self dispatchKeystrokeForEvent: anEvent ] .
+		ifTrue: [
+			(anEvent keyCharacter = Character tab and: [self valueOfProperty: #processTabHere ifAbsent: [ false ]]) ifFalse: [ 
+				self dispatchKeystrokeForEvent: anEvent
+			]
+	] .
 	anEvent wasHandled
 		ifTrue: [
 			"We need to check for completion here because otherwise it will try to handle the keystroke, 
