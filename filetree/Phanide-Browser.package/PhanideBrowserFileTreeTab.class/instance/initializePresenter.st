@@ -1,15 +1,9 @@
 initialization
 initializePresenter
-	| oldSelection newSelection |
-	tree doubleClick: [
-		self onDoubleClick: tree selectedItems
+	treeMorph onAnnouncement: FTSelectionChanged do: [ :ann |
+		self onNewTreeSelection: ann newSelectedRowIndexes
 	].
 
-	oldSelection := #().
-	tree whenSelectedItemsChanged: [:selectedElements |
-		newSelection := selectedElements asArray.
-		newSelection ~= oldSelection ifTrue: [ 
-			self onNewTreeSelection: newSelection.
-		].
-		oldSelection := newSelection
-	]
+	treeMorph onAnnouncement: FTStrongSelectionChanged do: [ :ann |
+		self onDoubleClick: ann selectedRowIndex
+	].

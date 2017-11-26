@@ -1,0 +1,1 @@
+I am a text entry dialog that is used for completing a text.

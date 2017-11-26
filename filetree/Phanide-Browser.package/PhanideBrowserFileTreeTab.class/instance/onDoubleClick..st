@@ -1,7 +1,3 @@
 as yet unclassified
-onDoubleClick: selectedElements
-	| element |
-	selectedElements size ~= 1 ifTrue: [ ^ self ].
-	
-	element := selectedElements first.
-	browser openFileView: element content
+onDoubleClick: selectedElement
+	browser openFileView: (treeMorph dataSource elementAt: selectedElement) data
