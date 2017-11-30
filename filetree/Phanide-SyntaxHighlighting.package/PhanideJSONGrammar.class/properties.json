@@ -1,0 +1,32 @@
+{
+	"commentStamp" : "RonieSalgado 11/30/2017 18:17",
+	"super" : "PPCompositeParser",
+	"category" : "Phanide-SyntaxHighlighting-Styler",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [
+		"value",
+		"string",
+		"number",
+		"object",
+		"array",
+		"trueLiteral",
+		"falseLiteral",
+		"nullLiteral",
+		"space",
+		"lbracket",
+		"comma",
+		"rbracket",
+		"lcbracket",
+		"objectMembers",
+		"rcbracket",
+		"pair",
+		"colon",
+		"integerPart",
+		"fractionalPart",
+		"exponent"
+	],
+	"name" : "PhanideJSONGrammar",
+	"type" : "normal"
+}
