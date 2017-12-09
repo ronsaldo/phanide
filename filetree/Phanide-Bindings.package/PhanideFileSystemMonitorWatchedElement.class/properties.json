@@ -1,0 +1,17 @@
+{
+	"commentStamp" : "RonieSalgado 12/9/2017 03:06",
+	"super" : "Object",
+	"category" : "Phanide-Bindings-FileSystem",
+	"classinstvars" : [ ],
+	"pools" : [
+		"LibPhanidePool"
+	],
+	"classvars" : [ ],
+	"instvars" : [
+		"handle",
+		"announcer",
+		"fileReference"
+	],
+	"name" : "PhanideFileSystemMonitorWatchedElement",
+	"type" : "normal"
+}

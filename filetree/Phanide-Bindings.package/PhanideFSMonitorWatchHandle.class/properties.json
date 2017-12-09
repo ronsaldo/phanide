@@ -1,0 +1,14 @@
+{
+	"commentStamp" : "RonieSalgado 12/9/2017 00:30",
+	"super" : "Object",
+	"category" : "Phanide-Bindings-Driver",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [
+		"handle",
+		"eventHandler"
+	],
+	"name" : "PhanideFSMonitorWatchHandle",
+	"type" : "normal"
+}

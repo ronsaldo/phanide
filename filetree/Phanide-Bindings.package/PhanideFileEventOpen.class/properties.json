@@ -1,0 +1,11 @@
+{
+	"commentStamp" : "",
+	"super" : "PhanideFileEvent",
+	"category" : "Phanide-Bindings-FileSystem",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [ ],
+	"name" : "PhanideFileEventOpen",
+	"type" : "normal"
+}

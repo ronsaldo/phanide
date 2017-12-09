@@ -1,0 +1,1 @@
+I am file related to event. My subclasses are announced when a monitored file or directory suffers some changes.

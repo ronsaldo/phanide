@@ -1,0 +1,11 @@
+{
+	"commentStamp" : "",
+	"super" : "LibPhanideHandle",
+	"category" : "Phanide-Bindings-Bindings",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [ ],
+	"name" : "LibPhanideFSMonitor",
+	"type" : "normal"
+}

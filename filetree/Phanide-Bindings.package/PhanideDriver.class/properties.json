@@ -16,7 +16,11 @@
 		"session",
 		"eventFetchingProcess",
 		"processDictionaryMutex",
-		"processDictionary"
+		"processDictionary",
+		"pendingEventsSemaphore",
+		"pendingEventsSemaphoreIndex",
+		"fsmonitorMutex",
+		"fsmonitorDictionary"
 	],
 	"name" : "PhanideDriver",
 	"type" : "normal"

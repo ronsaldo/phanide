@@ -1,3 +1,3 @@
 actions
 free
-	^ self ffiCall: #(void phanide_process_free(this))
+	^ self ffiCall: #(void phanide_process_free(self))

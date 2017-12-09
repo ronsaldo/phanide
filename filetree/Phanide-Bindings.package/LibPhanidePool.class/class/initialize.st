@@ -2,13 +2,16 @@ initialization
 initialize
 	phanide_context_t := LibPhanideContext.
 	phanide_process_t := LibPhanideProcess.
+	phanide_fsmonitor_handle_t := LibPhanideFSMonitor.
 	phanide_event_process_pipe_t := LibPhanideEventProcessPipe.
 	phanide_event_process_finished_t := LibPhanideEventProcessFinished.
+	phanide_event_fsmonitor_t := LibPhanideEventFSMonitor.
 	phanide_event_t := LibPhanideEvent.
 		
 	PHANIDE_EVENT_TYPE_NONE := 0.
 	PHANIDE_EVENT_TYPE_PROCESS_FINISHED := 1.
 	PHANIDE_EVENT_TYPE_PROCESS_PIPE_READY := 2.
+	PHANIDE_EVENT_TYPE_FSMONITOR := 100.
 	
 	PHANIDE_PIPE_INDEX_STDIN := 0.
 	PHANIDE_PIPE_INDEX_STDOUT := 1.
@@ -17,3 +20,16 @@ initialize
 	PHANIDE_PIPE_ERROR := -1.
 	PHANIDE_PIPE_ERROR_WOULD_BLOCK := -2.
 	PHANIDE_PIPE_ERROR_CLOSED := -3.
+
+	PHANIDE_FSMONITOR_EVENT_ACCESS := 1<<0.
+	PHANIDE_FSMONITOR_EVENT_ATTRIB := 1<<1.
+	PHANIDE_FSMONITOR_EVENT_CLOSE_WRITE := 1<<2.
+	PHANIDE_FSMONITOR_EVENT_CLOSE_NOWRITE := 1<<3.
+	PHANIDE_FSMONITOR_EVENT_CREATE := 1<<4.
+	PHANIDE_FSMONITOR_EVENT_DELETE := 1<<5.
+	PHANIDE_FSMONITOR_EVENT_DELETE_SELF := 1<<6.
+	PHANIDE_FSMONITOR_EVENT_MODIFY := 1<<7.
+	PHANIDE_FSMONITOR_EVENT_MOVE_SELF := 1<<8.
+	PHANIDE_FSMONITOR_EVENT_MOVED_FROM := 1<<9.
+	PHANIDE_FSMONITOR_EVENT_MOVED_TO := 1<<10.
+	PHANIDE_FSMONITOR_EVENT_OPEN := 1<<11.

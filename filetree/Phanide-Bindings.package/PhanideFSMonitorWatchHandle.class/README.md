@@ -1,0 +1,1 @@
+I represent a handle to something that is watched on the filesystem.

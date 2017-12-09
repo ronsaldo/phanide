@@ -1,0 +1,3 @@
+initialization
+isAvailable
+	^ LibPhanide isAvailable

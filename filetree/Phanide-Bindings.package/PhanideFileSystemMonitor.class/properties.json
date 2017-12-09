@@ -1,0 +1,17 @@
+{
+	"commentStamp" : "RonieSalgado 12/8/2017 21:08",
+	"super" : "Object",
+	"category" : "Phanide-Bindings-FileSystem",
+	"classinstvars" : [
+		"uniqueInstance"
+	],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [
+		"session",
+		"registeredFilesMutex",
+		"registeredFiles"
+	],
+	"name" : "PhanideFileSystemMonitor",
+	"type" : "normal"
+}

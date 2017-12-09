@@ -1,6 +1,8 @@
 process
 spawnShell: aCommand
 	| handle process |
+	self isAvailable ifFalse: [ ^ nil].
+	
 	self checkSession.
 	processDictionaryMutex critical: [
 		handle := context spawnShell: aCommand.
