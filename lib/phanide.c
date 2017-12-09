@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 
+typedef intptr_t (*signalSemaphoreWithIndex_t) (intptr_t index);
+
 struct phanide_context_s
 {
     phanide_thread_t thread;
@@ -10,6 +12,9 @@ struct phanide_context_s
     /* Control mutex */
     phanide_mutex_t controlMutex;
     int shuttingDown;
+
+    intptr_t pendingEventsSemaphoreIndex;
+    signalSemaphoreWithIndex_t signalSemaphoreWithIndex;
 
     /* Event queue */
     phanide_mutex_t eventQueueMutex;
@@ -27,11 +32,12 @@ static void phanide_wakeUpSelect(phanide_context_t *context);
 static void phanide_context_destroyIOData(phanide_context_t *context);
 
 PHANIDE_CORE_EXPORT phanide_context_t *
-phanide_createContext(void)
+phanide_createContext(intptr_t pendingEventsSemaphoreIndex)
 {
     /* Allocate the context*/
     phanide_context_t *context = (phanide_context_t*)malloc(sizeof(phanide_context_t));
     memset(context, 0, sizeof(phanide_context_t));
+    context->pendingEventsSemaphoreIndex = pendingEventsSemaphoreIndex;
 
     if(!phanide_createContextIOPrimitives(context))
     {
@@ -81,6 +87,18 @@ phanide_destroyContext(phanide_context_t *context)
     phanide_context_destroyIOData(context);
     phanide_linked_list_freeData(&context->eventQueue);
     free(context);
+}
+
+PHANIDE_CORE_EXPORT void *
+phanide_malloc(size_t size)
+{
+    return malloc(size);
+}
+
+PHANIDE_CORE_EXPORT void
+phanide_free(void *pointer)
+{
+    free(pointer);
 }
 
 /* Events */
@@ -141,5 +159,9 @@ phanide_pushEvent(phanide_context_t *context, phanide_event_t *event)
 
     phanide_condition_signal(&context->pendingEventCondition);
     phanide_mutex_unlock(&context->eventQueueMutex);
+
+    /* Notify the VM about the event. */
+    if(context->signalSemaphoreWithIndex)
+        context->signalSemaphoreWithIndex(context->pendingEventsSemaphoreIndex);
     return 0;
 }

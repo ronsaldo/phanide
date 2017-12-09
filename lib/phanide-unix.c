@@ -7,16 +7,19 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <dirent.h>
+#include <dlfcn.h>
 
 #if defined(linux)
 
 #include <sys/epoll.h>
 #include <sys/eventfd.h>
+#include <sys/inotify.h>
 
 typedef enum phanide_fd_event_descriptor_type_e
 {
     PHANIDE_FD_EVENT_WAKE_UP = 0,
     PHANIDE_FD_EVENT_SUBPROCESS_PIPE,
+    PHANIDE_FD_EVENT_INOTIFY
 } phanide_fd_event_descriptor_type_t;
 
 #define PHANIDE_MASK_FOR_BIT_COUNT(bc) ((((uint64_t)1) << bc) - 1)
@@ -36,8 +39,16 @@ typedef enum phanide_fd_event_descriptor_type_e
 
 #define USE_EPOLL 1
 #define USE_EVENT_FD 1
+#define USE_INOTIFY 1
 
 #define USE_SELECT_AS_CONDITION 1
+
+typedef union phanide_inotify_event_buffer_s
+{
+    int wd; /* For alignment purposes */
+    uint8_t bytes[sizeof(struct inotify_event) + NAME_MAX + 1];
+}phanide_inotify_event_buffer_t;
+
 #elif defined(_WIN32)
 #endif
 
@@ -50,6 +61,14 @@ typedef struct phanide_context_io_s
 
     phanide_mutex_t processListMutex;
     phanide_list_t processList;
+
+#if USE_INOTIFY
+    int inotifyFD;
+    phanide_inotify_event_buffer_t inotifyEventBuffer;
+#endif
+
+    phanide_mutex_t fsmonitorMutex;
+
 } phanide_context_io_t;
 
 #include "phanide.c"
@@ -57,6 +76,8 @@ typedef struct phanide_context_io_s
 static void phanide_process_destructor (void *arg);
 static void phanide_process_pendingData(phanide_process_t *process, int pipeIndex);
 static void phanide_process_pipeHungUpOrError(phanide_process_t *process, int pipeIndex);
+
+static void phanide_inotify_pendingEvents(phanide_context_t *context);
 
 static int
 phanide_createContextIOPrimitives(phanide_context_t *context)
@@ -81,7 +102,30 @@ phanide_createContextIOPrimitives(phanide_context_t *context)
         event.data.u64 = 0;
         epoll_ctl(context->io.epollFD, EPOLL_CTL_ADD, context->io.eventFD, &event);
     }
+
+    /* inotify*/
+    {
+        context->io.inotifyFD = inotify_init1(IN_CLOEXEC | IN_NONBLOCK);
+        if(context->io.inotifyFD < 0)
+        {
+            close(context->io.epollFD);
+            return 0;
+        }
+
+        {
+            struct epoll_event event;
+            event.events = EPOLLIN;
+            event.data.u64 = PHANIDE_EVENT_DESCRIPTOR_FIELD_SET(0, TYPE, PHANIDE_FD_EVENT_INOTIFY);
+            epoll_ctl(context->io.epollFD, EPOLL_CTL_ADD, context->io.inotifyFD, &event);
+        }
+    }
 #endif
+
+    context->signalSemaphoreWithIndex = (signalSemaphoreWithIndex_t)dlsym(0, "signalSemaphoreWithIndex");
+
+    /* Initialize the synchronization primitives. */
+    phanide_mutex_init(&context->io.processListMutex);
+    phanide_mutex_init(&context->io.fsmonitorMutex);
 
     return 1;
 }
@@ -90,12 +134,16 @@ static void
 phanide_context_destroyIOData(phanide_context_t *context)
 {
 #if USE_EVENT_FD
+    close(context->io.inotifyFD);
+
     close(context->io.epollFD);
     close(context->io.eventFD);
 #endif
 
     phanide_mutex_destroy(&context->io.processListMutex);
     phanide_list_destroyData(&context->io.processList, phanide_process_destructor);
+
+    phanide_mutex_destroy(&context->io.fsmonitorMutex);
 }
 
 static
@@ -149,6 +197,14 @@ phanide_processEPollEvent(phanide_context_t *context, struct epoll_event *event)
             phanide_mutex_unlock(&context->io.processListMutex);
         }
         break;
+#if USE_INOTIFY
+    case PHANIDE_FD_EVENT_INOTIFY:
+        {
+            if(event->events & EPOLLIN)
+                phanide_inotify_pendingEvents(context);
+        }
+        break;
+#endif
     default:
         break;
     }
@@ -685,4 +741,127 @@ phanide_process_destructor (void *arg)
         }
     }
     free(process);
+}
+
+
+#if USE_INOTIFY
+static int
+phanide_inotify_pendingEvent(phanide_context_t *context)
+{
+    ssize_t readCount;
+    do
+    {
+        readCount = read(context->io.inotifyFD, context->io.inotifyEventBuffer.bytes, sizeof(context->io.inotifyEventBuffer));
+    } while (readCount < 0 && errno == EINTR);
+
+    if(readCount < 0)
+        return 0;
+
+    uint8_t *bytes = context->io.inotifyEventBuffer.bytes;
+    while(readCount > 0)
+    {
+        struct inotify_event *event = (struct inotify_event *)bytes;
+        size_t eventSize = sizeof(struct inotify_event) + event->len;
+
+        /* Map the event mask */
+        uint32_t mappedMask = 0;
+        uint32_t mask = event->mask;
+
+#define MAP_INOTIFY_EVENT(name) if(mask & IN_##name) mappedMask |= PHANIDE_FSMONITOR_EVENT_ ##name;
+        MAP_INOTIFY_EVENT(ACCESS);
+        MAP_INOTIFY_EVENT(ATTRIB);
+        MAP_INOTIFY_EVENT(CLOSE_WRITE);
+        MAP_INOTIFY_EVENT(CLOSE_NOWRITE);
+        MAP_INOTIFY_EVENT(CREATE);
+        MAP_INOTIFY_EVENT(DELETE);
+        MAP_INOTIFY_EVENT(DELETE_SELF);
+        MAP_INOTIFY_EVENT(MODIFY);
+        MAP_INOTIFY_EVENT(MOVE_SELF);
+        MAP_INOTIFY_EVENT(MOVED_FROM);
+        MAP_INOTIFY_EVENT(MOVED_TO);
+        MAP_INOTIFY_EVENT(OPEN);
+#undef MAP_INOTIFY_EVENT
+
+        phanide_event_t phevent = {
+            .fsmonitor = {
+                .type = PHANIDE_EVENT_TYPE_FSMONITOR,
+                .handle = (phanide_fsmonitor_handle_t *)(size_t)event->wd,
+                .mask = mappedMask,
+                .cookie = event->cookie,
+                .nameLength = event->len,
+                .name = event->len ? phanide_strdup(event->name) : 0
+            }
+        };
+        phanide_pushEvent(context, &phevent);
+
+        readCount -= eventSize;
+        bytes += eventSize;
+    }
+
+    return 1;
+}
+
+static void
+phanide_inotify_pendingEvents(phanide_context_t *context)
+{
+    while(phanide_inotify_pendingEvent(context))
+        ;
+}
+#endif
+
+PHANIDE_CORE_EXPORT phanide_fsmonitor_handle_t *
+phanide_fsmonitor_watchFile(phanide_context_t *context, const char *path)
+{
+    if(!context)
+        return NULL;
+
+phanide_fsmonitor_handle_t *result = NULL;
+
+#if USE_INOTIFY
+    phanide_mutex_lock(&context->io.fsmonitorMutex);
+    int wd = inotify_add_watch(context->io.inotifyFD, path,
+        IN_ATTRIB | IN_CLOSE | IN_CREATE | IN_DELETE | IN_DELETE_SELF | IN_MODIFY | IN_MOVE_SELF | IN_MOVE | IN_OPEN);
+    if(wd >= 0)
+        result = (phanide_fsmonitor_handle_t*)(size_t)wd;
+
+    phanide_mutex_unlock(&context->io.fsmonitorMutex);
+#else
+#endif
+    return result;
+}
+
+PHANIDE_CORE_EXPORT phanide_fsmonitor_handle_t *
+phanide_fsmonitor_watchDirectory(phanide_context_t *context, const char *path)
+{
+    if(!context)
+        return NULL;
+
+    phanide_fsmonitor_handle_t *result = NULL;
+#if USE_INOTIFY
+    phanide_mutex_lock(&context->io.fsmonitorMutex);
+    int wd = inotify_add_watch(context->io.inotifyFD, path,
+        IN_ATTRIB | IN_CLOSE | IN_CREATE | IN_DELETE | IN_DELETE_SELF | IN_MODIFY | IN_MOVE_SELF | IN_MOVE | IN_OPEN | IN_EXCL_UNLINK);
+    if(wd >= 0)
+        result = (phanide_fsmonitor_handle_t*)(size_t)wd;
+
+    phanide_mutex_unlock(&context->io.fsmonitorMutex);
+#else
+#endif
+
+    return result;
+}
+
+PHANIDE_CORE_EXPORT void
+phanide_fsmonitor_destroy(phanide_context_t *context, phanide_fsmonitor_handle_t *handle)
+{
+    if(!context)
+        return;
+
+#if USE_INOTIFY
+    phanide_mutex_lock(&context->io.fsmonitorMutex);
+    int wd = (int)(size_t)handle;
+    inotify_rm_watch(context->io.inotifyFD, wd);
+    phanide_mutex_unlock(&context->io.fsmonitorMutex);
+#else
+#endif
 }

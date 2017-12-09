@@ -10,6 +10,15 @@
 
 typedef void (*phanide_destructor_t) (void *pointer);
 
+inline char *
+phanide_strdup(const char *string)
+{
+    size_t stringLength = strlen(string);
+    char *result = (char*)malloc(stringLength + 1);
+    memcpy(result, string, stringLength);
+    result[stringLength] = 0;
+    return result;
+}
 typedef struct phanide_linked_list_node_s
 {
     struct phanide_linked_list_node_s *previous;
