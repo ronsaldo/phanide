@@ -1,4 +1,4 @@
-# Phanide - Pharo native IDE
+# Phanide - Pharo Native IDE
 ----
 ## Loading
 ### Loading just the Phanide Browser
