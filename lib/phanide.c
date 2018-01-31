@@ -77,9 +77,6 @@ phanide_destroyContext(phanide_context_t *context)
     pthread_join(context->thread, &returnValue);
 
     phanide_mutex_destroy(&context->controlMutex);
-#if !USE_SELECT_AS_CONDITION
-    phanide_condition_destroy(&context->pendingWorkCondition);
-#endif
 
     phanide_mutex_destroy(&context->eventQueueMutex);
     phanide_condition_destroy(&context->pendingEventCondition);
@@ -161,6 +158,7 @@ phanide_pushEvent(phanide_context_t *context, phanide_event_t *event)
     phanide_mutex_unlock(&context->eventQueueMutex);
 
     /* Notify the VM about the event. */
+    printf("context->signalSemaphoreWithIndex %p\n", context->signalSemaphoreWithIndex);
     if(context->signalSemaphoreWithIndex)
         context->signalSemaphoreWithIndex(context->pendingEventsSemaphoreIndex);
     return 0;

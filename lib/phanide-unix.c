@@ -9,18 +9,7 @@
 #include <dirent.h>
 #include <dlfcn.h>
 
-#if defined(linux)
-
-#include <sys/epoll.h>
-#include <sys/eventfd.h>
-#include <sys/inotify.h>
-
-typedef enum phanide_fd_event_descriptor_type_e
-{
-    PHANIDE_FD_EVENT_WAKE_UP = 0,
-    PHANIDE_FD_EVENT_SUBPROCESS_PIPE,
-    PHANIDE_FD_EVENT_INOTIFY
-} phanide_fd_event_descriptor_type_t;
+#define PHANIDE_STDIN_PIPE_INDEX 0
 
 #define PHANIDE_MASK_FOR_BIT_COUNT(bc) ((((uint64_t)1) << bc) - 1)
 
@@ -37,11 +26,24 @@ typedef enum phanide_fd_event_descriptor_type_e
 #define PHANIDE_EVENT_DESCRIPTOR_SUBPROCESS_INDEX_MASK PHANIDE_MASK_FOR_BIT_COUNT(59)
 #define PHANIDE_EVENT_DESCRIPTOR_SUBPROCESS_INDEX_SHIFT 5
 
+typedef enum phanide_fd_event_descriptor_type_e
+{
+    PHANIDE_FD_EVENT_WAKE_UP = 0,
+    PHANIDE_FD_EVENT_SUBPROCESS_PIPE,
+    PHANIDE_FD_EVENT_INOTIFY
+} phanide_fd_event_descriptor_type_t;
+
+#if defined(linux) 
+
 #define USE_EPOLL 1
 #define USE_EVENT_FD 1
 #define USE_INOTIFY 1
 
 #define USE_SELECT_AS_CONDITION 1
+
+#include <sys/epoll.h>
+#include <sys/eventfd.h>
+#include <sys/inotify.h>
 
 typedef union phanide_inotify_event_buffer_s
 {
@@ -49,20 +51,28 @@ typedef union phanide_inotify_event_buffer_s
     uint8_t bytes[sizeof(struct inotify_event) + NAME_MAX + 1];
 }phanide_inotify_event_buffer_t;
 
-#elif defined(_WIN32)
+#elif defined(__APPLE__)
+#include <sys/types.h>
+#include <sys/event.h>
+
+#define USE_KQUEUE 1
 #endif
 
 typedef struct phanide_context_io_s
 {
-#if USE_EPOLL
+#ifdef USE_EPOLL
     int epollFD;
     int eventFD;
+#endif
+
+#ifdef USE_KQUEUE
+    int kqueueFD;
 #endif
 
     phanide_mutex_t processListMutex;
     phanide_list_t processList;
 
-#if USE_INOTIFY
+#ifdef USE_INOTIFY
     int inotifyFD;
     phanide_inotify_event_buffer_t inotifyEventBuffer;
 #endif
@@ -77,12 +87,14 @@ static void phanide_process_destructor (void *arg);
 static void phanide_process_pendingData(phanide_process_t *process, int pipeIndex);
 static void phanide_process_pipeHungUpOrError(phanide_process_t *process, int pipeIndex);
 
+#if defined(USE_INOTIFY)
 static void phanide_inotify_pendingEvents(phanide_context_t *context);
+#endif
 
 static int
 phanide_createContextIOPrimitives(phanide_context_t *context)
 {
-#if USE_EPOLL
+#if defined(USE_EPOLL)
     /* epoll */
     context->io.epollFD = epoll_create1(EPOLL_CLOEXEC);
     if(context->io.epollFD < 0)
@@ -119,10 +131,22 @@ phanide_createContextIOPrimitives(phanide_context_t *context)
             epoll_ctl(context->io.epollFD, EPOLL_CTL_ADD, context->io.inotifyFD, &event);
         }
     }
+#elif defined(USE_KQUEUE)
+    context->io.kqueueFD = kqueue();
+    if(context->io.kqueueFD < 0)
+        return 0;
+    
+    {
+        struct kevent ev;
+        EV_SET(&ev, 0, EVFILT_USER, EV_ADD, NOTE_FFCOPY, 0, NULL);
+        kevent(context->io.kqueueFD, &ev, 1, NULL, 0, NULL);
+    }
 #endif
 
-    context->signalSemaphoreWithIndex = (signalSemaphoreWithIndex_t)dlsym(0, "signalSemaphoreWithIndex");
-
+    context->signalSemaphoreWithIndex = (signalSemaphoreWithIndex_t)dlsym(RTLD_DEFAULT, "signalSemaphoreWithIndex");
+    if(!context->signalSemaphoreWithIndex)
+        context->signalSemaphoreWithIndex = (signalSemaphoreWithIndex_t)dlsym(RTLD_DEFAULT, "_signalSemaphoreWithIndex");
+    
     /* Initialize the synchronization primitives. */
     phanide_mutex_init(&context->io.processListMutex);
     phanide_mutex_init(&context->io.fsmonitorMutex);
@@ -154,6 +178,13 @@ void phanide_wakeUpSelect(phanide_context_t *context)
     ssize_t res = write(context->io.eventFD, &count, sizeof(count));
     if(res < 0)
         perror("Failed to wake up process threads");
+#elif USE_KQUEUE
+    {
+        struct kevent ev;
+        EV_SET(&ev, 0, EVFILT_USER, EV_ENABLE, NOTE_FFCOPY | NOTE_TRIGGER, 0, NULL);
+        kevent(context->io.kqueueFD, &ev, 1, NULL, 0, NULL);
+    }
+
 #else
 #error Pipe not yet implemented.
 #endif
@@ -220,13 +251,69 @@ phanide_processEPollEvents(phanide_context_t *context, struct epoll_event *event
 }
 #endif /* USE_EPOLL */
 
+#ifdef USE_KQUEUE
+static void
+phanide_processKQueueEvent(phanide_context_t *context, struct kevent *event)
+{
+    uint64_t descriptor = (uintptr_t)event->udata;
+    uint64_t eventType = PHANIDE_EVENT_DESCRIPTOR_FIELD_GET(descriptor, TYPE);
+    switch(eventType)
+    {
+    case PHANIDE_FD_EVENT_WAKE_UP:
+        {
+            {
+                struct kevent ev;
+                EV_SET(&ev, 0, EVFILT_USER, EV_DISABLE, NOTE_FFCOPY, 0, NULL);
+                kevent(context->io.kqueueFD, &ev, 1, NULL, 0, NULL);
+            }
+        }
+        break;
+    case PHANIDE_FD_EVENT_SUBPROCESS_PIPE:
+        {
+            phanide_mutex_lock(&context->io.processListMutex);
+
+            int pipe = PHANIDE_EVENT_DESCRIPTOR_FIELD_GET(descriptor, SUBPROCESS_PIPE);
+            int subprocess = PHANIDE_EVENT_DESCRIPTOR_FIELD_GET(descriptor, SUBPROCESS_INDEX);
+
+            /* Pending data*/
+            phanide_process_t *process = context->io.processList.data[subprocess];
+            if(event->filter == EVFILT_READ)
+                phanide_process_pendingData(process, pipe);
+
+            /* Pipe closed */
+            if(event->flags & EV_EOF || event->flags & EV_ERROR)
+                phanide_process_pipeHungUpOrError(process, pipe);
+
+            phanide_mutex_unlock(&context->io.processListMutex);
+        }
+        break;
+    case PHANIDE_FD_EVENT_INOTIFY:
+        printf("TODO kqueue inotify");
+        break;
+    default:
+        break;
+    }
+
+}
+
+static void
+phanide_processKQueueEvents(phanide_context_t *context, struct kevent *events, int eventCount)
+{
+    for(int i = 0; i < eventCount; ++i)
+    {
+        phanide_processKQueueEvent(context, &events[i]);
+    }
+}
+
+#endif
+
 static void *
 phanide_processThreadEntry(void *arg)
 {
     phanide_context_t *context = (phanide_context_t *)arg;
     for(;;)
     {
-#if USE_EPOLL
+#if defined(USE_EPOLL)
         struct epoll_event events[64];
         int eventCount = epoll_wait(context->io.epollFD, events, 64, -1);
         if(eventCount < 0)
@@ -236,6 +323,15 @@ phanide_processThreadEntry(void *arg)
         }
 
         phanide_processEPollEvents(context, events, eventCount);
+#elif defined(USE_KQUEUE)
+        struct kevent events[64];
+        int eventCount = kevent(context->io.kqueueFD, NULL, 0, events, 64, NULL);
+        if(eventCount < 0)
+        {
+            perror("kevent failed");
+            return NULL;
+        }
+        phanide_processKQueueEvents(context, events, eventCount);
 #else
 #error Select not yet implemented
 #endif
@@ -465,8 +561,12 @@ phanide_process_forkForSpawn(phanide_context_t *context, int *error)
         event.events = 0;
         event.data.u64 = descriptor;
         epoll_ctl(context->io.epollFD, EPOLL_CTL_ADD, process->stdinPipe, &event);
+#elif defined(USE_KQUEUE)
+        struct kevent event;
+        EV_SET(&event, process->stdinPipe, EVFILT_WRITE, EV_ADD|EV_DISABLE, 0, 0, (void*)(uintptr_t)descriptor);
+        kevent(context->io.kqueueFD, &event, 1, NULL, 0, NULL);
 #else
-#error Not yet implemented
+        #error Not yet implemented        
 #endif
     }
 
@@ -481,8 +581,12 @@ phanide_process_forkForSpawn(phanide_context_t *context, int *error)
         event.events = EPOLLIN;
         event.data.u64 = descriptor;
         epoll_ctl(context->io.epollFD, EPOLL_CTL_ADD, process->stdoutPipe, &event);
+#elif defined(USE_KQUEUE)
+        struct kevent event;
+        EV_SET(&event, process->stdoutPipe, EVFILT_READ, EV_ADD|EV_ENABLE, 0, 0, (void*)(uintptr_t)descriptor);
+        kevent(context->io.kqueueFD, &event, 1, NULL, 0, NULL);
 #else
-#error Not yet implemented
+#error Not yet implemented        
 #endif
     }
 
@@ -497,8 +601,10 @@ phanide_process_forkForSpawn(phanide_context_t *context, int *error)
         event.events = EPOLLIN;
         event.data.u64 = descriptor;
         epoll_ctl(context->io.epollFD, EPOLL_CTL_ADD, process->stderrPipe, &event);
-#else
-#error Not yet implemented
+#elif defined(USE_KQUEUE)
+        struct kevent event;
+        EV_SET(&event, process->stderrPipe, EVFILT_READ, EV_ADD|EV_ENABLE, 0, 0, (void*)(uintptr_t)descriptor);
+        kevent(context->io.kqueueFD, &event, 1, NULL, 0, NULL);
 #endif
     }
     return process;
@@ -507,16 +613,20 @@ phanide_process_forkForSpawn(phanide_context_t *context, int *error)
 static void
 phanide_process_setPipeReadPolling(int enabled, phanide_process_t *process, int pipeIndex)
 {
-#if defined(USE_EPOLL)
     uint64_t descriptor = PHANIDE_EVENT_DESCRIPTOR_FIELD_SET(0, TYPE, PHANIDE_FD_EVENT_SUBPROCESS_PIPE);
     descriptor = PHANIDE_EVENT_DESCRIPTOR_FIELD_SET(descriptor, SUBPROCESS_PIPE, pipeIndex);
     descriptor = PHANIDE_EVENT_DESCRIPTOR_FIELD_SET(descriptor, SUBPROCESS_INDEX, process->index);
 
+#if defined(USE_EPOLL)
     struct epoll_event event;
     event.events = enabled ? EPOLLIN : 0;
     event.data.u64 = descriptor;
     epoll_ctl(process->context->io.epollFD, EPOLL_CTL_MOD, process->pipes[pipeIndex], &event);
 
+#elif defined(USE_KQUEUE)
+    struct kevent event;
+    EV_SET(&event, process->pipes[pipeIndex], EVFILT_READ, enabled ? EV_ENABLE : EV_DISABLE, 0, 0, (void*)(uintptr_t)descriptor);
+    kevent(process->context->io.kqueueFD, &event, 1, NULL, 0, NULL);
 #else
 #error Not yet implemented
 #endif
@@ -543,7 +653,20 @@ phanide_process_pipeHungUpOrError(phanide_process_t *process, int pipeIndex)
 {
 #if defined (USE_EPOLL)
     epoll_ctl(process->context->io.epollFD, EPOLL_CTL_DEL, process->pipes[pipeIndex], NULL);
+#elif defined (USE_KQUEUE)
+    struct kevent event;
+    if(pipeIndex == PHANIDE_STDIN_PIPE_INDEX)
+    {
+        EV_SET(&event, process->pipes[pipeIndex], EV_DELETE, EVFILT_WRITE, 0, 0, 0);
+    }
+    else
+    {
+        EV_SET(&event, process->pipes[pipeIndex], EV_DELETE, EVFILT_READ, 0, 0, 0);
+    }
+    kevent(process->context->io.kqueueFD, &event, 1, NULL, 0, NULL);
+    
 #else
+
 #endif
     --process->remainingPipes;
     if(process->remainingPipes != 0)
@@ -620,7 +743,7 @@ phanide_process_spawnShell(phanide_context_t *context, const char *command)
     phanide_process_t *result = phanide_process_forkForSpawn(context, &error);
     if(result || error)
         return result;
-
+    
     execl("/bin/sh", "sh", "-c", command, NULL);
 
     /* Should never reach here. */
@@ -703,7 +826,7 @@ phanide_process_pipe_write(phanide_process_t *process, phanide_pipe_index_t pipe
     } while(result < 0 && errno == EINTR);
 
     phanide_mutex_unlock(&process->context->io.processListMutex);
-
+    
     /* Convert the error code. */
     if(result < 0)
     {
