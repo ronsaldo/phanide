@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include "internal.h"
 #include <unistd.h>
 #include <errno.h>
