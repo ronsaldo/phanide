@@ -1,1 +1,0 @@
-I am a gdb event handler that prints its output into the Transcript.

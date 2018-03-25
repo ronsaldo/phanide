@@ -1,1 +1,0 @@
-I am a rubric based text file editor for Phanide.

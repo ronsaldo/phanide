@@ -1,3 +1,0 @@
-initialization
-createMorph
-	self subclassResponsibility

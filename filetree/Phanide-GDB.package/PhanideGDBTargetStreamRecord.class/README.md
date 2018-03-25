@@ -1,1 +1,0 @@
-I contain textual output from the running target.

@@ -1,3 +1,0 @@
-testing
-isStreamRecord
-	^ true

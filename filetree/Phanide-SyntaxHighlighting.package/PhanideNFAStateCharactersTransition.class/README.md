@@ -1,1 +1,0 @@
-I am a state transition that is trigerered when a character  belongs to a set of characters.

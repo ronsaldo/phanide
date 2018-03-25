@@ -1,1 +1,0 @@
-I am a character class with a single character.

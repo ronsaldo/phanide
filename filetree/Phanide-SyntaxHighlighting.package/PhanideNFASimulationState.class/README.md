@@ -1,1 +1,0 @@
-I represent a state in the simulation of a non-determistic finite automata. I used to implement a caching strategy for the DFA version that is presented here: https://swtch.com/~rsc/regexp/regexp1.html

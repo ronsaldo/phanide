@@ -1,3 +1,0 @@
-api
-closeable
-	^ true

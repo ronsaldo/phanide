@@ -1,1 +1,0 @@
-I represent an UI component in the Phanide browser user interface.

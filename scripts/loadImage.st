@@ -1,6 +1,6 @@
 Metacello new
   baseline: 'Phanide';
-  repository: 'filetree://filetree';
+  repository: 'tonel://tonel';
   load.
 
 "Save the image"

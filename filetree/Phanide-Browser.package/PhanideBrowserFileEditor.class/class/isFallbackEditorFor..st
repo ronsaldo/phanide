@@ -1,3 +1,0 @@
-testing
-isFallbackEditorFor: aFileReference
-	^ false

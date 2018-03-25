@@ -1,3 +1,0 @@
-accessing
-accepting
-	^ accepting

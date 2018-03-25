@@ -1,1 +1,0 @@
-I represent the negation of a character class.

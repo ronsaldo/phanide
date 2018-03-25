@@ -1,1 +1,0 @@
-I represent a Phanide styler that uses a command stream that is built by a parser.

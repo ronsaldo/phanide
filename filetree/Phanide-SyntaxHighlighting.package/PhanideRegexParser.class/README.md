@@ -1,1 +1,0 @@
-A parser for regular expressions into Non Deterministic Finite Automatas.

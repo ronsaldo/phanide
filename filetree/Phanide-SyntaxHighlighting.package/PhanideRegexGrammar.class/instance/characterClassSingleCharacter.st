@@ -1,3 +1,0 @@
-accessing
-characterClassSingleCharacter
-	^ characterClassEscapeSequence / characterClassCharacter

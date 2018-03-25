@@ -1,3 +1,0 @@
-accessing
-emptyList
-	^ '[]' asParser

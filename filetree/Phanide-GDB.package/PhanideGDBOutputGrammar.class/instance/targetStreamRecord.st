@@ -1,3 +1,0 @@
-records
-targetStreamRecord
-	^ '@' asParser , cstring

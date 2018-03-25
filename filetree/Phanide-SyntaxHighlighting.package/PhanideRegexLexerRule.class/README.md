@@ -1,1 +1,0 @@
-I am a lexer rule. I contain a regular expression, a style name and the name of the next state.

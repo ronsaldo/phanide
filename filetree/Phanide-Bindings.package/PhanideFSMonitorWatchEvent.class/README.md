@@ -1,1 +1,0 @@
-I am an event for watched element using the low-level file system monitoring API.

@@ -1,1 +1,0 @@
-I am the main Phanide browser UI.

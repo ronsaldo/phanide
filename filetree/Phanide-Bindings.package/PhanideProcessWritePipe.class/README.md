@@ -1,1 +1,0 @@
-I represent a write only pipe from a process.

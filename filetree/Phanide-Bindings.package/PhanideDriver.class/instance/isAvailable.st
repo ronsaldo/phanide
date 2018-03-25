@@ -1,3 +1,0 @@
-testing
-isAvailable
-	^ LibPhanide isAvailable

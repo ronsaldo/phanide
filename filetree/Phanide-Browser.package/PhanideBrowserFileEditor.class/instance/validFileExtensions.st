@@ -1,3 +1,0 @@
-actions
-validFileExtensions
-	^ nil

@@ -1,3 +1,0 @@
-testing
-isSuitableEditorFor: aFileReference
-	^ false

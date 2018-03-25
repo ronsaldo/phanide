@@ -1,3 +1,0 @@
-accessing
-isAccepting
-	^ acceptingStates isNotEmpty
