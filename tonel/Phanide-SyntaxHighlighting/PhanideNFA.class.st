@@ -230,7 +230,7 @@ PhanideNFA >> createSimulationStateForActiveStates: activeStates [
 	^ result
 ]
 
-{ #category : #gt-extension }
+{ #category : #'gt-extension' }
 PhanideNFA >> gtInspectorDescriptionIn: composite [
 	"This is the most basic presentation showing the state of the object"
 	<gtInspectorPresentationOrder: 5>

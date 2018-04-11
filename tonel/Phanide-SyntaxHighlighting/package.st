@@ -1,1 +1,1 @@
-Package { #name : #Phanide-SyntaxHighlighting }
+Package { #name : #'Phanide-SyntaxHighlighting' }

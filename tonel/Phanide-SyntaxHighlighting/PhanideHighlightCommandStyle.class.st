@@ -123,6 +123,11 @@ PhanideHighlightCommandStyle class >> pragma [
 ]
 
 { #category : #'accessing comment' }
+PhanideHighlightCommandStyle class >> singleLineComment [
+	^ self style: #singleLineComment
+]
+
+{ #category : #'accessing comment' }
 PhanideHighlightCommandStyle class >> string [
 	^ self style: #string
 ]
