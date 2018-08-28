@@ -217,6 +217,66 @@ PhanideStyler class >> cpp [
 	).
 ]
 
+{ #category : #stylers }
+PhanideStyler class >> erlang [
+	<styler>
+	^ self styler: 'Erlang' extensions: #(erl hrl) regex: #(init
+		(init foreground
+			('%.*' singleLineComment)
+			
+			('-[a-z]+' preprocessor)
+
+			('after' keyword)
+			('begin' keyword)
+			('case' keyword)
+			('catch' keyword)
+			('cond' keyword)
+			('end' keyword)
+			('fun' keyword)
+			('if' keyword)
+			('let' keyword)
+			('of' keyword)
+			('query' keyword)
+			('receive' keyword)
+			('when' keyword)
+			
+			('[a-z][A-Za-z_0-9]*' type) "Atom"
+
+			('[A-Z_][A-Za-z_0-9]*' identifier)
+
+			('[0-9]*\.[0-9]+([eE][+\-]?[0-9]+)?[A-Za-z]*' number)
+			('[0-9]+[A-Za-z]*' number)
+
+			(and operator)			
+			(band operator)			
+			(bnot operator)			
+			(bor operator)			
+			(bsl operator)			
+			(bxor operator)
+			(div operator)
+			(not operator)
+			(or operator)
+			(rem operator)
+			(xor operator)
+
+			"TODO: Check these operators"
+			('[<>]=?' operator)
+			('==' operator)
+			('!=' operator)
+			('[+-/*%&|^]=?' operator)
+			('<<=' operator)
+			('>>=' operator)
+			('=' operator)
+			('!' operator)
+			('~' operator)
+			('\?' operator)
+			('::' operator)
+			
+			('\s+' space)
+		)
+	).
+]
+
 { #category : #'as yet unclassified' }
 PhanideStyler class >> forExtension: anExtension [
 	^ self stylerExtensionDictionary at: anExtension ifAbsent: [ nil ]
@@ -365,6 +425,13 @@ PhanideStyler >> name [
 { #category : #accessing }
 PhanideStyler >> name: anObject [
 	name := anObject
+]
+
+{ #category : #'instance creation' }
+PhanideStyler >> newStyleDecorator [
+	^ PhanideTextStylerDecorator new
+			phanideStyler: self;
+			yourself
 ]
 
 { #category : #'as yet unclassified' }
