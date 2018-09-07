@@ -12,7 +12,7 @@ LibPhanide class >> isAvailable [
 	^ self uniqueInstance isAvailable
 ]
 
-{ #category : #libgit-finalization }
+{ #category : #'libgit-finalization' }
 LibPhanide >> free: pointer [
 	^ self ffiCall: #(void phanide_free(void* pointer))
 ]

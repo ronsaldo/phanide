@@ -11,6 +11,11 @@ Class {
 	#category : 'Phanide-Bindings-FileSystem'
 }
 
+{ #category : #testing }
+PhanideFileEvent class >> isPreferredInParentFolder [
+	^ false
+]
+
 { #category : #accessing }
 PhanideFileEvent >> elementFileReference [
 	^ elementFileReference
