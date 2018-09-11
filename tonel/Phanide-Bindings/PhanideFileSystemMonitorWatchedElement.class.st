@@ -7,12 +7,13 @@ Class {
 	#instVars : [
 		'handle',
 		'announcer',
-		'fileReference'
+		'fileReference',
+		'perElementAnnouncers'
 	],
 	#pools : [
 		'LibPhanidePool'
 	],
-	#category : 'Phanide-Bindings-FileSystem'
+	#category : #'Phanide-Bindings-FileSystem'
 }
 
 { #category : #'instance creation' }
@@ -28,6 +29,11 @@ PhanideFileSystemMonitorWatchedElement >> announcer [
 { #category : #accessing }
 PhanideFileSystemMonitorWatchedElement >> announcer: anObject [
 	announcer := anObject
+]
+
+{ #category : #'events-processing' }
+PhanideFileSystemMonitorWatchedElement >> announcerForElement: anElement [
+	^ self perElementAnnouncers at: anElement ifAbsentPut: [ Announcer new ]
 ]
 
 { #category : #accessing }
@@ -62,11 +68,20 @@ PhanideFileSystemMonitorWatchedElement >> initializeFor: aFileReference [
 	]
 ]
 
-{ #category : #events-processing }
+{ #category : #'events-processing' }
+PhanideFileSystemMonitorWatchedElement >> perElementAnnouncers [
+	^ perElementAnnouncers ifNil: [ perElementAnnouncers := Dictionary new ]
+]
+
+{ #category : #'events-processing' }
 PhanideFileSystemMonitorWatchedElement >> processEvent: rawEvent [
-	| elementFileReference mask |
+	| elementFileReference mask elementAnnouncer |
+	self flag: 'Refactor this'.
 	elementFileReference := rawEvent name ifNil: [ fileReference ] ifNotNil: [ fileReference / rawEvent name ].
-	
+	elementAnnouncer := perElementAnnouncers ifNotNil: [ :dict |
+		rawEvent name ifNotNil: [:elementName | dict at: elementName ifAbsent: [ nil ] ]
+	].
+
 	mask := rawEvent mask.
 	(mask anyMask: PHANIDE_FSMONITOR_EVENT_ACCESS) ifTrue: [
 		announcer announce: (PhanideFileEventAccess new
@@ -84,7 +99,13 @@ PhanideFileSystemMonitorWatchedElement >> processEvent: rawEvent [
 		announcer announce: (PhanideFileEventCloseWrite new
 			fileReference: fileReference;
 			elementFileReference: elementFileReference;
-			yourself)
+			yourself).
+		elementAnnouncer ifNotNil: [ 
+			elementAnnouncer announce: (PhanideFileEventCloseWrite new
+				fileReference: fileReference;
+				elementFileReference: elementFileReference;
+				yourself).
+		]
 	].
 	(mask anyMask: PHANIDE_FSMONITOR_EVENT_CLOSE_NOWRITE) ifTrue: [ 
 		announcer announce: (PhanideFileEventCloseNoWrite new

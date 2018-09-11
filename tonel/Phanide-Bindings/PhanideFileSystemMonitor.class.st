@@ -49,12 +49,34 @@ PhanideFileSystemMonitor >> initializeForNewSession [
 ]
 
 { #category : #'event subscriptions' }
-PhanideFileSystemMonitor >> on: aPath when: anEvent do: aBlock [
+PhanideFileSystemMonitor >> on: aPath element: basename when: anEvent do: aBlock [
 	| watchedFileReference watchedElement |
 	PhanideDriver isAvailable ifFalse: [ ^ self ].
 	
 	self checkSession.
+	watchedFileReference := aPath asFileReference asAbsolute.	
+	watchedFileReference exists ifFalse: [ ^ self ].
+	
+	registeredFilesMutex critical: [
+		watchedElement := registeredFiles at: watchedFileReference
+			ifAbsentPut: [ PhanideFileSystemMonitorWatchedElement for: watchedFileReference ]
+	].
+
+	(watchedElement announcerForElement: basename) when: anEvent do: aBlock
+]
+
+{ #category : #'event subscriptions' }
+PhanideFileSystemMonitor >> on: aPath when: anEvent do: aBlock [
+	| watchedFileReference watchedElement parent |
+	PhanideDriver isAvailable ifFalse: [ ^ self ].
+	
 	watchedFileReference := aPath asFileReference asAbsolute.
+	(watchedFileReference isFile and: [anEvent isPreferredInParentFolder]) ifTrue: [
+		parent := watchedFileReference parent.
+		^ self on: parent element: watchedFileReference basename when: anEvent do: aBlock
+	].
+	
+	self checkSession.
 	watchedFileReference exists ifFalse: [ ^ self ].
 	
 	registeredFilesMutex critical: [

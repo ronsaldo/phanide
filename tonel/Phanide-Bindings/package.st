@@ -1,1 +1,1 @@
-Package { #name : #Phanide-Bindings }
+Package { #name : #'Phanide-Bindings' }
