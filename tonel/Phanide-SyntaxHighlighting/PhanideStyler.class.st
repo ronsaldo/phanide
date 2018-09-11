@@ -225,6 +225,7 @@ PhanideStyler class >> erlang [
 			('%.*' singleLineComment)
 			
 			('-[a-z]+' preprocessor)
+			('?[_A-Za-z][_A-Za-z0-9]*' preprocessor)
 
 			('after' keyword)
 			('begin' keyword)
@@ -239,39 +240,87 @@ PhanideStyler class >> erlang [
 			('query' keyword)
 			('receive' keyword)
 			('when' keyword)
-			
-			('[a-z][A-Za-z_0-9]*' type) "Atom"
 
+			"Binary format spec"
+			('/[a-z]+(-[a-z]+)+' annotation)
+
+			"Call"
+			('''([^\\'']|\\.)*''\(' callBracket)
+			('[a-z][A-Za-z_0-9]*\(' callBracket)
+			('(' callBracket)
+			('\)' callBracket)
+			
+			"Record name"
+			('#[a-z_][a-zA-Z_0-9]*' struct)
+
+			"Module name"
+			('''([^\\'']|\\.)*'':' module)
+			('[a-z][A-Za-z_0-9]*:' module)
+			
+			"Atom"
+			('''([^\\'']|\\.)*''' type)
+			('[a-z][A-Za-z_0-9]*' type)
+						
+			('"([^\\"]|\\.)*"' string)
+
+			('_[A-Za-z_0-9]*' patternDontCare)
 			('[A-Z_][A-Za-z_0-9]*' identifier)
 
 			('[0-9]*\.[0-9]+([eE][+\-]?[0-9]+)?[A-Za-z]*' number)
 			('[0-9]+[A-Za-z]*' number)
 
-			(and operator)			
-			(band operator)			
-			(bnot operator)			
-			(bor operator)			
-			(bsl operator)			
-			(bxor operator)
-			(div operator)
+
+			"Boolean operators"
 			(not operator)
+			(and operator)			
 			(or operator)
-			(rem operator)
 			(xor operator)
 
-			"TODO: Check these operators"
-			('[<>]=?' operator)
+			"Short circuit"
+			(orelse operator)
+			(andalso operator)
+
+			"Comparison"
 			('==' operator)
-			('!=' operator)
-			('[+-/*%&|^]=?' operator)
-			('<<=' operator)
-			('>>=' operator)
+			('/=' operator)
+			('=<' operator)
+			('>=' operator)
+			('=:=' operator)
+			('=/=' operator)
 			('=' operator)
+			('<' operator)
+			('>' operator)
+
+			"Message send"
 			('!' operator)
-			('~' operator)
-			('\?' operator)
-			('::' operator)
+
+			"Arithmetic"
+			(+ operator)	
+			(- operator)	
+			(* operator)		
+			(/ operator)		
+			(div operator)
+			(rem operator)
+			(band operator)	
+			(bnot operator)		
+			(bor operator)
+			(bsl operator)
+			(bxor operator)
 			
+			"List operations"
+			(++ operator)
+			(-- operator)
+			
+			"Map creation"
+			(=> operator)
+
+			"Return type"
+			(-> operator)
+			
+			"List comprehension"
+			(|| operator)
+			(<- operator)
+
 			('\s+' space)
 		)
 	).

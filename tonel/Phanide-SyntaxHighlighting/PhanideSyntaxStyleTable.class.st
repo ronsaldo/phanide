@@ -78,7 +78,10 @@ PhanideSyntaxStyleTable class >> darkStyleTableDefinition [
 			
 			(type '00CC6E') "keyword"
 			(preprocessor 'B4DD6E') "annotation"
-			
+			(module '40FFFF') "interface"
+			(struct 'C080FF') "class"
+			(patternDontCare '8040FF') "identifier"
+
 			(identifier '0080FF')
 			(symbol 'E38C1E') 
 			(callBracket 'FFE54B')
