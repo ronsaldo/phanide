@@ -95,7 +95,7 @@ PhanideBrowserModel >> installComponentModel: aComponentModel [
 	self registerNamedComponent: aComponentModel.
 
 	anchorHolder := self perform: aComponentModel installLocation.
-	anchorHolder installPhanideComponentModel: aComponentModel
+	anchorHolder installPhanideComponentPresenter: aComponentModel
 
 ]
 

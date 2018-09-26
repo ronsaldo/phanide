@@ -4,11 +4,11 @@ I am a subclass of a Tab model. I add some missing required features.
 "
 Class {
 	#name : #PhanideTabModel,
-	#superclass : #TabModel,
+	#superclass : #TabPresenter,
 	#instVars : [
 		'okToCloseAction'
 	],
-	#category : 'Phanide-Browser-Spec'
+	#category : #'Phanide-Browser-Spec'
 }
 
 { #category : #'phanide anchor' }
@@ -43,11 +43,6 @@ PhanideTabModel >> makePhanideActiveAnchorIn: aPhanideBrowser [
 	]
 ]
 
-{ #category : #api }
-PhanideTabModel >> model: aComposableModel [
-	super model: aComposableModel
-]
-
 { #category : #protocol }
 PhanideTabModel >> okToClose [
 	^ okToCloseAction value
@@ -61,4 +56,9 @@ PhanideTabModel >> okToCloseAction [
 { #category : #accessing }
 PhanideTabModel >> okToCloseAction: anObject [
 	okToCloseAction := anObject
+]
+
+{ #category : #api }
+PhanideTabModel >> presenter: aComposableModel [
+	super presenter: aComposableModel
 ]

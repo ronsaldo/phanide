@@ -1,1 +1,1 @@
-Package { #name : #Phanide-GDB }
+Package { #name : #'Phanide-GDB' }

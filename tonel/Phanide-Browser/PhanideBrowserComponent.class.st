@@ -3,7 +3,7 @@ I represent an UI component in the Phanide browser user interface.
 "
 Class {
 	#name : #PhanideBrowserComponent,
-	#superclass : #ComposableModel,
+	#superclass : #ComposablePresenter,
 	#instVars : [
 		'browser',
 		'anchor',
@@ -11,7 +11,7 @@ Class {
 		'label',
 		'tab'
 	],
-	#category : 'Phanide-Browser-UI'
+	#category : #'Phanide-Browser-UI'
 }
 
 { #category : #'instance creation' }

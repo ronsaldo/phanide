@@ -1,1 +1,1 @@
-Package { #name : #Phanide-Browser }
+Package { #name : #'Phanide-Browser' }

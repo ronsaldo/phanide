@@ -1,12 +1,13 @@
-Extension { #name : #TabManagerModel }
+Extension { #name : #TabManagerPresenter }
 
 { #category : #'*Phanide-Browser' }
-TabManagerModel >> installPhanideComponentModel: aComponentModel [
+TabManagerPresenter >> installPhanideComponentPresenter: aComponentModel [
 	"Create the actual tab"
+
 	| tab |
 	tab := aComponentModel browser instantiate: PhanideTabModel.
 	aComponentModel anchor: tab.
-	tab model: aComponentModel.
+	tab presenter: aComponentModel.
 	tab closeable: aComponentModel closeable.
 	tab doubleClick: [ aComponentModel onAnchorDoubleClick ].
 	tab okToCloseAction: [ aComponentModel okToClose ].
