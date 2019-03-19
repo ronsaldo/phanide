@@ -10,7 +10,7 @@
 
 typedef void (*phanide_destructor_t) (void *pointer);
 
-inline char *
+static inline char *
 phanide_strdup(const char *string)
 {
     size_t stringLength = strlen(string);
@@ -37,7 +37,7 @@ typedef struct phanide_linked_list_s
     phanide_linked_list_node_t *last;
 } phanide_linked_list_t;
 
-inline void
+static inline void
 phanide_linked_list_removeNode(phanide_linked_list_t *list, phanide_linked_list_node_t *node)
 {
     assert(list);
@@ -58,7 +58,7 @@ phanide_linked_list_removeNode(phanide_linked_list_t *list, phanide_linked_list_
     node->next = NULL;
 }
 
-inline void
+static inline void
 phanide_linked_list_pushBack(phanide_linked_list_t *list, phanide_linked_list_node_t *node)
 {
     assert(!node->previous);
@@ -73,7 +73,7 @@ phanide_linked_list_pushBack(phanide_linked_list_t *list, phanide_linked_list_no
         list->first = node;
 }
 
-inline void
+static inline void
 phanide_linked_list_destroyData(phanide_linked_list_t *list, phanide_destructor_t destructor)
 {
     phanide_linked_list_node_t *nextNode = list->first;
@@ -85,7 +85,7 @@ phanide_linked_list_destroyData(phanide_linked_list_t *list, phanide_destructor_
     }
 }
 
-inline void
+static inline void
 phanide_linked_list_freeData(phanide_linked_list_t *list)
 {
     phanide_linked_list_destroyData(list, free);
@@ -98,7 +98,7 @@ typedef struct phanide_list_s
     void **data;
 } phanide_list_t;
 
-inline void
+static inline void
 phanide_list_increaseCapacity(phanide_list_t *list)
 {
     size_t newCapacity = list->capacity*2;
@@ -116,7 +116,7 @@ phanide_list_increaseCapacity(phanide_list_t *list)
     list->capacity = newCapacity;
 }
 
-inline void
+static inline void
 phanide_list_pushBack(phanide_list_t *list, void *value)
 {
     if(list->size >= list->capacity)
@@ -124,14 +124,14 @@ phanide_list_pushBack(phanide_list_t *list, void *value)
     list->data[list->size++] = value;
 }
 
-inline void
+static inline void
 phanide_list_destroyData(phanide_list_t *list, phanide_destructor_t destructor)
 {
     for(size_t i = 0; i < list->size; ++i)
         destructor(list->data[i]);
 }
 
-inline void
+static inline void
 phanide_list_freeData(phanide_list_t *list)
 {
     phanide_list_destroyData(list, free);
