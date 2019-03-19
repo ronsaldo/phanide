@@ -21,12 +21,12 @@ set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/dist")
 set(Phanide_DATA_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/dist/data")
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/;${CMAKE_MODULE_PATH}")
 
-# Turn warnings and use C++ 2011.
+# Turn warnings and use C99.
 if (${CMAKE_C_COMPILER_ID} STREQUAL MSVC)
-	# using Visual Studio C++
+	# using Visual Studio
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /W4")
 else()
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99")
 	if(UNIX)
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread")
     endif()
