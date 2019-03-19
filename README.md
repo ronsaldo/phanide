@@ -1,4 +1,9 @@
 # Phanide - Pharo Native IDE
+
+[![Build Status](https://travis-ci.org/ronsaldo/phanide.svg?branch=master)](https://travis-ci.org/ronsaldo/phanide)
+[![Build status](https://ci.appveyor.com/api/projects/status/qu8475rhr06rmb56/branch/master?svg=true)](https://ci.appveyor.com/project/ronsaldo/phanide/branch/master)
+[![Download](https://api.bintray.com/packages/ronsaldo/phanide/lib/images/download.svg)](https://bintray.com/ronsaldo/phanide/lib/_latestVersion)
+
 ----
 ## Loading
 ### Loading just the Phanide Browser
