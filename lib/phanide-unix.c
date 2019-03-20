@@ -310,7 +310,7 @@ phanide_processKQueueEvents(phanide_context_t *context, struct kevent *events, i
 
 #endif
 
-static int PHANIDE_THREAD_ENTRY_CONVENTION
+static int
 phanide_processThreadEntry(void *arg)
 {
     phanide_context_t *context = (phanide_context_t *)arg;

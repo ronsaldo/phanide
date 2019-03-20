@@ -127,7 +127,7 @@ typedef struct phanide_thread_entry_arg_s
 	void *argument;
 } phanide_thread_entry_arg_t;
 
-static inline void* phanide_thread_entry(LPVOID param)
+static inline void* phanide_thread_entry(void *param)
 {
 	phanide_thread_entry_arg_t arg = *((phanide_thread_entry_arg_t*)param);
 	free(param);
@@ -135,7 +135,7 @@ static inline void* phanide_thread_entry(LPVOID param)
 	return (void*)((intptr_t)arg.entryPoint(arg.argument));
 }
 
-static inline int phanide_thread_create(phanide_thread_t *thread, phanide_thread_entry_point_t entryPoint, void *arg)
+static inline int phanide_thread_create(phanide_thread_t *thread, phanide_thread_entry_point_t entryPoint, void *argument)
 {
 	phanide_thread_entry_arg_t *entryArgument = (phanide_thread_entry_arg_t*)malloc(sizeof(phanide_thread_entry_arg_t));
 	entryArgument->entryPoint = entryPoint;
