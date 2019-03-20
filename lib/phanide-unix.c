@@ -1,3 +1,5 @@
+#ifndef _WIN32
+
 #define _GNU_SOURCE
 #include "internal.h"
 #include <unistd.h>
@@ -308,7 +310,7 @@ phanide_processKQueueEvents(phanide_context_t *context, struct kevent *events, i
 
 #endif
 
-static void *
+static int PHANIDE_THREAD_ENTRY_CONVENTION
 phanide_processThreadEntry(void *arg)
 {
     phanide_context_t *context = (phanide_context_t *)arg;
@@ -320,7 +322,7 @@ phanide_processThreadEntry(void *arg)
         if(eventCount < 0)
         {
             perror("epoll failed");
-            return NULL;
+            return 0;
         }
 
         phanide_processEPollEvents(context, events, eventCount);
@@ -330,7 +332,7 @@ phanide_processThreadEntry(void *arg)
         if(eventCount < 0)
         {
             perror("kevent failed");
-            return NULL;
+            return 0;
         }
         phanide_processKQueueEvents(context, events, eventCount);
 #else
@@ -348,7 +350,7 @@ phanide_processThreadEntry(void *arg)
         phanide_mutex_unlock(&context->controlMutex);
     }
 
-    return NULL;
+    return 0;
 }
 
 /* Process spawning. */
@@ -989,3 +991,5 @@ phanide_fsmonitor_destroy(phanide_context_t *context, phanide_fsmonitor_handle_t
 #else
 #endif
 }
+
+#endif //_WIN32

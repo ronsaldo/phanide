@@ -26,7 +26,7 @@ struct phanide_context_s
 };
 
 
-static void *phanide_processThreadEntry(void *arg);
+static int phanide_processThreadEntry(void *arg);
 static int phanide_createContextIOPrimitives(phanide_context_t *context);
 static void phanide_wakeUpSelect(phanide_context_t *context);
 static void phanide_context_destroyIOData(phanide_context_t *context);
@@ -73,8 +73,7 @@ phanide_destroyContext(phanide_context_t *context)
     }
 
     /* Wait for the working thread to finish. */
-    void *returnValue = NULL;
-    pthread_join(context->thread, &returnValue);
+    phanide_thread_join(context->thread);
 
     phanide_mutex_destroy(&context->controlMutex);
 
