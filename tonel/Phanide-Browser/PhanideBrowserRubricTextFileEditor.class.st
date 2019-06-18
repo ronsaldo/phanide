@@ -58,7 +58,7 @@ PhanideBrowserRubricTextFileEditor >> initializePresenter [
 { #category : #actions }
 PhanideBrowserRubricTextFileEditor >> saveInto: targetFileReference [
 	| fileContent |
-	fileContent := morph getText asString withUnixLineEndings.
+	fileContent := morph getText asString copy withUnixLineEndings.
 	targetFileReference writeStreamDo: [ :s |
 		s truncate; nextPutAll: fileContent
 	].
