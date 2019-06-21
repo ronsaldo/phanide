@@ -1,7 +1,7 @@
 Extension { #name : #FileReference }
 
 { #category : #'*Phanide-SyntaxHighlighting' }
-FileReference >> gtInspectorLowtalkIn: composite [
+FileReference >> gtInspectorPhanideIn: composite [
 	<gtInspectorPresentationOrder: 0>
 	| styler |
 	styler := PhanideStyler forFileReference: self.
@@ -18,7 +18,7 @@ FileReference >> gtInspectorLowtalkIn: composite [
 		act: [:rub | 
 			self 
 				ensureDelete; 
-				writeStreamDo: [ :s | s nextPutAll: rub text asString withUnixLineEndings ]] 
+				writeStreamDo: [ :s | s nextPutAll: rub text asString copy withUnixLineEndings ]] 
 			icon: GLMUIThemeExtraIcons glamorousSave 
 			on: $s
 			entitled: 'Save')
