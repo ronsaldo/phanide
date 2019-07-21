@@ -14,7 +14,7 @@ FileReference >> gtInspectorPhanideIn: composite [
 			GLMHighlighterTextRubEditingMode withStylerDecorator: (
 				styler textDecoratorInPresentation: rubPresentation
 					fileReference: self)];
-		display: [ self readStreamDo: #contents ];
+		display: [ (self readStreamDo: #contents) withSqueakLineEndings ];
 		act: [:rub | 
 			self 
 				ensureDelete; 
