@@ -22,11 +22,33 @@ Class {
 		'separateStdoutFromStderr',
 		'useIORedirection'
 	],
+	#classVars : [
+		'AsyncExecHandlingMap',
+		'AsyncNotificationHandlingMap'
+	],
 	#pools : [
 		'LibPhanidePool'
 	],
 	#category : #'Phanide-GDB-FrontEnd'
 }
+
+{ #category : #'class initialization' }
+PhanideGDB class >> initialize [
+	AsyncNotificationHandlingMap := Dictionary newFromPairs: #(
+		'breakpoint-modified' onBreakpointModifiedNotification:
+		'library-loaded' onLibraryLoadedNotification:
+		'thread-group-added' onThreadGroupAddredNotification:
+		'thread-group-started' onThreadGroupStartedNotification:
+		'thread-group-exited' onThreadGroupExitedNotification:
+		'thread-created' onThreadCreatedNotification:
+		'thread-exited' onThreadExitedNotification:
+	).
+	
+	AsyncExecHandlingMap := Dictionary newFromPairs: #(
+		running onExecRunningEvent:
+		stopped onExecStoppedEvent:
+	).
+]
 
 { #category : #commands }
 PhanideGDB >> cli: aString [
@@ -77,6 +99,14 @@ PhanideGDB >> execRun [
 { #category : #'convenience commands' }
 PhanideGDB >> execStep [
 	^ self mi: '-exec-step'
+]
+
+{ #category : #private }
+PhanideGDB >> finishProcessExecution [
+	process finish.
+	outputReadingProcess ifNotNil: [ outputReadingProcess terminate ].
+	programOutputReadingProcess ifNotNil: [ programOutputReadingProcess terminate ].
+	programErrorReadingProcess ifNotNil: [ programErrorReadingProcess terminate ].
 ]
 
 { #category : #accessing }
@@ -133,6 +163,45 @@ PhanideGDB >> newToken [
 	
 ]
 
+{ #category : #notifications }
+PhanideGDB >> onBreakpointModifiedNotification: notificationData [
+]
+
+{ #category : #events }
+PhanideGDB >> onExecRunningEvent: eventData [
+	^ PhanideGDBExecRunningEvent for: self with: eventData
+]
+
+{ #category : #events }
+PhanideGDB >> onExecStoppedEvent: eventData [
+	^ PhanideGDBExecStoppedEvent for: self with: eventData
+
+]
+
+{ #category : #notifications }
+PhanideGDB >> onLibraryLoadedNotification: notificationData [
+]
+
+{ #category : #notifications }
+PhanideGDB >> onThreadCreatedNotification: notificationData [
+]
+
+{ #category : #notifications }
+PhanideGDB >> onThreadExitedNotification: notificationData [
+]
+
+{ #category : #notifications }
+PhanideGDB >> onThreadGroupAddredNotification: notificationData [
+]
+
+{ #category : #notifications }
+PhanideGDB >> onThreadGroupExitedNotification: notificationData [
+]
+
+{ #category : #notifications }
+PhanideGDB >> onThreadGroupStartedNotification: notificationData [
+]
+
 { #category : #'as yet unclassified' }
 PhanideGDB >> outputReadingProcessEntry [
 	| stdout line |
@@ -176,6 +245,12 @@ PhanideGDB >> programOutputReadingProcess [
 		eventHandler onTargetOutput: line; onTargetOutput: String cr
 	]
 
+]
+
+{ #category : #'convenience commands' }
+PhanideGDB >> quit [
+	self cli: 'quit'.
+	^ self finishProcessExecution
 ]
 
 { #category : #accessing }
@@ -275,7 +350,19 @@ PhanideGDB >> visitEndRecord: record [
 
 { #category : #visiting }
 PhanideGDB >> visitExecAsyncOutput: record [
-	Transcript show: 'TODO: Handle exec async output'; cr; show: record; cr.
+	| asyncClass data selector |
+	asyncClass := record asyncClass.
+	data := record results.
+	
+	selector := AsyncExecHandlingMap at: asyncClass ifAbsent: [
+		eventHandler onLogOutput:(ByteString streamContents: [:out |
+			out nextPutAll: 'Unsupported async exec event from gdb:'; cr.
+			out nextPutAll: asyncClass; space; print: data; cr.
+		]).
+		^ self
+	].
+
+	^ self perform: selector with: data
 ]
 
 { #category : #visiting }
@@ -285,7 +372,19 @@ PhanideGDB >> visitLogStreamRecord: record [
 
 { #category : #visiting }
 PhanideGDB >> visitNotifyAsyncOutput: record [
-	Transcript show: 'TODO: Handle notify async output'; cr; show: record; cr.
+	| asyncClass data selector |
+	asyncClass := record asyncClass.
+	data := record results.
+	
+	selector := AsyncNotificationHandlingMap at: asyncClass ifAbsent: [
+		eventHandler onLogOutput:(ByteString streamContents: [:out |
+			out nextPutAll: 'Unsupported async notfication from gdb:'; cr.
+			out nextPutAll: asyncClass; space; print: data; cr.
+		]).
+		^ self
+	].
+
+	^ self perform: selector with: data
 ]
 
 { #category : #visiting }

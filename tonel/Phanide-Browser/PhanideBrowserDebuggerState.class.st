@@ -36,6 +36,11 @@ PhanideBrowserDebuggerState >> currentStartupProgram: anObject [
 	currentStartupProgram := anObject
 ]
 
+{ #category : #'as yet unclassified' }
+PhanideBrowserDebuggerState >> debuggerFinished [
+	currentDebugger := nil
+]
+
 { #category : #breakpoints }
 PhanideBrowserDebuggerState >> getOrCreateBreakpointInFile: fileReference atLineIndex: lineIndex [
 	| fileDebuggingState |

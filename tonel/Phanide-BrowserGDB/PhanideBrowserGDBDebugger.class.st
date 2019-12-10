@@ -36,6 +36,11 @@ PhanideBrowserGDBDebugger >> pause [
 	gdb execInterrupt
 ]
 
+{ #category : #'as yet unclassified' }
+PhanideBrowserGDBDebugger >> programExited [
+	self stop
+]
+
 { #category : #initialization }
 PhanideBrowserGDBDebugger >> runProgramLocally [
 	^ gdb execRun resultClass = #running
@@ -68,5 +73,6 @@ PhanideBrowserGDBDebugger >> stepOver [
 
 { #category : #accessing }
 PhanideBrowserGDBDebugger >> stop [
-	gdb quit
+	gdb quit.
+	self debuggerState debuggerFinished
 ]

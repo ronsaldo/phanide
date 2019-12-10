@@ -14,7 +14,7 @@ PhanideGDBTranscriptOutputEventHandler >> onConsoleOutput: aString [
 
 { #category : #'as yet unclassified' }
 PhanideGDBTranscriptOutputEventHandler >> onLogOutput: aString [
-	Transcript show: aString; cr.
+	Transcript show: aString
 ]
 
 { #category : #'as yet unclassified' }

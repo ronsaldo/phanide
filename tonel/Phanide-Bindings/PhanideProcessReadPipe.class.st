@@ -46,9 +46,11 @@ PhanideProcessReadPipe >> read: n into: aBuffer offset: aBufferOffset [
 	mutex critical: [
 		[
 			"Wait for the pipe to be ready"
-			[ready] whileFalse: [ readyCondition wait: mutex ].
+			[processHasFinished or: [ready]] whileFalse: [ readyCondition wait: mutex ].
+			processHasFinished ifTrue: [ ^ 0 ].
+			
 			resultCount := process handle pipe: index readInto: aBuffer offset: aBufferOffset - 1 count: n.
-			resultCount = PHANIDE_PIPE_ERROR_WOULD_BLOCK ifTrue: [ 
+			resultCount = PHANIDE_PIPE_ERROR_WOULD_BLOCK ifTrue: [
 				ready := false.
 			].
 		] doWhileTrue: [ ready not ]

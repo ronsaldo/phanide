@@ -5,7 +5,7 @@ Class {
 }
 
 { #category : #actions }
-LibPhanideProcess >> free [
+LibPhanideProcess >> destroy [
 	^ self ffiCall: #(void phanide_process_free(self))
 ]
 

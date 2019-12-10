@@ -23,6 +23,13 @@ PhanideProcess class >> newWithDriver: driver handle: handle flags: flags [
 	^ self basicNew initializeWithDriver: driver handle: handle flags: flags
 ]
 
+{ #category : #events }
+PhanideProcess >> destroy [
+	handle ifNil: [ ^ self ].
+	handle destroy.
+	handle := nil.
+]
+
 { #category : #accessing }
 PhanideProcess >> driver [
 	^ driver
@@ -44,13 +51,19 @@ PhanideProcess >> extraStdout [
 ]
 
 { #category : #events }
+PhanideProcess >> finish [
+	self wait.
+	self destroy.
+]
+
+{ #category : #events }
 PhanideProcess >> finishedWithExitCode: anExitCode [
-	mutex critical: [ 
+	mutex critical: [
 		exitCode := anExitCode.
-		finishedCondition signal
-	]
-	
-	
+		finishedCondition signal.
+		pipes do: [ :pipe | pipe processFinished]
+	].
+
 ]
 
 { #category : #accessing }
@@ -100,6 +113,7 @@ PhanideProcess >> stdout [
 
 { #category : #waiting }
 PhanideProcess >> wait [
+	exitCode ifNotNil: [ ^ exitCode ].
 	mutex critical: [
 		[exitCode] whileNil: [ 
 			finishedCondition wait: mutex

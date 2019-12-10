@@ -36,6 +36,11 @@ PhanideBrowserDebugger >> continue [
 	self subclassResponsibility
 ]
 
+{ #category : #'as yet unclassified' }
+PhanideBrowserDebugger >> debuggerState [
+	^ browser debuggerState
+]
+
 { #category : #initialization }
 PhanideBrowserDebugger >> initializeNewDebuggingSession [
 	self subclassResponsibility

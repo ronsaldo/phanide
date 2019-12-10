@@ -9,12 +9,13 @@ Class {
 		'index',
 		'ready',
 		'readyCondition',
-		'mutex'
+		'mutex',
+		'processHasFinished'
 	],
 	#pools : [
 		'LibPhanidePool'
 	],
-	#category : 'Phanide-Bindings-Driver'
+	#category : #'Phanide-Bindings-Driver'
 }
 
 { #category : #construction }
@@ -36,11 +37,20 @@ PhanideProcessPipe >> initializeForProcess: aProcess index: aPipeIndex [
 	mutex := Semaphore forMutualExclusion.
 	readyCondition := PhanideConditionVariable new.
 	ready := true.
+	processHasFinished := false.
 ]
 
 { #category : #testing }
 PhanideProcessPipe >> isBinary [
 	^ true
+]
+
+{ #category : #'accessing structure variables' }
+PhanideProcessPipe >> processFinished [
+	mutex critical: [ 
+		processHasFinished := true.
+		readyCondition signalAll.
+	].
 ]
 
 { #category : #signalling }
