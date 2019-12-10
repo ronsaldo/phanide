@@ -99,6 +99,12 @@ phanide_free(void *pointer)
 
 /* Events */
 PHANIDE_CORE_EXPORT int
+phanide_canSignalExternalSemaphore(phanide_context_t *context)
+{
+    return context && context->signalSemaphoreWithIndex;
+}
+
+PHANIDE_CORE_EXPORT int
 phanide_pollEvent(phanide_context_t *context, phanide_event_t *event)
 {
     int result = 0;

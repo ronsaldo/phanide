@@ -148,6 +148,7 @@ PHANIDE_CORE_EXPORT phanide_fsmonitor_handle_t *phanide_fsmonitor_watchFirectory
 PHANIDE_CORE_EXPORT void phanide_fsmonitor_destroy(phanide_context_t *context, phanide_fsmonitor_handle_t *handle);
 
 /* Event queue */
+PHANIDE_CORE_EXPORT int phanide_canSignalExternalSemaphore(phanide_context_t *context);
 PHANIDE_CORE_EXPORT int phanide_pollEvent(phanide_context_t *context, phanide_event_t *event);
 PHANIDE_CORE_EXPORT int phanide_waitEvent(phanide_context_t *context, phanide_event_t *event);
 PHANIDE_CORE_EXPORT int phanide_pushEvent(phanide_context_t *context, phanide_event_t *event);
