@@ -20,6 +20,11 @@ PhanideBrowserRubricTextFileEditor class >> isFallbackEditorFor: aFileReference 
 	^ true
 ]
 
+{ #category : #menu }
+PhanideBrowserRubricTextFileEditor class >> menuKeyword [
+	^ 'RubPlainTextMenu'
+]
+
 { #category : #initialization }
 PhanideBrowserRubricTextFileEditor >> createMorph [
 	textModel := RubScrolledTextModel new.
@@ -30,6 +35,39 @@ PhanideBrowserRubricTextFileEditor >> createMorph [
 		tabWidth: (StandardFonts codeFont characterFormAt: Character space) advance x * 4;
 		yourself.
 
+]
+
+{ #category : #debugging }
+PhanideBrowserRubricTextFileEditor >> enableBreakpointAtLineIndex: lineIndex [
+	| line startPosition endPosition conf breakpointHandle |
+	line := morph paragraph lines at: lineIndex.	
+	startPosition := line first.
+	endPosition := line last.
+	breakpointHandle := browser debuggerState
+		getOrCreateBreakpointInFile: fileReference atLineIndex: lineIndex.
+	breakpointHandle ifNil: [ ^ nil ].
+
+	conf := RubConfigurationChange new.
+	conf
+		configurationBlock: [ :scrolledText |
+		| r |
+		r := RubPlainSegmentMorph from: startPosition to: endPosition.
+		r 
+			label: 'Breakpoint';
+			iconBlock: [ :seg |
+				breakpointHandle delete.
+				seg delete
+			];
+			icon: (self iconNamed: #smallErrorIcon).
+		scrolledText addSegment: r.
+	].
+
+	textModel announce: conf
+]
+
+{ #category : #debugging }
+PhanideBrowserRubricTextFileEditor >> enableBreakpointOnClickEvent: anEvent morph: senderMorph [
+	self enableBreakpointAtLineIndex: (senderMorph lineIndexForPoint: anEvent position)
 ]
 
 { #category : #'as yet unclassified' }
@@ -49,10 +87,15 @@ PhanideBrowserRubricTextFileEditor >> initializePresenter [
 		morph textArea setProperty: #processTabHere toValue: true.
 		morph textArea announcer when: RubTextChanged send: #value: to: [ :ann | self makeDirty ].
 		morph textArea announcer when: RubTextAcceptRequest send: #value: to: [ :ann | self save. ].
-		morph lineNumbersRuler on: #click send: #toggleBreakpointOnClickEvent:morph: to: self.
-		morph textSegmentIconsRuler on: #click send: #toggleBreakpointOnClickEvent:morph: to: self.
+		morph lineNumbersRuler on: #click send: #enableBreakpointOnClickEvent:morph: to: self.
+		morph textSegmentIconsRuler on: #click send: #enableBreakpointOnClickEvent:morph: to: self.
 	]
 
+]
+
+{ #category : #api }
+PhanideBrowserRubricTextFileEditor >> menuModel [
+	^ morph textArea
 ]
 
 { #category : #actions }
@@ -74,16 +117,5 @@ PhanideBrowserRubricTextFileEditor >> setupMorph [
 
 { #category : #'as yet unclassified' }
 PhanideBrowserRubricTextFileEditor >> textMenu [
-	^ super menu
-]
-
-{ #category : #debugging }
-PhanideBrowserRubricTextFileEditor >> toggleBreakpointAtLineIndex: lineIndex [
-	| newState |
-	newState := browser toggleBreakpointInFile: fileReference atLineIndex: lineIndex.
-]
-
-{ #category : #debugging }
-PhanideBrowserRubricTextFileEditor >> toggleBreakpointOnClickEvent: anEvent morph: senderMorph [
-	self toggleBreakpointAtLineIndex: (senderMorph lineIndexForPoint: anEvent position)
+	^ self menu
 ]

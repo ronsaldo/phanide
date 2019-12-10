@@ -19,6 +19,6 @@ PhanideHighlighterTextRubEditingMode >> browserComponent: anObject [
 
 { #category : #menu }
 PhanideHighlighterTextRubEditingMode >> menu [
-	browserComponent ifNotNil: [ browserComponent textMenu ].
+	browserComponent ifNotNil: [ ^ browserComponent textMenu ].
 	^ super menu
 ]

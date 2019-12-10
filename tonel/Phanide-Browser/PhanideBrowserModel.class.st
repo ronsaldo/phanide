@@ -3,32 +3,41 @@ I am the main Phanide browser UI.
 "
 Class {
 	#name : #PhanideBrowserModel,
-	#superclass : #ComposableModel,
+	#superclass : #ComposablePresenter,
 	#instVars : [
 		'leftTabs',
 		'bottomTabs',
 		'mainTabs',
 		'componentDictionary',
-		'baseDirectory'
+		'baseDirectory',
+		'debuggerState',
+		'mainStatusBar',
+		'mainMenuBar',
+		'mainToolBar'
 	],
-	#category : 'Phanide-Browser-UI'
+	#category : #'Phanide-Browser-UI'
 }
 
 { #category : #specs }
 PhanideBrowserModel class >> defaultSpec [
 	^ SpecLayout composed
-		newRow: [ :centerRow |
-			centerRow
-				newColumn: [ :column  |
-					column add: #leftTabs
-				] left: 0.0 right: 0.75;
-				addSplitter;
-				newColumn: [ :column |
-					column
-						newRow: [:row | row add: #mainTabs] top: 0.0 bottom: 0.25;
-						addSplitter;
-						newRow: [:row | row add: #bottomTabs] top: 0.75 bottom: 0.0
-				] left: 0.0 right: 0.25
+		newColumn: [ :mainColumn |
+			mainColumn add: #mainMenuBar height: self toolbarHeight.
+			mainColumn add: #mainToolBar height: self toolbarHeight.
+			mainColumn newRow: [ :centerRow |
+				centerRow
+					newColumn: [ :column  |
+						column add: #leftTabs
+					] left: 0.0 right: 0.75;
+					addSplitter;
+					newColumn: [ :column |
+						column
+							newRow: [:row | row add: #mainTabs] top: 0.0 bottom: 0.25;
+							addSplitter;
+							newRow: [:row | row add: #bottomTabs] top: 0.75 bottom: 0.0
+					] left: 0.0 right: 0.25
+			].
+			mainColumn add: #mainStatusBar height: self toolbarHeight.
 		];
 		yourself
 ]
@@ -46,6 +55,76 @@ PhanideBrowserModel class >> new [
 { #category : #'instance creation' }
 PhanideBrowserModel class >> newWithDirectory: aDirectory [
 	^ self basicNew initializeWithDirectory: aDirectory
+]
+
+{ #category : #'main actions' }
+PhanideBrowserModel >> actionAbout [
+	self inform: 'TODO: actionAbout'
+]
+
+{ #category : #'main actions' }
+PhanideBrowserModel >> actionCopy [
+	self inform: 'TODO: actionCopy'
+]
+
+{ #category : #'main actions' }
+PhanideBrowserModel >> actionCut [
+	self inform: 'TODO: actionCut'
+]
+
+{ #category : #'main actions' }
+PhanideBrowserModel >> actionExit [
+	self delete
+]
+
+{ #category : #'main actions' }
+PhanideBrowserModel >> actionOpenFile [
+	self inform: 'TODO: actionOpenFile'
+]
+
+{ #category : #'main actions' }
+PhanideBrowserModel >> actionOpenFolder [
+	self inform: 'TODO: actionOpenFolder'
+]
+
+{ #category : #'main actions' }
+PhanideBrowserModel >> actionPaste [
+	self inform: 'TODO: actionPaste'
+]
+
+{ #category : #'main actions' }
+PhanideBrowserModel >> actionRedo [
+	self inform: 'TODO: actionRedo'
+]
+
+{ #category : #'main actions' }
+PhanideBrowserModel >> actionRun [
+	self inform: 'TODO: actionRun'
+]
+
+{ #category : #'main actions' }
+PhanideBrowserModel >> actionRunWithoutDebugging [
+	self inform: 'TODO: actionRunWithoutDebugging'
+]
+
+{ #category : #'main actions' }
+PhanideBrowserModel >> actionSaveFile [
+	self inform: 'TODO: actionSaveFile'
+]
+
+{ #category : #'main actions' }
+PhanideBrowserModel >> actionSaveFileAs [
+	self inform: 'TODO: actionSaveFileAs'
+]
+
+{ #category : #'main actions' }
+PhanideBrowserModel >> actionToggleToolbarVisibility [
+	self inform: 'TODO: actionToggleToolbarVisibility'
+]
+
+{ #category : #'main actions' }
+PhanideBrowserModel >> actionUndo [
+	self inform: 'TODO: actionUndo'
 ]
 
 { #category : #accessing }
@@ -68,17 +147,239 @@ PhanideBrowserModel >> component: component renamedFrom: oldName into: newName [
 	]
 ]
 
+{ #category : #initialization }
+PhanideBrowserModel >> createEditMenu [
+	^ MenuPresenter new
+		addGroup: [ :group |
+			group addItem: [ :item |
+				item
+					name: 'Undo';
+					icon: (self iconNamed: #smallUndoIcon);
+					action: [ self actionUndo ]
+			].
+			group addItem: [ :item |
+				item
+					name: 'Redo';
+					icon: (self iconNamed: #smallRedoIcon);
+					action: [ self actionRedo ]
+			].
+		];
+		addGroup: [ :group |
+			group addItem: [ :item |
+				item
+					name: 'Cut';
+					icon: (self iconNamed: #smallCutIcon);
+					action: [ self actionCut ]
+			].
+			group addItem: [ :item |
+				item
+					name: 'Copy';
+					icon: (self iconNamed: #smallCopyIcon);
+					action: [ self actionCopy ]
+			].
+			group addItem: [ :item |
+				item
+					name: 'Paste';
+					icon: (self iconNamed: #smallPasteIcon);
+					action: [ self actionPaste ]
+			].
+
+		]
+]
+
+{ #category : #initialization }
+PhanideBrowserModel >> createFileMenu [
+	^ MenuPresenter new
+		addGroup: [ :group |
+			group addItem: [ :item |
+				item
+					name: 'Open File...';
+					icon: (self iconNamed: #smallOpenIcon);
+					action: [ self actionOpenFile ]
+			].
+			group addItem: [ :item |
+				item
+					name: 'Open Folder...';
+					action: [ self actionOpenFolder ]
+			].
+			group addItem: [ :item |
+				item
+					name: 'Save file...';
+					icon: (self iconNamed: #smallSaveIcon);
+					action: [ self actionSaveFile ]
+			].
+			group addItem: [ :item |
+				item
+					name: 'Save file as...';
+					icon: (self iconNamed: #smallSaveAsIcon);
+					action: [ self actionSaveFileAs ]
+			].
+		];
+		addGroup: [ :group |
+			group addItem: [ :item |
+				item
+					name: 'Exit';
+					action: [ self actionExit ]
+			].
+		]
+]
+
+{ #category : #initialization }
+PhanideBrowserModel >> createHelpMenu [
+	^ MenuPresenter new
+		addGroup: [ :group |
+			group addItem: [ :item |
+				item
+					name: 'About';
+					action: [ self actionAbout ]
+			].
+		]
+]
+
+{ #category : #initialization }
+PhanideBrowserModel >> createMainMenu [
+	^ MenuPresenter new
+		addGroup: [ :group |
+			group addItem: [ :item |
+				item name: 'File'; subMenu: self createFileMenu
+			];
+			addItem: [ :item |
+				item name: 'Edit'; subMenu: self createEditMenu
+			];
+			addItem: [ :item |
+				item name: 'Debug'; subMenu: self createRunMenu
+			];
+			addItem: [ :item |
+				item name: 'View'; subMenu: self createViewMenu
+			];
+			addItem: [ :item |
+				item name: 'Help'; subMenu: self createHelpMenu
+			]
+		]
+]
+
+{ #category : #initialization }
+PhanideBrowserModel >> createMainToolBar [
+	^ MenuPresenter new
+		addGroup: [ :group |
+			group addItem: [ :item |
+				item
+					description: 'Save file';
+					icon: (self iconNamed: #smallSaveIcon);
+					action: [ self actionSaveFile ]
+			].
+			group addItem: [ :item |
+				item
+					description: 'Save file as';
+					icon: (self iconNamed: #smallSaveAsIcon);
+					action: [ self actionSaveFileAs ]
+			].
+			group addItem: [ :item |
+				item
+					description: 'Open';
+					icon: (self iconNamed: #smallOpenIcon);
+					action: [ self actionOpenFile ]
+			]
+		];
+		addGroup: [ :group |
+			group addItem: [ :item |
+				item
+					description: 'Undo';
+					icon: (self iconNamed: #smallUndoIcon);
+					action: [ self actionUndo ]
+			].
+			group addItem: [ :item |
+				item
+					description: 'Redo';
+					icon: (self iconNamed: #smallRedoIcon);
+					action: [ self actionRedo ]
+			]
+		];
+		addGroup: [ :group |
+			group addItem: [ :item |
+				item
+					description: 'Cut';
+					icon: (self iconNamed: #smallCutIcon);
+					action: [ self actionCut ]
+			].
+			group addItem: [ :item |
+				item
+					description: 'Copy';
+					icon: (self iconNamed: #smallCopyIcon);
+					action: [ self actionCopy ]
+			].
+			group addItem: [ :item |
+				item
+					description: 'Paste';
+					icon: (self iconNamed: #smallPasteIcon);
+					action: [ self actionPaste ]
+			]
+		];
+		addGroup: [ :group |
+			group addItem: [ :item |
+				item description: 'Run';
+					icon: (self iconNamed: #smallDoIt);
+					action: [ self actionRun ]
+			]
+		].
+]
+
+{ #category : #initialization }
+PhanideBrowserModel >> createRunMenu [
+	^ MenuPresenter new
+		addGroup: [ :group |
+			group addItem: [ :item |
+				item
+					name: 'Run';
+					icon: (self iconNamed: #smallDoIt);
+					action: [ self actionRun ]
+			].
+			group addItem: [ :item |
+				item
+					name: 'Run without debugging';
+					action: [ self actionRunWithoutDebugging ]
+			].
+		]
+]
+
+{ #category : #initialization }
+PhanideBrowserModel >> createViewMenu [
+	^ MenuPresenter new
+		addGroup: [ :group |
+			group addItem: [ :item |
+				item
+					name: 'Toolbar';
+					action: [ self actionToggleToolbarVisibility ]
+			].
+		]
+]
+
+{ #category : #'as yet unclassified' }
+PhanideBrowserModel >> debuggerState [
+	^ debuggerState ifNil: [ debuggerState := PhanideBrowserDebuggerState new ]
+]
+
 { #category : #api }
 PhanideBrowserModel >> extent [
 	^ 1024@768
 ]
 
+{ #category : #'as yet unclassified' }
+PhanideBrowserModel >> getOrCreateBreakpointInFile: fileReference atLineIndex: lineIndex [
+	fileReference ifNil: [ ^ nil ].
+	^ true
+
+]
+
 { #category : #initialization }
 PhanideBrowserModel >> initializeWidgets [
 	componentDictionary := Dictionary new.
+	mainMenuBar := self createMainMenu.
+	mainToolBar := self createMainToolBar.
 	leftTabs := self newTabManager.
 	bottomTabs := self newTabManager.
 	mainTabs := self newTabManager.
+	mainStatusBar := self newLabel.
 	self populateComponents
 ]
 
@@ -105,8 +406,23 @@ PhanideBrowserModel >> leftTabs [
 ]
 
 { #category : #accessing }
+PhanideBrowserModel >> mainMenuBar [
+	^ mainMenuBar
+]
+
+{ #category : #accessing }
+PhanideBrowserModel >> mainStatusBar [
+	^ mainStatusBar
+]
+
+{ #category : #accessing }
 PhanideBrowserModel >> mainTabs [
 	^ mainTabs
+]
+
+{ #category : #accessing }
+PhanideBrowserModel >> mainToolBar [
+	^ mainToolBar
 ]
 
 { #category : #files }
@@ -217,11 +533,4 @@ PhanideBrowserModel >> temporaryFileEditorName [
 { #category : #api }
 PhanideBrowserModel >> title [
 	^ 'Phanide Browser'
-]
-
-{ #category : #'as yet unclassified' }
-PhanideBrowserModel >> toggleBreakpointInFile: fileReference atLineIndex: lineIndex [
-	fileReference ifNil: [ ^ false ].
-	"TODO: Notify the debugger about the change."
-	^ true
 ]

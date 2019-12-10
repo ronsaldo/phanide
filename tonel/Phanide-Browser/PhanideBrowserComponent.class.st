@@ -24,6 +24,11 @@ PhanideBrowserComponent class >> isPermanentComponent [
 	^ false
 ]
 
+{ #category : #menu }
+PhanideBrowserComponent class >> menuKeyword [
+	^ self subclassResponsibility
+]
+
 { #category : #'as yet unclassified' }
 PhanideBrowserComponent class >> specLayout [
 	^ SpecLayout composed
@@ -103,7 +108,17 @@ PhanideBrowserComponent >> makeActive [
 PhanideBrowserComponent >> menu [ 
 		"Answer the menu to be presented "
 
-	^ (PragmaMenuBuilder pragmaKeyword: self menuKeyword model: self) menu
+	^ (PragmaMenuBuilder pragmaKeyword: self menuKeyword model: self menuModel) menu
+]
+
+{ #category : #menu }
+PhanideBrowserComponent >> menuKeyword [
+	^ self class menuKeyword
+]
+
+{ #category : #api }
+PhanideBrowserComponent >> menuModel [
+	^ self
 ]
 
 { #category : #accessing }
