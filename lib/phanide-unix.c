@@ -86,6 +86,7 @@ typedef struct phanide_context_io_s
 
 #include "phanide.c"
 
+static phanide_process_t *phanide_process_getFromIndex(phanide_context_t *context, size_t index);
 static void phanide_process_destructor (void *arg);
 static void phanide_process_pendingData(phanide_process_t *process, int pipeIndex);
 static void phanide_process_pipeHungUpOrError(phanide_process_t *process, int pipeIndex);
@@ -220,13 +221,16 @@ phanide_processEPollEvent(phanide_context_t *context, struct epoll_event *event)
             int subprocess = PHANIDE_EVENT_DESCRIPTOR_FIELD_GET(descriptor, SUBPROCESS_INDEX);
 
             /* Pending data*/
-            phanide_process_t *process = context->io.processList.data[subprocess];
-            if(event->events & EPOLLIN)
-                phanide_process_pendingData(process, pipe);
+            phanide_process_t *process = phanide_process_getFromIndex(context, subprocess);
+            if(process)
+            {
+                if(event->events & EPOLLIN)
+                    phanide_process_pendingData(process, pipe);
 
-            /* Pipe closed */
-            if(event->events & EPOLLHUP || event->events & EPOLLERR)
-                phanide_process_pipeHungUpOrError(process, pipe);
+                /* Pipe closed */
+                if(event->events & EPOLLHUP || event->events & EPOLLERR)
+                    phanide_process_pipeHungUpOrError(process, pipe);
+            }
 
             phanide_mutex_unlock(&context->io.processListMutex);
         }
@@ -279,13 +283,16 @@ phanide_processKQueueEvent(phanide_context_t *context, struct kevent *event)
             int subprocess = PHANIDE_EVENT_DESCRIPTOR_FIELD_GET(descriptor, SUBPROCESS_INDEX);
 
             /* Pending data*/
-            phanide_process_t *process = context->io.processList.data[subprocess];
-            if(event->filter == EVFILT_READ)
-                phanide_process_pendingData(process, pipe);
+            phanide_process_t *process = phanide_process_getFromIndex(context, subprocess);
+            if(process)
+            {
+                if(event->filter == EVFILT_READ)
+                    phanide_process_pendingData(process, pipe);
 
-            /* Pipe closed */
-            if(event->flags & EV_EOF || event->flags & EV_ERROR)
-                phanide_process_pipeHungUpOrError(process, pipe);
+                /* Pipe closed */
+                if(event->flags & EV_EOF || event->flags & EV_ERROR)
+                    phanide_process_pipeHungUpOrError(process, pipe);
+            }
 
             phanide_mutex_unlock(&context->io.processListMutex);
         }
@@ -414,38 +421,55 @@ phanide_process_allocate(phanide_context_t *context)
     return resultProcess;
 }
 
+static phanide_process_t*
+phanide_process_getFromIndex(phanide_context_t *context, size_t index)
+{
+    if(index >= context->io.processList.size)
+        return NULL;
+
+    phanide_process_t *process = context->io.processList.data[index];
+    if(!process->used)
+        return NULL;
+
+    return process;
+}
+
+static void
+phanide_process_closePipeFD(phanide_process_t *process, int fd)
+{
+#ifdef USE_EPOLL
+    epoll_ctl(process->context->io.epollFD, EPOLL_CTL_DEL, fd, NULL);
+#endif
+    close(fd);
+}
+
 PHANIDE_CORE_EXPORT void
 phanide_process_free(phanide_process_t *process)
 {
+    printf("Process free: %p\n", process);
     if(!process)
         return;
 
     /* TODO: Perform process clean up*/
-    phanide_mutex_lock(&process->context->io.processListMutex);
+    phanide_context_t *context = process->context;
+    phanide_mutex_lock(&context->io.processListMutex);
     if(process->used)
     {
         if(process->stdinPipe)
-        {
-#ifdef USE_EPOLL
-            epoll_ctl(process->context->io.epollFD, EPOLL_CTL_DEL, process->stdinPipe, NULL);
-#endif
-            close(process->stdinPipe);
-        }
-
+            phanide_process_closePipeFD(process, process->stdinPipe);
         if(process->stdoutPipe)
-        {
-#ifdef USE_EPOLL
-            epoll_ctl(process->context->io.epollFD, EPOLL_CTL_DEL, process->stdoutPipe, NULL);
-#endif
-            close(process->stdoutPipe);
-        }
-
+            phanide_process_closePipeFD(process, process->stdoutPipe);
         if(process->stderrPipe)
+            phanide_process_closePipeFD(process, process->stderrPipe);
+
+        if(process->flags & PHANIDE_SPAWN_FLAGS_OPEN_EXTRA_PIPES)
         {
-#ifdef USE_EPOLL
-            epoll_ctl(process->context->io.epollFD, EPOLL_CTL_DEL, process->stderrPipe, NULL);
-#endif
-            close(process->stderrPipe);
+            if(process->extraStdinPipe)
+                phanide_process_closePipeFD(process, process->extraStdinPipe);
+            if(process->extraStdoutPipe)
+                phanide_process_closePipeFD(process, process->extraStdoutPipe);
+            if(process->extraStderrPipe)
+                phanide_process_closePipeFD(process, process->extraStderrPipe);
         }
 
         if(process->childPid)
@@ -457,7 +481,7 @@ phanide_process_free(phanide_process_t *process)
         }
     }
     memset(process, 0, sizeof(phanide_process_t));
-    phanide_mutex_unlock(&process->context->io.processListMutex);
+    phanide_mutex_unlock(&context->io.processListMutex);
 }
 
 static void phanide_process_closeAllOpenFileDescriptors(int inheritedCount)
@@ -648,6 +672,7 @@ phanide_process_forkForSpawn(phanide_context_t *context, phanide_process_spawn_f
 
     /* Create the process */
     phanide_process_t *process = phanide_process_allocate(context);
+    printf("Allocated process %p\n", process);
     process->flags = flags;
 
     /* We are the parent. Close the pipe endpoint that are unintesting to us. */
