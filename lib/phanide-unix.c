@@ -446,7 +446,6 @@ phanide_process_closePipeFD(phanide_process_t *process, int fd)
 PHANIDE_CORE_EXPORT void
 phanide_process_free(phanide_process_t *process)
 {
-    printf("Process free: %p\n", process);
     if(!process)
         return;
 
@@ -672,7 +671,6 @@ phanide_process_forkForSpawn(phanide_context_t *context, phanide_process_spawn_f
 
     /* Create the process */
     phanide_process_t *process = phanide_process_allocate(context);
-    printf("Allocated process %p\n", process);
     process->flags = flags;
 
     /* We are the parent. Close the pipe endpoint that are unintesting to us. */
