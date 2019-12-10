@@ -79,6 +79,11 @@ PhanideBrowserModel >> actionCut [
 ]
 
 { #category : #'main actions' }
+PhanideBrowserModel >> actionDebugContinue [
+	self debuggerState continueCurrentProgramExecution
+]
+
+{ #category : #'main actions' }
 PhanideBrowserModel >> actionDebugPause [
 	self debuggerState pauseCurrentProgramExecution
 ]
@@ -219,9 +224,16 @@ PhanideBrowserModel >> createDebugToolBar [
 		addGroup: [ :group |
 			group addItem: [ :item |
 				item
+					name: 'Continue';
+					description: 'Continue';
+					icon: (self iconNamed: #glamorousGo);
+					action: [ self actionDebugContinue ]
+			].
+			group addItem: [ :item |
+				item
 					name: 'Pause';
 					description: 'Pause';
-					action: [ self actionDebugRun ]
+					action: [ self actionDebugPause ]
 			].
 			group addItem: [ :item |
 				item
@@ -513,18 +525,16 @@ PhanideBrowserModel >> mainToolBar [
 
 { #category : #files }
 PhanideBrowserModel >> makeTemporaryEditorPermanent: tempEditor [
-	tempEditor
+	^ tempEditor
 		name: tempEditor fileReference printString;
 		temporaryEditor: false;
-		makeActive.
-	^ self
-
+		makeActive
 ]
 
 { #category : #files }
 PhanideBrowserModel >> openFileView: aFileReference [
 	| editor |
-	aFileReference isFile ifFalse: [ ^ self ].
+	aFileReference isFile ifFalse: [ ^ nil ].
 	componentDictionary at: self temporaryFileEditorName ifPresent: [ :tempEditor |
 		tempEditor fileReference = aFileReference ifTrue: [
 			^ self makeTemporaryEditorPermanent: tempEditor
@@ -532,8 +542,7 @@ PhanideBrowserModel >> openFileView: aFileReference [
 	].
 
 	componentDictionary at: aFileReference printString ifPresent: [ :existentEditor |
-		existentEditor makeActive.
-		^ self
+		^ existentEditor makeActive.
 	].
 	
 	editor := (PhanideBrowserFileEditor editorForFile: aFileReference) for: self.
@@ -541,18 +550,17 @@ PhanideBrowserModel >> openFileView: aFileReference [
 		fileReference: aFileReference;
 		name: aFileReference printString.
 	self installComponentModel: editor.
-	editor makeActive
+	^ editor makeActive
 ]
 
 { #category : #files }
 PhanideBrowserModel >> openFileViewTemporarily: aFileReference [
 	| editor |
-	aFileReference isFile ifFalse: [ ^ self ].
+	aFileReference isFile ifFalse: [ ^ nil ].
 	
 	"Make active the existent file"
 	componentDictionary at: aFileReference printString ifPresent: [ :existentEditor |
-		existentEditor makeActive.
-		^ self
+		^ existentEditor makeActive
 	].
 
 	"Check the existent temporary file editor"
@@ -570,7 +578,7 @@ PhanideBrowserModel >> openFileViewTemporarily: aFileReference [
 		fileReference: aFileReference;
 		name: self temporaryFileEditorName.
 	self installComponentModel: editor.
-	editor makeActive
+	^ editor makeActive
 ]
 
 { #category : #'as yet unclassified' }

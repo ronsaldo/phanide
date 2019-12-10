@@ -21,6 +21,11 @@ PhanideBrowserDebuggerState >> browser: anObject [
 	browser := anObject
 ]
 
+{ #category : #'debugging actions' }
+PhanideBrowserDebuggerState >> continueCurrentProgramExecution [
+	currentDebugger ifNotNil: [ currentDebugger continue ]
+]
+
 { #category : #accessing }
 PhanideBrowserDebuggerState >> currentStartupProgram [
 	^ currentStartupProgram
@@ -43,7 +48,7 @@ PhanideBrowserDebuggerState >> getOrCreateBreakpointInFile: fileReference atLine
 { #category : #breakpoints }
 PhanideBrowserDebuggerState >> getOrCreateFileDebuggingState: fileReference [
 	fileReference isAbsolute ifFalse: [ ^ self getOrCreateFileDebuggingState: fileReference asAbsolute ].
-	^ perFileDebuggingStates at: fileReference ifAbsent: [ PhanideBrowserDebuggerPerFileState for: fileReference ]
+	^ perFileDebuggingStates at: fileReference ifAbsentPut: [ PhanideBrowserDebuggerPerFileState for: fileReference ]
 ]
 
 { #category : #settings }

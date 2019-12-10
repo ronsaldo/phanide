@@ -46,6 +46,8 @@ PhanideBrowserRubricTextFileEditor >> enableBreakpointAtLineIndex: lineIndex [
 	breakpointHandle := browser debuggerState
 		getOrCreateBreakpointInFile: fileReference atLineIndex: lineIndex.
 	breakpointHandle ifNil: [ ^ nil ].
+	
+	self makeTemporaryEditorPermanent.
 
 	conf := RubConfigurationChange new.
 	conf

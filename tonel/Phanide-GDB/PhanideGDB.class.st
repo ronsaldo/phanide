@@ -19,7 +19,8 @@ Class {
 		'pendingCommandsMutex',
 		'programOutputReadingProcess',
 		'programErrorReadingProcess',
-		'separateStdoutFromStderr'
+		'separateStdoutFromStderr',
+		'useIORedirection'
 	],
 	#pools : [
 		'LibPhanidePool'
@@ -38,6 +39,11 @@ PhanideGDB >> cli: aString withResult: aPhanideGDBFutureCommandResult [
 	^ aPhanideGDBFutureCommandResult
 ]
 
+{ #category : #'convenience commands' }
+PhanideGDB >> createBreakpointInFile: fileName atLine: line [
+	^ PhanideGDBBreakpoint for: self from: (self mi: ('-break-insert --source {1} --line {2}' format: {fileName asCStringForGDB . line asString})) results
+]
+
 { #category : #accessing }
 PhanideGDB >> eventHandler [
 	^ eventHandler
@@ -49,8 +55,28 @@ PhanideGDB >> eventHandler: anObject [
 ]
 
 { #category : #'convenience commands' }
+PhanideGDB >> execContinue [
+	^ self mi: '-exec-continue'
+]
+
+{ #category : #'convenience commands' }
+PhanideGDB >> execInterrupt [
+	^ self mi: '-exec-interrupt'
+]
+
+{ #category : #'convenience commands' }
+PhanideGDB >> execNext [
+	^ self mi: '-exec-next'
+]
+
+{ #category : #'convenience commands' }
 PhanideGDB >> execRun [
 	^ self mi: '-exec-run'
+]
+
+{ #category : #'convenience commands' }
+PhanideGDB >> execStep [
+	^ self mi: '-exec-step'
 ]
 
 { #category : #accessing }
@@ -164,12 +190,19 @@ PhanideGDB >> separateStdoutFromStderr: aBoolean [
 
 { #category : #'convenience commands' }
 PhanideGDB >> setProgramArguments: arguments [
-	arguments ifEmpty: [ ^ self ].
 	^ self mi: (ByteString streamContents: [:out |
 		out nextPutAll: '-exec-arguments'.
 		arguments do: [ :arg |
 			out space.
 			arg asCStringForGDBInto: out
+		].
+	
+		self useIORedirection ifTrue: [
+			self separateStdoutFromStderr ifTrue: [ 
+				out nextPutAll: ' <&3 >&4 2>&5'
+			] ifFalse: [ 
+				out nextPutAll: ' <&3 >&4 2>&4'
+			]
 		].
 	])
 ]
@@ -177,16 +210,6 @@ PhanideGDB >> setProgramArguments: arguments [
 { #category : #'convenience commands' }
 PhanideGDB >> setProgramFileAndSymbols: programFileName [
 	^ self mi: ('-file-exec-and-symbols {1}' format: {programFileName asCStringForGDB})
-]
-
-{ #category : #'convenience commands' }
-PhanideGDB >> setupLocalIORedirection [
-	self separateStdoutFromStderr ifTrue: [ 
-		^ self cli: 'set exec-wrapper <&3 >&4 2>&5'
-	] ifFalse: [ 
-		^ self cli: 'set exec-wrapper <&3 >&4 2>&4'
-	]
-
 ]
 
 { #category : #commands }
@@ -231,6 +254,16 @@ PhanideGDB >> startProgramOutputReadingProcess [
 	] fork
 ]
 
+{ #category : #accessing }
+PhanideGDB >> useIORedirection [
+	^ useIORedirection ifNil: [ useIORedirection := true ]
+]
+
+{ #category : #accessing }
+PhanideGDB >> useIORedirection: anObject [
+	useIORedirection := anObject
+]
+
 { #category : #visiting }
 PhanideGDB >> visitConsoleStreamRecord: record [
 	eventHandler onConsoleOutput: record value
@@ -242,7 +275,7 @@ PhanideGDB >> visitEndRecord: record [
 
 { #category : #visiting }
 PhanideGDB >> visitExecAsyncOutput: record [
-	Transcript show: 'TODO: Handle exec async output'; cr; show: record
+	Transcript show: 'TODO: Handle exec async output'; cr; show: record; cr.
 ]
 
 { #category : #visiting }
@@ -252,7 +285,7 @@ PhanideGDB >> visitLogStreamRecord: record [
 
 { #category : #visiting }
 PhanideGDB >> visitNotifyAsyncOutput: record [
-	Transcript show: 'TODO: Handle notify async output'; cr; show: record
+	Transcript show: 'TODO: Handle notify async output'; cr; show: record; cr.
 ]
 
 { #category : #visiting }
@@ -271,7 +304,7 @@ PhanideGDB >> visitResultRecord: record [
 
 { #category : #visiting }
 PhanideGDB >> visitStatusAsyncOutput: record [
-	Transcript show: 'TODO: Handle status async output'; cr; show: record
+	Transcript show: 'TODO: Handle status async output'; cr; show: record; cr.
 ]
 
 { #category : #visiting }

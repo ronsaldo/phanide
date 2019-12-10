@@ -28,6 +28,11 @@ PhanideBrowserDebuggerBreakpoint >> fileDebuggingState: anObject [
 ]
 
 { #category : #accessing }
+PhanideBrowserDebuggerBreakpoint >> fileReference [
+	^ fileDebuggingState fileReference
+]
+
+{ #category : #accessing }
 PhanideBrowserDebuggerBreakpoint >> lineIndex [
 	^ lineIndex
 ]

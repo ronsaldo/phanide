@@ -32,6 +32,11 @@ PhanideBrowserDebugger >> browser: anObject [
 ]
 
 { #category : #initialization }
+PhanideBrowserDebugger >> continue [
+	self subclassResponsibility
+]
+
+{ #category : #initialization }
 PhanideBrowserDebugger >> initializeNewDebuggingSession [
 	self subclassResponsibility
 ]
@@ -52,7 +57,7 @@ PhanideBrowserDebugger >> stepInto [
 ]
 
 { #category : #initialization }
-PhanideBrowserDebugger >> stepThrough [
+PhanideBrowserDebugger >> stepOver [
 	self subclassResponsibility
 ]
 
