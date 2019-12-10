@@ -32,5 +32,10 @@ BaselineOfPhanide >> baseline: spec [
 			package: 'Phanide-GDB' with: [
 				spec requires: #('Phanide-Bindings')
 			].
+		spec
+			package: 'Phanide-BrowserGDB' with: [
+				spec requires: #('Phanide-GDB' 'Phanide-Browser')
+			].
+
 	].
 ]

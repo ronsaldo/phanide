@@ -1,5 +1,5 @@
 Class {
-	#name : #PhanideBrowserFileDebuggerState,
+	#name : #PhanideBrowserDebuggerPerFileState,
 	#superclass : #Object,
 	#instVars : [
 		'fileReference',
@@ -9,27 +9,37 @@ Class {
 }
 
 { #category : #'instance creation' }
-PhanideBrowserFileDebuggerState class >> for: aFileReference [
+PhanideBrowserDebuggerPerFileState class >> for: aFileReference [
 	^ self new fileReference: aFileReference
 ]
 
 { #category : #'as yet unclassified' }
-PhanideBrowserFileDebuggerState >> breakpointDeleted: breakpoint [
+PhanideBrowserDebuggerPerFileState >> breakpointDeleted: breakpoint [
 	perLineBreakpoints removeKey: breakpoint lineIndex ifAbsent: []
 ]
 
+{ #category : #'as yet unclassified' }
+PhanideBrowserDebuggerPerFileState >> breakpoints [
+	^ perLineBreakpoints values
+]
+
+{ #category : #'as yet unclassified' }
+PhanideBrowserDebuggerPerFileState >> breakpointsDo: aBlock [
+	^ perLineBreakpoints valuesDo: aBlock
+]
+
 { #category : #accessing }
-PhanideBrowserFileDebuggerState >> fileReference [
+PhanideBrowserDebuggerPerFileState >> fileReference [
 	^ fileReference
 ]
 
 { #category : #accessing }
-PhanideBrowserFileDebuggerState >> fileReference: anObject [
+PhanideBrowserDebuggerPerFileState >> fileReference: anObject [
 	fileReference := anObject
 ]
 
 { #category : #'as yet unclassified' }
-PhanideBrowserFileDebuggerState >> getOrCreateBreakpointAtLine: line [
+PhanideBrowserDebuggerPerFileState >> getOrCreateBreakpointAtLine: line [
 	^ perLineBreakpoints at: line ifAbsentPut: [ PhanideBrowserDebuggerBreakpoint new
 			fileDebuggingState: self;
 			lineIndex: line;
@@ -37,7 +47,7 @@ PhanideBrowserFileDebuggerState >> getOrCreateBreakpointAtLine: line [
 ]
 
 { #category : #initialization }
-PhanideBrowserFileDebuggerState >> initialize [
+PhanideBrowserDebuggerPerFileState >> initialize [
 	super initialize.
 	perLineBreakpoints := Dictionary new.
 ]

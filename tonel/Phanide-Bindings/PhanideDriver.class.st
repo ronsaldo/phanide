@@ -61,9 +61,16 @@ PhanideDriver >> checkSession [
 
 { #category : #events }
 PhanideDriver >> createEventFetchingProcess [
-	eventFetchingProcess := [
-		self eventFetchingProcessEntry
-	] forkAt: Processor lowIOPriority named: 'PhanideDriver event loop'
+	context canSignalExternalSemaphore ifTrue: [ 
+		eventFetchingProcess := [
+			self eventFetchingProcessEntry
+		] forkAt: Processor lowIOPriority named: 'PhanideDriver event loop'.
+	] ifFalse: [ 
+		eventFetchingProcess := [
+			self pollingEventFetchingProcessEntry
+		] forkAt: Processor lowIOPriority named: 'PhanideDriver event loop'.
+	]
+
 ]
 
 { #category : #events }
@@ -182,6 +189,16 @@ PhanideDriver >> onProcessPipeEvent: event [
 ]
 
 { #category : #events }
+PhanideDriver >> pollingEventFetchingProcessEntry [
+	[
+		(session ~~ Smalltalk session or: [context isNil or: [context isNull]]) ifTrue: [ ^ self ].
+		self eventFetchingIteration.
+		
+		(Delay forMilliseconds: 100) wait
+	] repeat
+]
+
+{ #category : #events }
 PhanideDriver >> processEvent: anEvent [
 	| dispatchMethods |
 	dispatchMethods := EventDispatchMap at: anEvent type ifAbsent: [ ^ self ].
@@ -195,13 +212,18 @@ PhanideDriver >> processEvent: anEvent [
 
 { #category : #process }
 PhanideDriver >> spawnShell: aCommand [
+	^ self spawnShell: aCommand flags: PHANIDE_SPAWN_FLAGS_NONE
+]
+
+{ #category : #process }
+PhanideDriver >> spawnShell: aCommand flags: flags [
 	| handle process |
 	self isAvailable ifFalse: [ ^ nil].
 	
 	self checkSession.
 	processDictionaryMutex critical: [
-		handle := context spawnShell: aCommand.
-		process := PhanideProcess newWithDriver: self handle: handle.
+		handle := context spawnShell: aCommand flags: flags.
+		process := PhanideProcess newWithDriver: self handle: handle flags: flags.
 		processDictionary at: handle getHandle getHandle put: process
 	].
 

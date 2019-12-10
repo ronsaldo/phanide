@@ -48,7 +48,10 @@ PhanideBrowserFileTreeTab class >> fileTreeFileMenu: aBuilder [
 		selector: #openItems.
 	(aBuilder item: #'Delete file')
 		keyText: 'x';
-		selector: #deleteItems
+		selector: #deleteItems.
+	(aBuilder item: #'Set as startup program')
+		selector: #setAsStartupProgram.
+
 ]
 
 { #category : #menus }
@@ -234,6 +237,17 @@ PhanideBrowserFileTreeTab >> onNewTreeSelection: newSelection [
 	]
 ]
 
+{ #category : #menus }
+PhanideBrowserFileTreeTab >> openItems [
+	| selectedFiles |
+	selectedFiles := self selectedFiles.
+	selectedFiles do: [ :file |
+		(file isFile and: [ file exists ]) ifTrue: [ 
+			browser openFileView: file
+		]
+	]
+]
+
 { #category : #accessing }
 PhanideBrowserFileTreeTab >> selectedFile [
 	treeMorph selectedRowIndex = 0 ifTrue: [ ^ nil ].
@@ -247,6 +261,18 @@ PhanideBrowserFileTreeTab >> selectedFiles [
 	^ treeMorph selectedRowIndexes collect: [ :i |
 		(ds elementAt: i) data
 	]
+]
+
+{ #category : #menus }
+PhanideBrowserFileTreeTab >> setAsStartupProgram [
+	| selectedFiles startupProgram |
+	selectedFiles := self selectedFiles.
+	selectedFiles size ~= 1 ifTrue: [ ^ self ].
+	startupProgram := selectedFiles first.
+	(startupProgram isFile and: [ startupProgram exists ]) ifTrue: [ 
+		browser setCurrentStartupProgramForFileReference: startupProgram
+	]
+
 ]
 
 { #category : #accessing }

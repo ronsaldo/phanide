@@ -13,7 +13,9 @@ Class {
 		'debuggerState',
 		'mainStatusBar',
 		'mainMenuBar',
-		'mainToolBar'
+		'mainToolBar',
+		'startupProgramCombo',
+		'debugToolBar'
 	],
 	#category : #'Phanide-Browser-UI'
 }
@@ -23,7 +25,11 @@ PhanideBrowserModel class >> defaultSpec [
 	^ SpecLayout composed
 		newColumn: [ :mainColumn |
 			mainColumn add: #mainMenuBar height: self toolbarHeight.
-			mainColumn add: #mainToolBar height: self toolbarHeight.
+			mainColumn newRow: [ :toolbarRow |
+				toolbarRow add: #mainToolBar.
+				toolbarRow add: #startupProgramCombo width: 200.
+				toolbarRow add: #debugToolBar.
+			] height: self toolbarHeight.
 			mainColumn newRow: [ :centerRow |
 				centerRow
 					newColumn: [ :column  |
@@ -73,6 +79,31 @@ PhanideBrowserModel >> actionCut [
 ]
 
 { #category : #'main actions' }
+PhanideBrowserModel >> actionDebugPause [
+	self debuggerState pauseCurrentProgramExecution
+]
+
+{ #category : #'main actions' }
+PhanideBrowserModel >> actionDebugRun [
+	self debuggerState runStartupProgramWithDebugger
+]
+
+{ #category : #'main actions' }
+PhanideBrowserModel >> actionDebugStepInto [
+	self debuggerState stepInto
+]
+
+{ #category : #'main actions' }
+PhanideBrowserModel >> actionDebugStepOver [
+	self debuggerState stepOver
+]
+
+{ #category : #'main actions' }
+PhanideBrowserModel >> actionDebugStop [
+	self debuggerState stopCurrentDebugger
+]
+
+{ #category : #'main actions' }
 PhanideBrowserModel >> actionExit [
 	self delete
 ]
@@ -95,11 +126,6 @@ PhanideBrowserModel >> actionPaste [
 { #category : #'main actions' }
 PhanideBrowserModel >> actionRedo [
 	self inform: 'TODO: actionRedo'
-]
-
-{ #category : #'main actions' }
-PhanideBrowserModel >> actionRun [
-	self inform: 'TODO: actionRun'
 ]
 
 { #category : #'main actions' }
@@ -145,6 +171,74 @@ PhanideBrowserModel >> component: component renamedFrom: oldName into: newName [
 		componentDictionary removeKey: oldName.
 		componentDictionary at: newName put: component
 	]
+]
+
+{ #category : #initialization }
+PhanideBrowserModel >> createDebugMenu [
+	^ MenuPresenter new
+		addGroup: [ :group |
+			group addItem: [ :item |
+				item
+					name: 'Run';
+					icon: (self iconNamed: #smallDoIt);
+					action: [ self actionDebugRun ]
+			].
+			group addItem: [ :item |
+				item
+					name: 'Run without debugging';
+					action: [ self actionRunWithoutDebugging ]
+			].
+			group addItem: [ :item |
+				item
+					name: 'Stop';
+					icon: (self iconNamed: #stop);
+					action: [ self actionDebugStop ]
+			].
+		]
+]
+
+{ #category : #initialization }
+PhanideBrowserModel >> createDebugToolBar [
+	^ MenuPresenter new
+		addGroup: [ :group |
+			group addItem: [ :item |
+				item
+					name: 'Run';
+					description: 'Run selected startup program with a debugger.';
+					icon: (self iconNamed: #smallDoIt);
+					action: [ self actionDebugRun ]
+			].
+			group addItem: [ :item |
+				item
+					name: 'Stop';
+					description: 'Stops the currently program that is being executed.';
+					icon: (self iconNamed: #stop);
+					action: [ self actionDebugStop ]
+			]
+		];
+		addGroup: [ :group |
+			group addItem: [ :item |
+				item
+					name: 'Pause';
+					description: 'Pause';
+					action: [ self actionDebugRun ]
+			].
+			group addItem: [ :item |
+				item
+					name: 'Into';
+					description: 'Step into. Gdb step';
+					icon: (self iconNamed: #glamorousInto);
+					action: [ self actionDebugStepInto ]
+			].
+			group addItem: [ :item |
+				item
+					name: 'Over';
+					description: 'Step over. Gdb next';
+					icon: (self iconNamed: #glamorousOver);
+					action: [ self actionDebugStepOver ]
+			].
+
+		].	
 ]
 
 { #category : #initialization }
@@ -247,7 +341,7 @@ PhanideBrowserModel >> createMainMenu [
 				item name: 'Edit'; subMenu: self createEditMenu
 			];
 			addItem: [ :item |
-				item name: 'Debug'; subMenu: self createRunMenu
+				item name: 'Debug'; subMenu: self createDebugMenu
 			];
 			addItem: [ :item |
 				item name: 'View'; subMenu: self createViewMenu
@@ -314,32 +408,7 @@ PhanideBrowserModel >> createMainToolBar [
 					icon: (self iconNamed: #smallPasteIcon);
 					action: [ self actionPaste ]
 			]
-		];
-		addGroup: [ :group |
-			group addItem: [ :item |
-				item description: 'Run';
-					icon: (self iconNamed: #smallDoIt);
-					action: [ self actionRun ]
-			]
 		].
-]
-
-{ #category : #initialization }
-PhanideBrowserModel >> createRunMenu [
-	^ MenuPresenter new
-		addGroup: [ :group |
-			group addItem: [ :item |
-				item
-					name: 'Run';
-					icon: (self iconNamed: #smallDoIt);
-					action: [ self actionRun ]
-			].
-			group addItem: [ :item |
-				item
-					name: 'Run without debugging';
-					action: [ self actionRunWithoutDebugging ]
-			].
-		]
 ]
 
 { #category : #initialization }
@@ -354,14 +423,29 @@ PhanideBrowserModel >> createViewMenu [
 		]
 ]
 
+{ #category : #accessing }
+PhanideBrowserModel >> debugToolBar [
+	^ debugToolBar
+]
+
 { #category : #'as yet unclassified' }
 PhanideBrowserModel >> debuggerState [
-	^ debuggerState ifNil: [ debuggerState := PhanideBrowserDebuggerState new ]
+	^ debuggerState ifNil: [ debuggerState := PhanideBrowserDebuggerState new browser: self]
 ]
 
 { #category : #api }
 PhanideBrowserModel >> extent [
 	^ 1024@768
+]
+
+{ #category : #'named components' }
+PhanideBrowserModel >> getNamedComponent: componentName [
+	^ self getNamedComponent: componentName ifAbsent: [nil]
+]
+
+{ #category : #'named components' }
+PhanideBrowserModel >> getNamedComponent: componentName ifAbsent: absentBlock [
+	^ componentDictionary at: componentName ifAbsent: absentBlock
 ]
 
 { #category : #'as yet unclassified' }
@@ -375,7 +459,9 @@ PhanideBrowserModel >> getOrCreateBreakpointInFile: fileReference atLineIndex: l
 PhanideBrowserModel >> initializeWidgets [
 	componentDictionary := Dictionary new.
 	mainMenuBar := self createMainMenu.
+	startupProgramCombo := self newDropList.
 	mainToolBar := self createMainToolBar.
+	debugToolBar := self createDebugToolBar.
 	leftTabs := self newTabManager.
 	bottomTabs := self newTabManager.
 	mainTabs := self newTabManager.
@@ -523,6 +609,21 @@ PhanideBrowserModel >> removeComponent: aComponent [
 	(componentDictionary includesKey: aComponent name) ifTrue: [
 		componentDictionary removeKey: aComponent name
 	].
+]
+
+{ #category : #initialization }
+PhanideBrowserModel >> setCurrentStartupProgramForFileReference: aStartupProgramFileReference [
+	| programSettings |
+	programSettings := self debuggerState setCurrentStartupProgramForFileReference: aStartupProgramFileReference.
+	
+	startupProgramCombo addItemLabeled: programSettings name do: [
+		self debuggerState setCurrentStartupProgram: programSettings
+	]
+]
+
+{ #category : #accessing }
+PhanideBrowserModel >> startupProgramCombo [
+	^ startupProgramCombo
 ]
 
 { #category : #files }

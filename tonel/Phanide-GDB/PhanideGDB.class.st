@@ -16,9 +16,15 @@ Class {
 		'tokenCountMutex',
 		'tokenCount',
 		'pendingCommands',
-		'pendingCommandsMutex'
+		'pendingCommandsMutex',
+		'programOutputReadingProcess',
+		'programErrorReadingProcess',
+		'separateStdoutFromStderr'
 	],
-	#category : 'Phanide-GDB-FrontEnd'
+	#pools : [
+		'LibPhanidePool'
+	],
+	#category : #'Phanide-GDB-FrontEnd'
 }
 
 { #category : #commands }
@@ -42,6 +48,11 @@ PhanideGDB >> eventHandler: anObject [
 	eventHandler := anObject
 ]
 
+{ #category : #'convenience commands' }
+PhanideGDB >> execRun [
+	^ self mi: '-exec-run'
+]
+
 { #category : #accessing }
 PhanideGDB >> gdbCommand [
 	^ 'gdb -q --interpreter=mi'
@@ -58,7 +69,7 @@ PhanideGDB >> initialize [
 	
 ]
 
-{ #category : #accessing }
+{ #category : #initialization }
 PhanideGDB >> initializeGDBMI [
 	"Enable the async mode."
 	stdin nextPutAll: '-gdb-set mi-async on'; lf
@@ -119,9 +130,69 @@ PhanideGDB >> processOutputLine: line [
 	record accept: self
 ]
 
+{ #category : #'as yet unclassified' }
+PhanideGDB >> programErrorOutputReadingProcess [
+	| stderr line |
+	stderr := process extraStderr textStream.
+	self flag: 'FIXME: Do not read per line here.'.
+	[(line := stderr nextLine)] whileNotNil: [ 
+		eventHandler onTargetErrorOutput: line; onTargetErrorOutput: String cr.
+	]
+
+]
+
+{ #category : #'as yet unclassified' }
+PhanideGDB >> programOutputReadingProcess [
+	| stdout line |
+	stdout := process extraStdout textStream.
+	self flag: 'FIXME: Do not read per line here.'.
+	[(line := stdout nextLine)] whileNotNil: [ 
+		eventHandler onTargetOutput: line; onTargetOutput: String cr
+	]
+
+]
+
 { #category : #accessing }
+PhanideGDB >> separateStdoutFromStderr [
+	^ separateStdoutFromStderr ifNil: [ separateStdoutFromStderr := false ]
+]
+
+{ #category : #accessing }
+PhanideGDB >> separateStdoutFromStderr: aBoolean [
+	^ separateStdoutFromStderr := aBoolean
+]
+
+{ #category : #'convenience commands' }
+PhanideGDB >> setProgramArguments: arguments [
+	arguments ifEmpty: [ ^ self ].
+	^ self mi: (ByteString streamContents: [:out |
+		out nextPutAll: '-exec-arguments'.
+		arguments do: [ :arg |
+			out space.
+			arg asCStringForGDBInto: out
+		].
+	])
+]
+
+{ #category : #'convenience commands' }
+PhanideGDB >> setProgramFileAndSymbols: programFileName [
+	^ self mi: ('-file-exec-and-symbols {1}' format: {programFileName asCStringForGDB})
+]
+
+{ #category : #'convenience commands' }
+PhanideGDB >> setupLocalIORedirection [
+	self separateStdoutFromStderr ifTrue: [ 
+		^ self cli: 'set exec-wrapper <&3 >&4 2>&5'
+	] ifFalse: [ 
+		^ self cli: 'set exec-wrapper <&3 >&4 2>&4'
+	]
+
+]
+
+{ #category : #commands }
 PhanideGDB >> start [
-	process := PhanideDriver uniqueInstance spawnShell: self gdbCommand.
+	| programStdin |
+	process := PhanideDriver uniqueInstance spawnShell: self gdbCommand flags: PHANIDE_SPAWN_FLAGS_OPEN_EXTRA_PIPES.
 	session := Smalltalk session.
 	
 	mutex := Semaphore forMutualExclusion.
@@ -129,8 +200,13 @@ PhanideGDB >> start [
 	pendingCommandsMutex := Semaphore forMutualExclusion.
 
 	outputReadingProcess := self startOutputReadingProcess.
+	programOutputReadingProcess := self startProgramOutputReadingProcess.
+	self separateStdoutFromStderr ifTrue: [ 
+		programErrorReadingProcess := self startProgramErrorOutputReadingProcess.
+	].
 	
 	stdin := process stdin textStream.
+	programStdin := process extraStdin textStream.
 	self initializeGDBMI
 ]
 
@@ -138,6 +214,20 @@ PhanideGDB >> start [
 PhanideGDB >> startOutputReadingProcess [
 	^ [
 		self outputReadingProcessEntry
+	] fork
+]
+
+{ #category : #'as yet unclassified' }
+PhanideGDB >> startProgramErrorOutputReadingProcess [
+	^ [
+		self programErrorOutputReadingProcess
+	] fork
+]
+
+{ #category : #'as yet unclassified' }
+PhanideGDB >> startProgramOutputReadingProcess [
+	^ [
+		self programOutputReadingProcess
 	] fork
 ]
 
@@ -152,6 +242,7 @@ PhanideGDB >> visitEndRecord: record [
 
 { #category : #visiting }
 PhanideGDB >> visitExecAsyncOutput: record [
+	Transcript show: 'TODO: Handle exec async output'; cr; show: record
 ]
 
 { #category : #visiting }
@@ -161,6 +252,7 @@ PhanideGDB >> visitLogStreamRecord: record [
 
 { #category : #visiting }
 PhanideGDB >> visitNotifyAsyncOutput: record [
+	Transcript show: 'TODO: Handle notify async output'; cr; show: record
 ]
 
 { #category : #visiting }
@@ -179,9 +271,15 @@ PhanideGDB >> visitResultRecord: record [
 
 { #category : #visiting }
 PhanideGDB >> visitStatusAsyncOutput: record [
+	Transcript show: 'TODO: Handle status async output'; cr; show: record
 ]
 
 { #category : #visiting }
 PhanideGDB >> visitTargetStreamRecord: record [
 	eventHandler onTargetOutput: record value
+]
+
+{ #category : #'convenience commands' }
+PhanideGDB >> workingDirectory: workingDirectory [
+	^ self mi: ('-environment-cd {1}' format: {workingDirectory asCStringForGDB})
 ]

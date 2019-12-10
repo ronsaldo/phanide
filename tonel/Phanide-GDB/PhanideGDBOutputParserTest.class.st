@@ -40,6 +40,7 @@ PhanideGDBOutputParserTest >> sample [
 ~"for full documentation.\n"
 ~"Type \"apropos word\" to search for commands related to \"word\".\n"
 ~"Command name abbreviations are allowed if unambiguous.\n"
+=library-loaded,id="/lib64/ld-linux-x86-64.so.2",target-name="/lib64/ld-linux-x86-64.so.2",host-name="/lib64/ld-linux-x86-64.so.2",symbols-loaded="0",thread-group="i1",ranges=[{from="0x00007ffff7fd3090",to="0x00007ffff7ff3130"}]
 ^done
 (gdb)'
 ]
@@ -52,6 +53,7 @@ PhanideGDBOutputParserTest >> testParser [
 	self assert: records first isAsyncRecord. 
 	self assert: records second isStreamRecord.
 	self assert: (records at: 11) isEndRecord.
-	self assert: (records at: 32) isResultRecord.
+	self assert: (records at: 32) isAsyncRecord.
+	self assert: (records at: 33) isResultRecord.
 	self assert: records last isEndRecord.
 ]

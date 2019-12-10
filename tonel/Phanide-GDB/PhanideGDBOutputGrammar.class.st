@@ -99,7 +99,7 @@ PhanideGDBOutputGrammar >> nonEmptyList [
 
 { #category : #accessing }
 PhanideGDBOutputGrammar >> nonEmptyTuple [
-	^ ${ asParser , result , ($, asParser , result) star , $}
+	^ ${ asParser , result , ($, asParser , result) star , $} asParser 
 ]
 
 { #category : #records }

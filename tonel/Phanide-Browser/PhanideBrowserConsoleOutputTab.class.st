@@ -3,22 +3,33 @@ I represent a console output UI interface.
 "
 Class {
 	#name : #PhanideBrowserConsoleOutputTab,
-	#superclass : #PhanideBrowserComponent,
+	#superclass : #PhanideBrowserMorphFileEditor,
 	#instVars : [
-		'text'
+		'textModel'
 	],
-	#category : 'Phanide-Browser-UI'
+	#category : #'Phanide-Browser-UI'
 }
-
-{ #category : #specs }
-PhanideBrowserConsoleOutputTab class >> defaultSpec [
-	^ self specLayout
-		add: #text
-]
 
 { #category : #testing }
 PhanideBrowserConsoleOutputTab class >> isPermanentComponent [
 	^ true
+]
+
+{ #category : #'acessing text' }
+PhanideBrowserConsoleOutputTab >> appendText: aText [
+	morph appendText: aText
+]
+
+{ #category : #initialization }
+PhanideBrowserConsoleOutputTab >> createMorph [
+	textModel := RubScrolledTextModel new.
+	^ textModel newScrolledText
+		color: Smalltalk ui theme backgroundColor;
+		textColor: Smalltalk ui theme textColor;
+		textFont: StandardFonts codeFont;
+		tabWidth: (StandardFonts codeFont characterFormAt: Character space) advance x * 4;
+		yourself.
+
 ]
 
 { #category : #accessing }
@@ -32,21 +43,13 @@ PhanideBrowserConsoleOutputTab >> defaultName [
 ]
 
 { #category : #initialization }
-PhanideBrowserConsoleOutputTab >> initializeWidgets [
-	text := self newText
+PhanideBrowserConsoleOutputTab >> initializePresenter [
+	self whenBuiltDo: [
+	]
+
 ]
 
 { #category : #'as yet unclassified' }
 PhanideBrowserConsoleOutputTab >> installLocation [
 	^ #bottomTabs
-]
-
-{ #category : #accessing }
-PhanideBrowserConsoleOutputTab >> text [
-	^ text
-]
-
-{ #category : #accessing }
-PhanideBrowserConsoleOutputTab >> text: anObject [
-	text := anObject
 ]

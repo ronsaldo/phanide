@@ -16,5 +16,9 @@ PhanideGDBEventHandler >> onLogOutput: aString [
 ]
 
 { #category : #'as yet unclassified' }
+PhanideGDBEventHandler >> onTargetErrorOutput: aString [
+]
+
+{ #category : #'as yet unclassified' }
 PhanideGDBEventHandler >> onTargetOutput: aString [
 ]

@@ -18,6 +18,11 @@ PhanideGDBTranscriptOutputEventHandler >> onLogOutput: aString [
 ]
 
 { #category : #'as yet unclassified' }
+PhanideGDBTranscriptOutputEventHandler >> onTargetErrorOutput: aString [
+	Transcript show: aString
+]
+
+{ #category : #'as yet unclassified' }
 PhanideGDBTranscriptOutputEventHandler >> onTargetOutput: aString [
-	Transcript show: aString; cr.
+	Transcript show: aString
 ]

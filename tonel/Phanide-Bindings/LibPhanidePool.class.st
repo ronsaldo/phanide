@@ -21,9 +21,14 @@ Class {
 		'PHANIDE_PIPE_ERROR',
 		'PHANIDE_PIPE_ERROR_CLOSED',
 		'PHANIDE_PIPE_ERROR_WOULD_BLOCK',
+		'PHANIDE_PIPE_INDEX_EXTRA_STDERR',
+		'PHANIDE_PIPE_INDEX_EXTRA_STDIN',
+		'PHANIDE_PIPE_INDEX_EXTRA_STDOUT',
 		'PHANIDE_PIPE_INDEX_STDERR',
 		'PHANIDE_PIPE_INDEX_STDIN',
 		'PHANIDE_PIPE_INDEX_STDOUT',
+		'PHANIDE_SPAWN_FLAGS_NONE',
+		'PHANIDE_SPAWN_FLAGS_OPEN_EXTRA_PIPES',
 		'phanide_context_t',
 		'phanide_event_fsmonitor_t',
 		'phanide_event_process_finished_t',
@@ -32,7 +37,7 @@ Class {
 		'phanide_fsmonitor_handle_t',
 		'phanide_process_t'
 	],
-	#category : 'Phanide-Bindings-Bindings'
+	#category : #'Phanide-Bindings-Bindings'
 }
 
 { #category : #initialization }
@@ -54,6 +59,13 @@ LibPhanidePool class >> initialize [
 	PHANIDE_PIPE_INDEX_STDOUT := 1.
 	PHANIDE_PIPE_INDEX_STDERR := 2.
 
+	PHANIDE_PIPE_INDEX_EXTRA_STDIN := 3.
+	PHANIDE_PIPE_INDEX_EXTRA_STDOUT := 4.
+	PHANIDE_PIPE_INDEX_EXTRA_STDERR := 5.
+
+	PHANIDE_SPAWN_FLAGS_NONE := 0.
+	PHANIDE_SPAWN_FLAGS_OPEN_EXTRA_PIPES := 1.
+	
 	PHANIDE_PIPE_ERROR := -1.
 	PHANIDE_PIPE_ERROR_WOULD_BLOCK := -2.
 	PHANIDE_PIPE_ERROR_CLOSED := -3.

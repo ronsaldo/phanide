@@ -14,6 +14,11 @@ LibPhanideContext class >> create: semaphoreIndex [
 	^ self ffiCall: #(phanide_context_t phanide_createContext(size_t semaphoreIndex))
 ]
 
+{ #category : #events }
+LibPhanideContext >> canSignalExternalSemaphore [
+	^ self ffiCall: #(bool phanide_canSignalExternalSemaphore(self))
+]
+
 { #category : #initialize }
 LibPhanideContext >> destroy [
 	^ self ffiCall: #(void phanide_destroyContext(this))
@@ -38,17 +43,32 @@ LibPhanideContext >> pushEvent: anEvent [
 
 { #category : #process }
 LibPhanideContext >> spawn: path arguments: arguments [
-	^ self ffiCall: #(phanide_process_t phanide_process_spawnInPath(self, String path, String* arguments))
+	^ self spawn: path arguments: arguments flags: PHANIDE_SPAWN_FLAGS_NONE
+]
+
+{ #category : #process }
+LibPhanideContext >> spawn: path arguments: arguments flags: flags [
+	^ self ffiCall: #(phanide_process_t phanide_process_spawnInPath(self, String path, String* arguments, int flags))
 ]
 
 { #category : #process }
 LibPhanideContext >> spawnInPath: file arguments: arguments [
-	^ self ffiCall: #(phanide_process_t phanide_process_spawnInPath(self, String file, String* arguments))
+	^ self spawnInPath: file arguments: arguments flags: PHANIDE_SPAWN_FLAGS_NONE
+]
+
+{ #category : #process }
+LibPhanideContext >> spawnInPath: file arguments: arguments flags: flags [
+	^ self ffiCall: #(phanide_process_t phanide_process_spawnInPath(self, String file, String* arguments, int flags))
 ]
 
 { #category : #process }
 LibPhanideContext >> spawnShell: command [
-	^ self ffiCall: #(phanide_process_t phanide_process_spawnShell(self, String command))
+	^ self spawnShell: command flags: PHANIDE_SPAWN_FLAGS_NONE
+]
+
+{ #category : #process }
+LibPhanideContext >> spawnShell: command flags: flags [
+	^ self ffiCall: #(phanide_process_t phanide_process_spawnShell(self, String command, int flags))
 ]
 
 { #category : #events }
