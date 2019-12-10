@@ -68,7 +68,18 @@ typedef enum phanide_pipe_index_e
     PHANIDE_PIPE_INDEX_STDIN = 0,
     PHANIDE_PIPE_INDEX_STDOUT = 1,
     PHANIDE_PIPE_INDEX_STDERR = 2,
+
+    /* These extra pipes are for facilitating the GDB I/O redirection*/
+    PHANIDE_PIPE_INDEX_EXTRA_STDIN = 3,
+    PHANIDE_PIPE_INDEX_EXTRA_STDOUT = 4,
+    PHANIDE_PIPE_INDEX_EXTRA_STDERR = 5,
 } phanide_pipe_index_t;
+
+typedef enum phanide_process_spawn_flags_e
+{
+    PHANIDE_SPAWN_FLAGS_NONE = 0,
+    PHANIDE_SPAWN_FLAGS_OPEN_EXTRA_PIPES = 1
+} phanide_process_spawn_flags_t;
 
 typedef enum phanide_pipe_error_e
 {
@@ -118,9 +129,9 @@ PHANIDE_CORE_EXPORT void *phanide_malloc(size_t size);
 PHANIDE_CORE_EXPORT void phanide_free(void *pointer);
 
 /* Process spawning */
-PHANIDE_CORE_EXPORT phanide_process_t *phanide_process_spawn(phanide_context_t *context, const char *path, const char **argv);
-PHANIDE_CORE_EXPORT phanide_process_t *phanide_process_spawnInPath(phanide_context_t *context, const char *file, const char **argv);
-PHANIDE_CORE_EXPORT phanide_process_t *phanide_process_spawnShell(phanide_context_t *context, const char *command);
+PHANIDE_CORE_EXPORT phanide_process_t *phanide_process_spawn(phanide_context_t *context, const char *path, const char **argv, phanide_process_spawn_flags_t flags);
+PHANIDE_CORE_EXPORT phanide_process_t *phanide_process_spawnInPath(phanide_context_t *context, const char *file, const char **argv, phanide_process_spawn_flags_t flags);
+PHANIDE_CORE_EXPORT phanide_process_t *phanide_process_spawnShell(phanide_context_t *context, const char *command, phanide_process_spawn_flags_t flags);
 
 /* Process termination */
 PHANIDE_CORE_EXPORT void phanide_process_free(phanide_process_t *process);
