@@ -26,8 +26,11 @@ PhanideProcess class >> newWithDriver: driver handle: handle flags: flags [
 { #category : #events }
 PhanideProcess >> destroy [
 	handle ifNil: [ ^ self ].
-	handle destroy.
-	handle := nil.
+	mutex critical: [ 
+		handle destroy.
+		handle := nil.
+	].
+
 ]
 
 { #category : #accessing }

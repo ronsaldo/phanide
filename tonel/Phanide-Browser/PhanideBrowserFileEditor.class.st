@@ -77,6 +77,11 @@ PhanideBrowserFileEditor >> fileReference: anObject [
 	self fileChanged
 ]
 
+{ #category : #'as yet unclassified' }
+PhanideBrowserFileEditor >> highlightLine: line forDebuggerStopReason: reason [
+	^ nil
+]
+
 { #category : #initialization }
 PhanideBrowserFileEditor >> initialize [
 	temporaryEditor := false.

@@ -12,6 +12,16 @@ PhanideGDBHandle class >> for: gdb [
 	^ self new gdb: gdb
 ]
 
+{ #category : #'instance creation' }
+PhanideGDBHandle class >> for: gdb from: result [
+	^ (self for: gdb) constructFromResult: result
+]
+
+{ #category : #'as yet unclassified' }
+PhanideGDBHandle >> constructFromResult: result [
+
+]
+
 { #category : #accessing }
 PhanideGDBHandle >> gdb [
 	^ gdb

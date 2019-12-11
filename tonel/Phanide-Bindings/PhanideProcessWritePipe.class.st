@@ -42,9 +42,10 @@ PhanideProcessWritePipe >> write: n from: aBuffer offset: aBufferOffset [
 		[
 			"Wait for the pipe to be ready"
 			[processHasFinished or: [ready]] whileFalse: [ readyCondition wait: mutex ].
-			processHasFinished ifTrue: [ ^ 0 ].
 
-			resultCount := process handle pipe: index writeFrom: aBuffer offset: aBufferOffset - 1 count: n.
+			resultCount := process handle
+				ifNil: [ PHANIDE_PIPE_ERROR_CLOSED ]
+				ifNotNil: [:handle | handle pipe: index writeFrom: aBuffer offset: aBufferOffset - 1 count: n ].
 			resultCount = PHANIDE_PIPE_ERROR_WOULD_BLOCK ifTrue: [ 
 				ready := false.
 			].

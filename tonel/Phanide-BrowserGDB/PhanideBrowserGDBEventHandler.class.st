@@ -20,14 +20,31 @@ PhanideBrowserGDBEventHandler >> browser: anObject [
 
 { #category : #accessing }
 PhanideBrowserGDBEventHandler >> debugger [
-	^ browser debuggerState debugger
+	^ browser debuggerState currentDebugger
+]
+
+{ #category : #events }
+PhanideBrowserGDBEventHandler >> notifyStopWithReason: reason atFrame: frame [
+	browser debuggerState notifyDebugStopWithReason: reason file: frame file line: frame line pcAddress: frame addr pcFunction: frame func
+
+]
+
+{ #category : #events }
+PhanideBrowserGDBEventHandler >> onExecBreakpointHitEvent: event [
+	self notifyStopWithReason: 'Breakpoint hit' atFrame: event frame.
+
+]
+
+{ #category : #events }
+PhanideBrowserGDBEventHandler >> onExecEndSteppingRange: event [
+	self notifyStopWithReason: 'End stepping range' atFrame: event frame.
+
 ]
 
 { #category : #events }
 PhanideBrowserGDBEventHandler >> onExecExitedEvent: event [
 	self debugger ifNotNil: #programExited.
-	
-	
+
 ]
 
 { #category : #'as yet unclassified' }

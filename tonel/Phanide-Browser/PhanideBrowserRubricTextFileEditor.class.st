@@ -53,7 +53,7 @@ PhanideBrowserRubricTextFileEditor >> enableBreakpointAtLineIndex: lineIndex [
 	conf
 		configurationBlock: [ :scrolledText |
 		| r |
-		r := RubPlainSegmentMorph from: startPosition to: endPosition.
+		r := PhanideRubBreakpointSetSegmentMorph from: startPosition to: endPosition.
 		r 
 			label: 'Breakpoint';
 			iconBlock: [ :seg |
@@ -81,6 +81,22 @@ PhanideBrowserRubricTextFileEditor >> fileChanged [
 	].
 	morph hasUnacceptedEdits: false.
 	self unsavedChanges: false.
+]
+
+{ #category : #'as yet unclassified' }
+PhanideBrowserRubricTextFileEditor >> highlightLine: lineIndex forDebuggerStopReason: reason [
+	| line startPosition endPosition conf |
+	line := morph paragraph lines at: lineIndex.	
+	startPosition := line first.
+	endPosition := line last.
+
+	conf := RubConfigurationChange new.
+	conf configurationBlock: [ :scrolledText |
+		scrolledText selectFrom: startPosition to: endPosition
+	].
+
+	textModel announce: conf.
+	^ nil
 ]
 
 { #category : #initialization }

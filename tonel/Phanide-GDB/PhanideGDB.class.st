@@ -66,6 +66,11 @@ PhanideGDB >> createBreakpointInFile: fileName atLine: line [
 	^ PhanideGDBBreakpoint for: self from: (self mi: ('-break-insert --source {1} --line {2}' format: {fileName asCStringForGDB . line asString})) results
 ]
 
+{ #category : #events }
+PhanideGDB >> dispatchEvent: event [
+	^ eventHandler processEvent: event
+]
+
 { #category : #accessing }
 PhanideGDB >> eventHandler [
 	^ eventHandler
@@ -169,12 +174,12 @@ PhanideGDB >> onBreakpointModifiedNotification: notificationData [
 
 { #category : #events }
 PhanideGDB >> onExecRunningEvent: eventData [
-	^ PhanideGDBExecRunningEvent for: self with: eventData
+	^ self dispatchEvent: (PhanideGDBExecRunningEvent for: self with: eventData)
 ]
 
 { #category : #events }
 PhanideGDB >> onExecStoppedEvent: eventData [
-	^ PhanideGDBExecStoppedEvent for: self with: eventData
+	^ self dispatchEvent: (PhanideGDBExecStoppedEvent for: self with: eventData)
 
 ]
 
@@ -249,7 +254,7 @@ PhanideGDB >> programOutputReadingProcess [
 
 { #category : #'convenience commands' }
 PhanideGDB >> quit [
-	self cli: 'quit'.
+	self mi: '-gdb-exit'.
 	^ self finishProcessExecution
 ]
 

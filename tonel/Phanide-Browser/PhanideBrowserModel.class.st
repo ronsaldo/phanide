@@ -531,6 +531,21 @@ PhanideBrowserModel >> makeTemporaryEditorPermanent: tempEditor [
 		makeActive
 ]
 
+{ #category : #'debugger support' }
+PhanideBrowserModel >> notifyDebugStopWithReason: reason file: file line: line pcAddress: pcAddress pcFunction: pcFunction [
+	| fileReference |
+	file ifNotNil: [
+		fileReference := file asFileReference asAbsolute.
+		fileReference exists ifTrue: [ 
+			(self openFileViewTemporarily: fileReference) ifNotNil: [ :fileView |
+				currentDebuggerStopHighlight ifNotNil: [ currentDebuggerStopHighlight delete ].
+				currentDebuggerStopHighlight := fileView highlightLine line forDebuggerStopReason: reason
+			]
+		]
+	].
+
+]
+
 { #category : #files }
 PhanideBrowserModel >> openFileView: aFileReference [
 	| editor |

@@ -17,6 +17,11 @@ PhanideGDBEventHandler >> onExecBreakpointHitEvent: event [
 ]
 
 { #category : #events }
+PhanideGDBEventHandler >> onExecEndSteppingRange: event [
+	
+]
+
+{ #category : #events }
 PhanideGDBEventHandler >> onExecExitedEvent: event [
 	
 ]
@@ -44,5 +49,5 @@ PhanideGDBEventHandler >> onTargetOutput: aString [
 
 { #category : #'events-processing' }
 PhanideGDBEventHandler >> processEvent: event [
-	^ event accept: self
+	^ event processWith: self
 ]

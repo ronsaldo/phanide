@@ -13,11 +13,6 @@ Class {
 	#category : #'Phanide-GDB-FrontEnd'
 }
 
-{ #category : #'instance creation' }
-PhanideGDBBreakpoint class >> for: gdb from: result [
-	^ (self for: gdb) constructFromResult: result
-]
-
 { #category : #accessing }
 PhanideGDBBreakpoint >> addr [
 	^ addr

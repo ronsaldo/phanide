@@ -6,7 +6,8 @@ Class {
 		'currentStartupProgram',
 		'perFileDebuggingStates',
 		'perProgramSettings',
-		'currentDebugger'
+		'currentDebugger',
+		'currentDebuggerStopHighlight'
 	],
 	#category : #'Phanide-Browser-Debugging'
 }
@@ -24,6 +25,11 @@ PhanideBrowserDebuggerState >> browser: anObject [
 { #category : #'debugging actions' }
 PhanideBrowserDebuggerState >> continueCurrentProgramExecution [
 	currentDebugger ifNotNil: [ currentDebugger continue ]
+]
+
+{ #category : #accessing }
+PhanideBrowserDebuggerState >> currentDebugger [
+	^ currentDebugger
 ]
 
 { #category : #accessing }
@@ -68,6 +74,22 @@ PhanideBrowserDebuggerState >> initialize [
 	perFileDebuggingStates := Dictionary new.
 	perProgramSettings := Dictionary new.
 	currentStartupProgram := nil.
+]
+
+{ #category : #'debugger support' }
+PhanideBrowserDebuggerState >> notifyDebugStopWithReason: reason file: file line: line pcAddress: pcAddress pcFunction: pcFunction [
+	| fileReference |
+	file ifNotNil: [
+		fileReference := file asFileReference asAbsolute.
+		fileReference exists ifTrue: [ 
+			(browser openFileViewTemporarily: fileReference) ifNotNil: [ :fileView |
+				currentDebuggerStopHighlight ifNotNil: [ currentDebuggerStopHighlight delete ].
+				currentDebuggerStopHighlight := fileView highlightLine: line forDebuggerStopReason: reason.
+				^ self
+			]
+		]
+	].
+
 ]
 
 { #category : #'debugging actions' }

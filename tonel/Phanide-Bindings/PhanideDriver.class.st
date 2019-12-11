@@ -175,11 +175,12 @@ PhanideDriver >> onProcessFinishedEvent: event [
 	| process |
 	process := self getProcessFromHandle: event process getHandle.
 	process ifNil: [ ^ self ].
-	
-	process finishedWithExitCode: event exitCode.
+
 	processDictionaryMutex critical: [
-		processDictionary removeKey: process handle getHandle ifAbsent: []
-	].
+		processDictionary removeKey: event process getHandle
+	].	
+	process finishedWithExitCode: event exitCode.
+
 ]
 
 { #category : #events }
