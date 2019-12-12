@@ -29,11 +29,17 @@
 #define PHANIDE_EVENT_DESCRIPTOR_SUBPROCESS_INDEX_MASK PHANIDE_MASK_FOR_BIT_COUNT(58)
 #define PHANIDE_EVENT_DESCRIPTOR_SUBPROCESS_INDEX_SHIFT 6
 
+#define PHANIDE_EVENT_DESCRIPTOR_FD_MASK PHANIDE_MASK_FOR_BIT_COUNT(61)
+#define PHANIDE_EVENT_DESCRIPTOR_FD_SHIFT 3
+
 typedef enum phanide_fd_event_descriptor_type_e
 {
     PHANIDE_FD_EVENT_WAKE_UP = 0,
     PHANIDE_FD_EVENT_SUBPROCESS_PIPE,
-    PHANIDE_FD_EVENT_INOTIFY
+    PHANIDE_FD_EVENT_INOTIFY,
+    PHANIDE_FD_EVENT_FILE,
+    PHANIDE_FD_EVENT_DIRECTORY,
+    
 } phanide_fd_event_descriptor_type_t;
 
 #if defined(linux)
@@ -300,6 +306,15 @@ phanide_processKQueueEvent(phanide_context_t *context, struct kevent *event)
     case PHANIDE_FD_EVENT_INOTIFY:
         printf("TODO kqueue inotify");
         break;
+        
+    case PHANIDE_FD_EVENT_DIRECTORY:
+    case PHANIDE_FD_EVENT_FILE:
+        {
+            int fd = PHANIDE_EVENT_DESCRIPTOR_FIELD_GET(descriptor, FD);
+            printf("Got watched FD event: %d\n", fd);
+        }
+        break;
+
     default:
         break;
     }
@@ -341,6 +356,11 @@ phanide_processThreadEntry(void *arg)
             perror("kevent failed");
             return 0;
         }
+        
+        struct kevent ev;
+        EV_SET(&ev, 0, EVFILT_VNODE | EV_CLEAR, EV_ADD, NOTE_FFCOPY, 0, NULL);
+        kevent(context->io.kqueueFD, &ev, 1, NULL, 0, NULL);
+
         phanide_processKQueueEvents(context, events, eventCount);
 #else
 #error Select not yet implemented
@@ -1054,7 +1074,26 @@ phanide_fsmonitor_handle_t *result = NULL;
         result = (phanide_fsmonitor_handle_t*)(size_t)wd;
 
     phanide_mutex_unlock(&context->io.fsmonitorMutex);
-#else
+
+#elif USE_KQUEUE
+    int eventFD = open(path, O_EVTONLY);
+    if(eventFD < 0)
+        return NULL;
+
+    result = (phanide_fsmonitor_handle_t*)(size_t)eventFD;
+    printf("Watch file %s %d\n", path, eventFD);
+    
+    uint64_t descriptor = PHANIDE_EVENT_DESCRIPTOR_FIELD_SET(0, TYPE, PHANIDE_FD_EVENT_FILE);
+    descriptor = PHANIDE_EVENT_DESCRIPTOR_FIELD_SET(descriptor, FD, eventFD);
+
+    phanide_mutex_lock(&context->io.fsmonitorMutex);
+    
+    struct kevent event;
+    unsigned int fileEvents = NOTE_DELETE | NOTE_WRITE | NOTE_EXTEND | NOTE_ATTRIB | NOTE_LINK | NOTE_RENAME | NOTE_REVOKE;
+    EV_SET(&event, eventFD, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_CLEAR, fileEvents, 0, (void*)(uintptr_t)descriptor);
+    kevent(context->io.kqueueFD, &event, 1, NULL, 0, NULL);
+
+    phanide_mutex_unlock(&context->io.fsmonitorMutex);
 #endif
     return result;
 }
@@ -1074,7 +1113,24 @@ phanide_fsmonitor_watchDirectory(phanide_context_t *context, const char *path)
         result = (phanide_fsmonitor_handle_t*)(size_t)wd;
 
     phanide_mutex_unlock(&context->io.fsmonitorMutex);
-#else
+#elif USE_KQUEUE
+    int eventFD = open(path, O_RDONLY);
+    if(eventFD < 0)
+        return NULL;
+
+    result = (phanide_fsmonitor_handle_t*)(size_t)eventFD;
+
+    uint64_t descriptor = PHANIDE_EVENT_DESCRIPTOR_FIELD_SET(0, TYPE, PHANIDE_FD_EVENT_DIRECTORY);
+    descriptor = PHANIDE_EVENT_DESCRIPTOR_FIELD_SET(descriptor, FD, eventFD);
+
+    phanide_mutex_lock(&context->io.fsmonitorMutex);
+
+    struct kevent event;
+    unsigned int fileEvents = NOTE_DELETE | NOTE_WRITE | NOTE_EXTEND | NOTE_ATTRIB | NOTE_LINK | NOTE_RENAME | NOTE_REVOKE;
+    EV_SET(&event, eventFD, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_CLEAR, fileEvents, 0, (void*)(uintptr_t)descriptor);
+    kevent(context->io.kqueueFD, &event, 1, NULL, 0, NULL);
+    
+    phanide_mutex_unlock(&context->io.fsmonitorMutex);
 #endif
 
     return result;
@@ -1091,7 +1147,13 @@ phanide_fsmonitor_destroy(phanide_context_t *context, phanide_fsmonitor_handle_t
     int wd = (int)(size_t)handle;
     inotify_rm_watch(context->io.inotifyFD, wd);
     phanide_mutex_unlock(&context->io.fsmonitorMutex);
-#else
+#elif USE_KQUEUE
+    if(!handle)
+        return;
+        
+    int eventFD = (int)(uintptr_t)handle;
+    close(eventFD);
+    
 #endif
 }
 

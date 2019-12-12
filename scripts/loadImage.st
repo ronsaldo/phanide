@@ -1,6 +1,6 @@
 Metacello new
   baseline: 'Phanide';
-  repository: 'tonel://tonel';
+  repository: 'gitlocal://.';
   load.
 
 "Save the image"
