@@ -78,7 +78,7 @@ LibPhanideContext >> waitEvent: anEvent [
 
 { #category : #'file system' }
 LibPhanideContext >> watchDirectory: path [
-	^ self ffiCall: #(phanide_fsmonitor_handle_t phanide_fsmonitor_watchFile(self, String path))
+	^ self ffiCall: #(phanide_fsmonitor_handle_t phanide_fsmonitor_watchDirectory(self, String path))
 ]
 
 { #category : #'file system' }
