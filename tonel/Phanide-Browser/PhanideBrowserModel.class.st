@@ -640,7 +640,7 @@ PhanideBrowserModel >> setCurrentStartupProgramForFileReference: aStartupProgram
 	programSettings := self debuggerState setCurrentStartupProgramForFileReference: aStartupProgramFileReference.
 	
 	startupProgramCombo addItemLabeled: programSettings name do: [
-		self debuggerState setCurrentStartupProgram: programSettings
+		self debuggerState currentStartupProgram: programSettings
 	]
 ]
 
