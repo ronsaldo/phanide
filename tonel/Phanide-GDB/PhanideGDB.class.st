@@ -40,11 +40,13 @@ PhanideGDB class >> initialize [
 	AsyncNotificationHandlingMap := Dictionary newFromPairs: #(
 		'breakpoint-modified' onBreakpointModifiedNotification:
 		'library-loaded' onLibraryLoadedNotification:
+		'library-unloaded' onLibraryUnloadedNotification:
 		'thread-group-added' onThreadGroupAddredNotification:
 		'thread-group-started' onThreadGroupStartedNotification:
 		'thread-group-exited' onThreadGroupExitedNotification:
 		'thread-created' onThreadCreatedNotification:
 		'thread-exited' onThreadExitedNotification:
+		'thread-selected' onThreadSelectedNotification:
 	).
 	
 	AsyncExecHandlingMap := Dictionary newFromPairs: #(
@@ -253,6 +255,10 @@ PhanideGDB >> onThreadGroupExitedNotification: notificationData [
 
 { #category : #notifications }
 PhanideGDB >> onThreadGroupStartedNotification: notificationData [
+]
+
+{ #category : #notifications }
+PhanideGDB >> onThreadSelectedNotification: notificationData [
 ]
 
 { #category : #'as yet unclassified' }
