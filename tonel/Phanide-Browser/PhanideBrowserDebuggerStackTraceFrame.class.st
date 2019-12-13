@@ -2,6 +2,7 @@ Class {
 	#name : #PhanideBrowserDebuggerStackTraceFrame,
 	#superclass : #Object,
 	#instVars : [
+		'threadId',
 		'level',
 		'address',
 		'function',
@@ -72,4 +73,14 @@ PhanideBrowserDebuggerStackTraceFrame >> printOn: aStream [
 		aStream nextPutAll: ' File: '; print: file.
 		line ifNotNil: [ aStream nextPutAll: ' Line: '; print: line ]
 	].
+]
+
+{ #category : #accessing }
+PhanideBrowserDebuggerStackTraceFrame >> threadId [
+	^ threadId
+]
+
+{ #category : #accessing }
+PhanideBrowserDebuggerStackTraceFrame >> threadId: anObject [
+	threadId := anObject
 ]

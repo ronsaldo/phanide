@@ -8,10 +8,21 @@ Class {
 		'perProgramSettings',
 		'currentDebugger',
 		'currentDebuggerStopHighlight',
+		'currentThread',
 		'currentStackFrame'
 	],
 	#category : #'Phanide-Browser-Debugging'
 }
+
+{ #category : #'as yet unclassified' }
+PhanideBrowserDebuggerState >> breakpointCreated: breakpoint [
+	currentDebugger ifNotNil: [ currentDebugger breakpointCreated: breakpoint ]
+]
+
+{ #category : #'as yet unclassified' }
+PhanideBrowserDebuggerState >> breakpointDestroyed: breakpoint [
+	currentDebugger ifNotNil: [ currentDebugger breakpointDestroyed: breakpoint ]
+]
 
 { #category : #accessing }
 PhanideBrowserDebuggerState >> browser [
@@ -63,6 +74,16 @@ PhanideBrowserDebuggerState >> currentStartupProgram: anObject [
 	currentStartupProgram := anObject
 ]
 
+{ #category : #accessing }
+PhanideBrowserDebuggerState >> currentThread [
+	^ currentThread
+]
+
+{ #category : #accessing }
+PhanideBrowserDebuggerState >> currentThread: anObject [
+	currentThread := anObject
+]
+
 { #category : #'as yet unclassified' }
 PhanideBrowserDebuggerState >> debuggerFinished [
 	currentDebugger := nil.
@@ -87,7 +108,9 @@ PhanideBrowserDebuggerState >> getOrCreateBreakpointInFile: fileReference atLine
 { #category : #breakpoints }
 PhanideBrowserDebuggerState >> getOrCreateFileDebuggingState: fileReference [
 	fileReference isAbsolute ifFalse: [ ^ self getOrCreateFileDebuggingState: fileReference asAbsolute ].
-	^ perFileDebuggingStates at: fileReference ifAbsentPut: [ PhanideBrowserDebuggerPerFileState for: fileReference ]
+	^ perFileDebuggingStates at: fileReference ifAbsentPut: [ (PhanideBrowserDebuggerPerFileState for: fileReference)
+		debuggingState: self;
+		yourself ]
 ]
 
 { #category : #settings }
@@ -121,14 +144,26 @@ PhanideBrowserDebuggerState >> initialize [
 	perFileDebuggingStates := Dictionary new.
 	perProgramSettings := Dictionary new.
 	currentStartupProgram := nil.
+	currentStackFrame := nil.
+	currentThread := nil.
 ]
 
 { #category : #'debugger support' }
 PhanideBrowserDebuggerState >> notifyDebugStopWithReason: reason atFrame: stackFrame [
+	currentThread := stackFrame threadId.
 	browser allComponentsDo: [ :comp |
 		comp notifyDebugStopWithReason: reason atFrame: stackFrame
 	].
 	self currentStackFrame: stackFrame.
+]
+
+{ #category : #'debugger support' }
+PhanideBrowserDebuggerState >> notifyProgramIsRunning [
+	currentThread := nil.
+	currentStackFrame := nil.
+	browser allComponentsDo: [ :comp |
+		comp notifyDebugProgramIsRunning
+	].
 ]
 
 { #category : #'debugging actions' }
@@ -157,7 +192,7 @@ PhanideBrowserDebuggerState >> setCurrentStartupProgramForFileReference: aFileRe
 PhanideBrowserDebuggerState >> setupBreakpointsInDebugger [
 	perFileDebuggingStates valuesDo: [ :perFileState |
 		perFileState breakpointsDo: [ :breakpoint |
-			currentDebugger setupBreakpoint: breakpoint.
+			currentDebugger breakpointCreated: breakpoint.
 		]
 	]
 ]
@@ -165,6 +200,7 @@ PhanideBrowserDebuggerState >> setupBreakpointsInDebugger [
 { #category : #'debugging actions' }
 PhanideBrowserDebuggerState >> startNewDebuggingSession [
 	self stopCurrentDebugger.
+	
 	currentDebugger := PhanideBrowserDebugger findAvailableDebugger
 		ifNil: [ self error: 'Not valid debuggger is available.' ].
 	currentDebugger
@@ -186,5 +222,7 @@ PhanideBrowserDebuggerState >> stepOver [
 { #category : #'debugging actions' }
 PhanideBrowserDebuggerState >> stopCurrentDebugger [
 	currentDebugger ifNotNil: [ currentDebugger stop ].
-	currentDebugger := nil
+	currentDebugger := nil.
+	currentStackFrame := nil.
+	currentThread := nil.
 ]

@@ -22,6 +22,7 @@ PhanideGDBExecStoppedEvent class >> for: gdb with: eventData [
 PhanideGDBExecStoppedEvent class >> initialize [
 	ReasonEventClassMap := Dictionary newFromPairs: {
 		'breakpoint-hit' . PhanideGDBExecBreakpointHitEvent .
+		'signal-received' . PhanideGDBExecSignalReceivedEvent .
 		'end-stepping-range' . PhanideGDBExecEndSteppingRangeEvent .
 		'exited' . PhanideGDBExecExitedEvent .
 		'exited-normally' . PhanideGDBExecExitedEvent .

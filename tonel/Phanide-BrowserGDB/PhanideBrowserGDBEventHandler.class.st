@@ -30,6 +30,11 @@ PhanideBrowserGDBEventHandler >> debugger [
 ]
 
 { #category : #events }
+PhanideBrowserGDBEventHandler >> notifyProgramIsRunning [
+	browser debuggerState notifyProgramIsRunning
+]
+
+{ #category : #events }
 PhanideBrowserGDBEventHandler >> notifyStopWithReason: reason atFrame: frame [
 	browser debuggerState notifyDebugStopWithReason: reason atFrame: (self debugger convertGDBFrame: frame)
 
@@ -57,6 +62,18 @@ PhanideBrowserGDBEventHandler >> onExecEndSteppingRange: event [
 { #category : #events }
 PhanideBrowserGDBEventHandler >> onExecExitedEvent: event [
 	self debugger ifNotNil: #programExited.
+
+]
+
+{ #category : #events }
+PhanideBrowserGDBEventHandler >> onExecRunningEvent: event [
+	self notifyProgramIsRunning
+
+]
+
+{ #category : #events }
+PhanideBrowserGDBEventHandler >> onExecSignalReceived: event [
+	self notifyStopWithReason: 'Signal received' atFrame: event frame.
 
 ]
 

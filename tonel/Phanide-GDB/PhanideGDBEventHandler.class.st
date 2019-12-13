@@ -39,6 +39,11 @@ PhanideGDBEventHandler >> onExecRunningEvent: event [
 ]
 
 { #category : #events }
+PhanideGDBEventHandler >> onExecSignalReceived: event [
+	
+]
+
+{ #category : #events }
 PhanideGDBEventHandler >> onExecStoppedEvent: event [
 	
 ]

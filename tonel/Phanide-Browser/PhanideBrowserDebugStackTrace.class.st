@@ -36,14 +36,33 @@ PhanideBrowserDebugStackTrace >> defaultName [
 	^ #DebugStackTrace
 ]
 
+{ #category : #initialization }
+PhanideBrowserDebugStackTrace >> initializePresenter [
+	morph onAnnouncement: FTStrongSelectionChanged do: [ :ann |
+		self onDoubleClick: ann selectedRowIndex
+	].
+]
+
 { #category : #'as yet unclassified' }
 PhanideBrowserDebugStackTrace >> installLocation [
 	^ #rightMiddleTabs
 ]
 
+{ #category : #'as yet unclassified' }
+PhanideBrowserDebugStackTrace >> notifyDebugProgramIsRunning [
+	dataSource elements: #(); tableRefresh
+]
+
 { #category : #notifications }
 PhanideBrowserDebugStackTrace >> notifyDebugStopWithReason: reason atFrame: stackFrame [
 	self updateStackTrace
+]
+
+{ #category : #initialization }
+PhanideBrowserDebugStackTrace >> onDoubleClick: selectedElement [
+	| stackFrame |
+	stackFrame := morph dataSource elementAt: selectedElement.
+	self debuggerState currentStackFrame: stackFrame
 ]
 
 { #category : #'as yet unclassified' }

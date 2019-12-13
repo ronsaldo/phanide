@@ -20,7 +20,10 @@ Class {
 		'programOutputReadingProcess',
 		'programErrorReadingProcess',
 		'separateStdoutFromStderr',
-		'useIORedirection'
+		'useIORedirection',
+		'isRunning',
+		'isStopped',
+		'isStoppingForCommand'
 	],
 	#classVars : [
 		'AsyncExecHandlingMap',
@@ -63,12 +66,30 @@ PhanideGDB >> cli: aString withResult: aPhanideGDBFutureCommandResult [
 
 { #category : #'convenience commands' }
 PhanideGDB >> createBreakpointInFile: fileName atLine: line [
-	^ PhanideGDBBreakpoint for: self from: (self mi: ('-break-insert --source {1} --line {2}' format: {fileName asCStringForGDB . line asString})) results
+	| breakpointCommand |
+	breakpointCommand := self ensureStopped: [ 
+		self mi: ('-break-insert --source {1} --line {2}' format: {fileName asCStringForGDB . line asString})
+	].
+
+	^ PhanideGDBBreakpoint for: self from: breakpointCommand results
 ]
 
 { #category : #events }
 PhanideGDB >> dispatchEvent: event [
 	^ eventHandler dispatchEvent: event
+]
+
+{ #category : #'as yet unclassified' }
+PhanideGDB >> ensureStopped: aBlock [
+	(isRunning or: [isStoppingForCommand]) ifFalse: [ ^ aBlock value ].
+	isStoppingForCommand := true.
+	(self mi: '-exec-interrupt') value.
+	^ [ 
+		aBlock value.
+	] ensure: [
+		isStoppingForCommand := false.
+		(self mi: '-exec-continue') value.
+	]
 ]
 
 { #category : #accessing }
@@ -121,19 +142,20 @@ PhanideGDB >> gdbCommand [
 ]
 
 { #category : #'convenience commands' }
-PhanideGDB >> getLocals [
+PhanideGDB >> getLocalsInThread: threadId frameLevel: frameLevel [
 	| variables |
-	variables := (self mi: '-stack-list-variables --thread 1 --frame 0 --simple-values') results.
+	variables := (self mi: ('-stack-list-variables --thread {1} --frame {2} --simple-values' format: {threadId asString . frameLevel asString})) results.
 	^ (variables at: #variables) collect: [ :var | PhanideGDBVariable for: self from: var ]
 ]
 
 { #category : #'convenience commands' }
-PhanideGDB >> getStackTrace [
+PhanideGDB >> getStackTraceForThread: threadId [
 	| trace frames |
-	trace := (self mi: '-stack-list-frames') results at: #stack.
+	trace := (self mi: ('-stack-list-frames --thread {1}' format: {threadId asString})) results at: #stack.
 	frames := trace collect: [ :frame |
 		self assert: frame key = #frame.
-		PhanideGDBStackFrame for: self from: frame value
+		(PhanideGDBStackFrame for: self from: frame value)
+			thread: threadId
 	].
 	^ frames
 ]
@@ -145,7 +167,8 @@ PhanideGDB >> initialize [
 	
 	tokenCountMutex := Semaphore forMutualExclusion.
 	tokenCount := 0.
-	
+	isRunning := false.
+	isStoppingForCommand := false.
 ]
 
 { #category : #initialization }
@@ -192,17 +215,24 @@ PhanideGDB >> onBreakpointModifiedNotification: notificationData [
 
 { #category : #events }
 PhanideGDB >> onExecRunningEvent: eventData [
+	isRunning := true.
 	^ self dispatchEvent: (PhanideGDBExecRunningEvent for: self with: eventData)
 ]
 
 { #category : #events }
 PhanideGDB >> onExecStoppedEvent: eventData [
+	isStoppingForCommand ifTrue: [ ^ self ].
+	isStopped := true.
 	^ self dispatchEvent: (PhanideGDBExecStoppedEvent for: self with: eventData)
 
 ]
 
 { #category : #notifications }
 PhanideGDB >> onLibraryLoadedNotification: notificationData [
+]
+
+{ #category : #notifications }
+PhanideGDB >> onLibraryUnloadedNotification: notificationData [
 ]
 
 { #category : #notifications }

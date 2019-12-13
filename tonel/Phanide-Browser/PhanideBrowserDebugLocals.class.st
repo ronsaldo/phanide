@@ -41,14 +41,31 @@ PhanideBrowserDebugLocals >> defaultName [
 	^ #DebugLocals
 ]
 
+{ #category : #initialization }
+PhanideBrowserDebugLocals >> initializePresenter [
+	morph onAnnouncement: FTStrongSelectionChanged do: [ :ann |
+		self onDoubleClick: ann selectedRowIndex
+	].
+]
+
 { #category : #'as yet unclassified' }
 PhanideBrowserDebugLocals >> installLocation [
 	^ #rightTopTabs
 ]
 
+{ #category : #'as yet unclassified' }
+PhanideBrowserDebugLocals >> notifyDebugProgramIsRunning [
+	dataSource elements: #(); tableRefresh
+]
+
 { #category : #notifications }
 PhanideBrowserDebugLocals >> notifyDebugStackFrameChanged [
 	self updateLocals
+]
+
+{ #category : #initialization }
+PhanideBrowserDebugLocals >> onDoubleClick: selectedElement [
+	(morph dataSource elementAt: selectedElement) inspect
 ]
 
 { #category : #notifications }

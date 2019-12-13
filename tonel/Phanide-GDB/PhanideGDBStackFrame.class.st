@@ -2,6 +2,7 @@ Class {
 	#name : #PhanideGDBStackFrame,
 	#superclass : #PhanideGDBHandle,
 	#instVars : [
+		'thread',
 		'addr',
 		'func',
 		'file',
@@ -74,6 +75,12 @@ PhanideGDBStackFrame >> func: anObject [
 	func := anObject
 ]
 
+{ #category : #initialization }
+PhanideGDBStackFrame >> initialize [
+	super initialize.
+	thread := 1.
+]
+
 { #category : #accessing }
 PhanideGDBStackFrame >> level [
 	^ level
@@ -92,4 +99,14 @@ PhanideGDBStackFrame >> line [
 { #category : #accessing }
 PhanideGDBStackFrame >> line: anObject [
 	line := anObject
+]
+
+{ #category : #accessing }
+PhanideGDBStackFrame >> thread [
+	^ thread
+]
+
+{ #category : #accessing }
+PhanideGDBStackFrame >> thread: anObject [
+	thread := anObject
 ]

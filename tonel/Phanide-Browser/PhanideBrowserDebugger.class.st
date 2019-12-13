@@ -21,6 +21,14 @@ PhanideBrowserDebugger class >> isAvailable [
 	^ false
 ]
 
+{ #category : #'as yet unclassified' }
+PhanideBrowserDebugger >> breakpointCreated: breakpoint [
+]
+
+{ #category : #'as yet unclassified' }
+PhanideBrowserDebugger >> breakpointDestroyed: breakpoint [
+]
+
 { #category : #accessing }
 PhanideBrowserDebugger >> browser [
 	^ browser

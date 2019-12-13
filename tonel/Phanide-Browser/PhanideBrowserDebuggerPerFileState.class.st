@@ -2,6 +2,7 @@ Class {
 	#name : #PhanideBrowserDebuggerPerFileState,
 	#superclass : #Object,
 	#instVars : [
+		'debuggingState',
 		'fileReference',
 		'perLineBreakpoints'
 	],
@@ -29,6 +30,16 @@ PhanideBrowserDebuggerPerFileState >> breakpointsDo: aBlock [
 ]
 
 { #category : #accessing }
+PhanideBrowserDebuggerPerFileState >> debuggingState [
+	^ debuggingState
+]
+
+{ #category : #accessing }
+PhanideBrowserDebuggerPerFileState >> debuggingState: anObject [
+	debuggingState := anObject
+]
+
+{ #category : #accessing }
 PhanideBrowserDebuggerPerFileState >> fileReference [
 	^ fileReference
 ]
@@ -40,10 +51,14 @@ PhanideBrowserDebuggerPerFileState >> fileReference: anObject [
 
 { #category : #'as yet unclassified' }
 PhanideBrowserDebuggerPerFileState >> getOrCreateBreakpointAtLine: line [
-	^ perLineBreakpoints at: line ifAbsentPut: [ PhanideBrowserDebuggerBreakpoint new
+	^ perLineBreakpoints at: line ifAbsentPut: [
+		| breakpoint |
+		breakpoint := PhanideBrowserDebuggerBreakpoint new
 			fileDebuggingState: self;
 			lineIndex: line;
-			yourself ]
+			yourself.
+		debuggingState breakpointCreated: breakpoint.
+		breakpoint ]
 ]
 
 { #category : #initialization }

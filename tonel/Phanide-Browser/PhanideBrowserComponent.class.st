@@ -141,6 +141,10 @@ PhanideBrowserComponent >> name: aNewName [
 	name := aNewName
 ]
 
+{ #category : #'as yet unclassified' }
+PhanideBrowserComponent >> notifyDebugProgramIsRunning [
+]
+
 { #category : #notifications }
 PhanideBrowserComponent >> notifyDebugStackFrameChanged [
 ]

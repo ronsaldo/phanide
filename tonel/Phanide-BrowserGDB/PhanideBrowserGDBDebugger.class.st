@@ -13,6 +13,13 @@ PhanideBrowserGDBDebugger class >> isAvailable [
 	^ LibPhanide isAvailable
 ]
 
+{ #category : #'as yet unclassified' }
+PhanideBrowserGDBDebugger >> breakpointCreated: breakpoint [
+	breakpointHandles at: breakpoint ifAbsentPut: [
+		gdb createBreakpointInFile: breakpoint fileReference fullName atLine: breakpoint lineIndex
+	].
+]
+
 { #category : #initialization }
 PhanideBrowserGDBDebugger >> continue [
 	gdb execContinue
@@ -21,6 +28,7 @@ PhanideBrowserGDBDebugger >> continue [
 { #category : #'debugging actions' }
 PhanideBrowserGDBDebugger >> convertGDBFrame: gdbFrame [
 	^ PhanideBrowserDebuggerStackTraceFrame new
+		threadId: gdbFrame thread;
 		level: gdbFrame level;
 		address: gdbFrame addr;
 		function: gdbFrame func;
@@ -41,8 +49,9 @@ PhanideBrowserGDBDebugger >> convertGDBLocal: gdbLocal [
 
 { #category : #'debugging actions' }
 PhanideBrowserGDBDebugger >> getLocals [
-	| locals |
-	locals := gdb getLocals.
+	| locals stackFrame |
+	stackFrame := self debuggerState currentStackFrame ifNil: [ ^ #() ].
+	locals := gdb getLocalsInThread: stackFrame threadId frameLevel: stackFrame level.
 	^ locals collect: [ :local |
 		self convertGDBLocal: local
 	]
@@ -51,7 +60,7 @@ PhanideBrowserGDBDebugger >> getLocals [
 { #category : #'debugging actions' }
 PhanideBrowserGDBDebugger >> getStackTrace [
 	| stackTrace |
-	stackTrace := gdb getStackTrace.
+	stackTrace := gdb getStackTraceForThread: (self debuggerState currentThread ifNil: [1]).
 	^ stackTrace collect: [ :frame | self convertGDBFrame: frame ]
 ]
 
@@ -89,13 +98,6 @@ PhanideBrowserGDBDebugger >> setProgramSettings: programSettings [
 		setProgramFileAndSymbols: programSettings programFileReference fullName;
 		workingDirectory: programSettings workingDirectory fullName;
 		setProgramArguments: programSettings arguments.
-]
-
-{ #category : #'as yet unclassified' }
-PhanideBrowserGDBDebugger >> setupBreakpoint: breakpoint [
-	breakpointHandles at: breakpoint ifAbsentPut: [
-		gdb createBreakpointInFile: breakpoint fileReference fullName atLine: breakpoint lineIndex
-	].
 ]
 
 { #category : #initialization }

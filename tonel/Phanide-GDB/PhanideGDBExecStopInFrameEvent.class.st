@@ -20,5 +20,6 @@ PhanideGDBExecStopInFrameEvent >> frame: anObject [
 { #category : #parsing }
 PhanideGDBExecStopInFrameEvent >> parseEventData: eventData [
 	super parseEventData: eventData.
-	frame := PhanideGDBStackFrame for: gdb from: (eventData at: #frame)
+	frame := PhanideGDBStackFrame for: gdb from: (eventData at: #frame).
+	frame thread: (eventData at: 'thread-id') asInteger
 ]
