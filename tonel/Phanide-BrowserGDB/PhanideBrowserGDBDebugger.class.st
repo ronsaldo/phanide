@@ -47,6 +47,21 @@ PhanideBrowserGDBDebugger >> convertGDBLocal: gdbLocal [
 		yourself
 ]
 
+{ #category : #'as yet unclassified' }
+PhanideBrowserGDBDebugger >> doItCliCommand: command [
+	| sanitizedCommand |
+	sanitizedCommand := ByteString streamContents: [ :out |
+		command do: [ :char |
+			char <= Character space
+				ifTrue: [ out nextPut: Character space ]
+				ifFalse: [ out nextPut: char ]
+		]
+	].
+
+	gdb eventHandler onConsoleOutput: String cr.
+	gdb cli: sanitizedCommand
+]
+
 { #category : #'debugging actions' }
 PhanideBrowserGDBDebugger >> getLocals [
 	| locals stackFrame |

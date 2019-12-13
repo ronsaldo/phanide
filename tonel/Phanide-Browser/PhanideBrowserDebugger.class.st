@@ -49,6 +49,11 @@ PhanideBrowserDebugger >> debuggerState [
 	^ browser debuggerState
 ]
 
+{ #category : #'as yet unclassified' }
+PhanideBrowserDebugger >> doItCliCommand: command [
+	"This should process the command as a cli command"
+]
+
 { #category : #'debugging actions' }
 PhanideBrowserDebugger >> getLocals [
 	self subclassResponsibility

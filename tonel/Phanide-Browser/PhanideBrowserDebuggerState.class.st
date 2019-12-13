@@ -90,6 +90,11 @@ PhanideBrowserDebuggerState >> debuggerFinished [
 	browser allComponentsDo: #debuggerFinished
 ]
 
+{ #category : #'as yet unclassified' }
+PhanideBrowserDebuggerState >> doItCliCommand: command [
+	currentDebugger ifNotNil: [ currentDebugger doItCliCommand: command ]
+]
+
 { #category : #'debugging actions' }
 PhanideBrowserDebuggerState >> getLocals [
 	currentDebugger ifNil: [ ^ #() ].

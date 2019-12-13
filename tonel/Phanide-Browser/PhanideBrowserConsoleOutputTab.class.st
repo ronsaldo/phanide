@@ -44,13 +44,6 @@ PhanideBrowserConsoleOutputTab >> defaultName [
 	^ #MainConsoleOutput
 ]
 
-{ #category : #initialization }
-PhanideBrowserConsoleOutputTab >> initializePresenter [
-	self whenBuiltDo: [
-	]
-
-]
-
 { #category : #'as yet unclassified' }
 PhanideBrowserConsoleOutputTab >> installLocation [
 	^ #bottomTabs

@@ -21,7 +21,7 @@ PhanideBrowserGDBEventHandler >> browser: anObject [
 
 { #category : #'as yet unclassified' }
 PhanideBrowserGDBEventHandler >> debugConsoleComponent [
-	^ debugConsoleComponent ifNil: [ debugConsoleComponent := browser getNamedComponent: #DebugConsoleOutput ]
+	^ debugConsoleComponent ifNil: [ debugConsoleComponent := browser getNamedComponent: #DebugConsole ]
 ]
 
 { #category : #accessing }
@@ -43,7 +43,7 @@ PhanideBrowserGDBEventHandler >> notifyStopWithReason: reason atFrame: frame [
 { #category : #'as yet unclassified' }
 PhanideBrowserGDBEventHandler >> onConsoleOutput: aString [
 	self debugConsoleComponent ifNotNil: [ :comp |
-		comp appendText: aString
+		comp appendText: aString withSqueakLineEndings
 	]
 ]
 
@@ -80,14 +80,14 @@ PhanideBrowserGDBEventHandler >> onExecSignalReceived: event [
 { #category : #'as yet unclassified' }
 PhanideBrowserGDBEventHandler >> onLogOutput: aString [
 	self debugConsoleComponent ifNotNil: [ :comp |
-		comp appendText: aString
+		comp appendText: aString withSqueakLineEndings
 	]
 ]
 
 { #category : #'as yet unclassified' }
 PhanideBrowserGDBEventHandler >> onTargetOutput: aString [
 	self targetConsoleComponent ifNotNil: [ :comp |
-		comp appendText: aString
+		comp appendText: aString withSqueakLineEndings
 	]
 ]
 
