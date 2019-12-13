@@ -55,6 +55,15 @@ PhanideBrowserComponent >> closeable [
 	^ false
 ]
 
+{ #category : #'as yet unclassified' }
+PhanideBrowserComponent >> debuggerFinished [
+]
+
+{ #category : #accessing }
+PhanideBrowserComponent >> debuggerState [
+	^ browser debuggerState
+]
+
 { #category : #accessing }
 PhanideBrowserComponent >> defaultLabel [
 	^ 'Untitled'
@@ -130,6 +139,14 @@ PhanideBrowserComponent >> name [
 PhanideBrowserComponent >> name: aNewName [
 	name ifNotNil: [ browser component: self renamedFrom: name into: aNewName ].
 	name := aNewName
+]
+
+{ #category : #notifications }
+PhanideBrowserComponent >> notifyDebugStackFrameChanged [
+]
+
+{ #category : #notifications }
+PhanideBrowserComponent >> notifyDebugStopWithReason: reason atFrame: stackFrame [
 ]
 
 { #category : #protocol }

@@ -7,7 +7,8 @@ Class {
 		'perFileDebuggingStates',
 		'perProgramSettings',
 		'currentDebugger',
-		'currentDebuggerStopHighlight'
+		'currentDebuggerStopHighlight',
+		'currentStackFrame'
 	],
 	#category : #'Phanide-Browser-Debugging'
 }
@@ -33,6 +34,26 @@ PhanideBrowserDebuggerState >> currentDebugger [
 ]
 
 { #category : #accessing }
+PhanideBrowserDebuggerState >> currentStackFrame [
+	^ currentStackFrame
+]
+
+{ #category : #accessing }
+PhanideBrowserDebuggerState >> currentStackFrame: anObject [
+	currentStackFrame := anObject.
+	
+	currentStackFrame ifNotNil: [
+		currentStackFrame file ifNotNil: [ 
+			self highlightFileForStackFrame: currentStackFrame
+		] ifNil: [ 
+		]
+	].
+
+	browser allComponentsDo: #notifyDebugStackFrameChanged.
+
+]
+
+{ #category : #accessing }
 PhanideBrowserDebuggerState >> currentStartupProgram [
 	^ currentStartupProgram
 ]
@@ -44,7 +65,14 @@ PhanideBrowserDebuggerState >> currentStartupProgram: anObject [
 
 { #category : #'as yet unclassified' }
 PhanideBrowserDebuggerState >> debuggerFinished [
-	currentDebugger := nil
+	currentDebugger := nil.
+	browser allComponentsDo: #debuggerFinished
+]
+
+{ #category : #'debugging actions' }
+PhanideBrowserDebuggerState >> getLocals [
+	currentDebugger ifNil: [ ^ #() ].
+	^ currentDebugger getLocals
 ]
 
 { #category : #breakpoints }
@@ -68,6 +96,25 @@ PhanideBrowserDebuggerState >> getOrCreatePerProgramSettingsForFileReference: aF
 	^ perProgramSettings at: aFileReference ifAbsentPut: [ PhanideBrowserDebuggerProgramSettings for: aFileReference ]
 ]
 
+{ #category : #'debugging actions' }
+PhanideBrowserDebuggerState >> getStackTrace [
+	currentDebugger ifNil: [ ^ #() ].
+	^ currentDebugger getStackTrace
+]
+
+{ #category : #accessing }
+PhanideBrowserDebuggerState >> highlightFileForStackFrame: stackFrame [
+	| fileReference |
+	fileReference := stackFrame file asFileReference asAbsolute.
+	fileReference exists ifTrue: [ 
+		(browser openFileViewTemporarily: fileReference) ifNotNil: [ :fileView |
+			currentDebuggerStopHighlight ifNotNil: [ currentDebuggerStopHighlight delete ].
+			currentDebuggerStopHighlight := fileView highlightLine: stackFrame line forDebugStackFrame: stackFrame.
+			^ self
+		]
+	]
+]
+
 { #category : #initialization }
 PhanideBrowserDebuggerState >> initialize [
 	super initialize.
@@ -77,19 +124,11 @@ PhanideBrowserDebuggerState >> initialize [
 ]
 
 { #category : #'debugger support' }
-PhanideBrowserDebuggerState >> notifyDebugStopWithReason: reason file: file line: line pcAddress: pcAddress pcFunction: pcFunction [
-	| fileReference |
-	file ifNotNil: [
-		fileReference := file asFileReference asAbsolute.
-		fileReference exists ifTrue: [ 
-			(browser openFileViewTemporarily: fileReference) ifNotNil: [ :fileView |
-				currentDebuggerStopHighlight ifNotNil: [ currentDebuggerStopHighlight delete ].
-				currentDebuggerStopHighlight := fileView highlightLine: line forDebuggerStopReason: reason.
-				^ self
-			]
-		]
+PhanideBrowserDebuggerState >> notifyDebugStopWithReason: reason atFrame: stackFrame [
+	browser allComponentsDo: [ :comp |
+		comp notifyDebugStopWithReason: reason atFrame: stackFrame
 	].
-
+	self currentStackFrame: stackFrame.
 ]
 
 { #category : #'debugging actions' }

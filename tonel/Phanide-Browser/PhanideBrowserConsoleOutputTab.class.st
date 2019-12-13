@@ -3,7 +3,9 @@ I represent a console output UI interface.
 "
 Class {
 	#name : #PhanideBrowserConsoleOutputTab,
-	#superclass : #PhanideBrowserMorphFileEditor,
+	#superclass : #PhanideBrowserComponent,
+	#traits : 'TPhanideBrowserMorphComponent',
+	#classTraits : 'TPhanideBrowserMorphComponent classTrait',
 	#instVars : [
 		'textModel'
 	],

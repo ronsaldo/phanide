@@ -15,7 +15,10 @@ Class {
 		'mainMenuBar',
 		'mainToolBar',
 		'startupProgramCombo',
-		'debugToolBar'
+		'debugToolBar',
+		'rightTopTabs',
+		'rightBottomTabs',
+		'rightMiddleTabs'
 	],
 	#category : #'Phanide-Browser-UI'
 }
@@ -34,14 +37,23 @@ PhanideBrowserModel class >> defaultSpec [
 				centerRow
 					newColumn: [ :column  |
 						column add: #leftTabs
-					] left: 0.0 right: 0.75;
+					] left: 0.0 right: 0.8;
 					addSplitter;
 					newColumn: [ :column |
 						column
 							newRow: [:row | row add: #mainTabs] top: 0.0 bottom: 0.25;
 							addSplitter;
 							newRow: [:row | row add: #bottomTabs] top: 0.75 bottom: 0.0
-					] left: 0.0 right: 0.25
+					] left: 0.0 right: 0.4;
+					addSplitter;
+					newColumn: [ :column  |
+						column
+							newRow: [:row | row add: #rightTopTabs] top: 0.0 bottom: 2.0/3.0;
+							addSplitter;
+							newRow: [:row | row add: #rightMiddleTabs] top: 1.0/3.0 bottom: 1.0/3.0;
+							addSplitter;
+							newRow: [:row | row add: #rightBottomTabs] top: 2.0/3.0 bottom: 0.0
+					]
 			].
 			mainColumn add: #mainStatusBar height: self toolbarHeight.
 		];
@@ -156,6 +168,11 @@ PhanideBrowserModel >> actionToggleToolbarVisibility [
 { #category : #'main actions' }
 PhanideBrowserModel >> actionUndo [
 	self inform: 'TODO: actionUndo'
+]
+
+{ #category : #enumerating }
+PhanideBrowserModel >> allComponentsDo: aBlock [
+	componentDictionary valuesDo: aBlock
 ]
 
 { #category : #accessing }
@@ -476,6 +493,9 @@ PhanideBrowserModel >> initializeWidgets [
 	debugToolBar := self createDebugToolBar.
 	leftTabs := self newTabManager.
 	bottomTabs := self newTabManager.
+	rightTopTabs := self newTabManager.
+	rightMiddleTabs := self newTabManager.
+	rightBottomTabs := self newTabManager.
 	mainTabs := self newTabManager.
 	mainStatusBar := self newLabel.
 	self populateComponents
@@ -529,21 +549,6 @@ PhanideBrowserModel >> makeTemporaryEditorPermanent: tempEditor [
 		name: tempEditor fileReference printString;
 		temporaryEditor: false;
 		makeActive
-]
-
-{ #category : #'debugger support' }
-PhanideBrowserModel >> notifyDebugStopWithReason: reason file: file line: line pcAddress: pcAddress pcFunction: pcFunction [
-	| fileReference |
-	file ifNotNil: [
-		fileReference := file asFileReference asAbsolute.
-		fileReference exists ifTrue: [ 
-			(self openFileViewTemporarily: fileReference) ifNotNil: [ :fileView |
-				currentDebuggerStopHighlight ifNotNil: [ currentDebuggerStopHighlight delete ].
-				currentDebuggerStopHighlight := fileView highlightLine line forDebuggerStopReason: reason
-			]
-		]
-	].
-
 ]
 
 { #category : #files }
@@ -632,6 +637,21 @@ PhanideBrowserModel >> removeComponent: aComponent [
 	(componentDictionary includesKey: aComponent name) ifTrue: [
 		componentDictionary removeKey: aComponent name
 	].
+]
+
+{ #category : #accessing }
+PhanideBrowserModel >> rightBottomTabs [
+	^ rightBottomTabs
+]
+
+{ #category : #accessing }
+PhanideBrowserModel >> rightMiddleTabs [
+	^ rightMiddleTabs
+]
+
+{ #category : #accessing }
+PhanideBrowserModel >> rightTopTabs [
+	^ rightTopTabs
 ]
 
 { #category : #initialization }

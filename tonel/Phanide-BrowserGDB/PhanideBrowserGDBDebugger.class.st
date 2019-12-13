@@ -18,6 +18,43 @@ PhanideBrowserGDBDebugger >> continue [
 	gdb execContinue
 ]
 
+{ #category : #'debugging actions' }
+PhanideBrowserGDBDebugger >> convertGDBFrame: gdbFrame [
+	^ PhanideBrowserDebuggerStackTraceFrame new
+		level: gdbFrame level;
+		address: gdbFrame addr;
+		function: gdbFrame func;
+		file: gdbFrame file;
+		line: gdbFrame line;
+		yourself
+]
+
+{ #category : #'debugging actions' }
+PhanideBrowserGDBDebugger >> convertGDBLocal: gdbLocal [
+	^ PhanideBrowserDebuggerVariable new
+		name: gdbLocal name;
+		argumentIndex: gdbLocal arg;
+		type: gdbLocal type;
+		value: gdbLocal value;
+		yourself
+]
+
+{ #category : #'debugging actions' }
+PhanideBrowserGDBDebugger >> getLocals [
+	| locals |
+	locals := gdb getLocals.
+	^ locals collect: [ :local |
+		self convertGDBLocal: local
+	]
+]
+
+{ #category : #'debugging actions' }
+PhanideBrowserGDBDebugger >> getStackTrace [
+	| stackTrace |
+	stackTrace := gdb getStackTrace.
+	^ stackTrace collect: [ :frame | self convertGDBFrame: frame ]
+]
+
 { #category : #initialization }
 PhanideBrowserGDBDebugger >> initialize [
 	super initialize.

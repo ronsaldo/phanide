@@ -32,9 +32,12 @@ Class {
 		'consoleStreamRecord',
 		'targetStreamRecord',
 		'logStreamRecord',
-		'notifyAsyncOutputRecord'
+		'notifyAsyncOutputRecord',
+		'listContent',
+		'valueListContent',
+		'resultListContent'
 	],
-	#category : 'Phanide-GDB-Output'
+	#category : #'Phanide-GDB-Output'
 }
 
 { #category : #accessing }
@@ -87,6 +90,11 @@ PhanideGDBOutputGrammar >> list [
 	^ emptyList / nonEmptyList
 ]
 
+{ #category : #accessing }
+PhanideGDBOutputGrammar >> listContent [
+	^ valueListContent / resultListContent
+]
+
 { #category : #records }
 PhanideGDBOutputGrammar >> logStreamRecord [
 	^ '&' asParser , cstring
@@ -94,7 +102,7 @@ PhanideGDBOutputGrammar >> logStreamRecord [
 
 { #category : #accessing }
 PhanideGDBOutputGrammar >> nonEmptyList [
-	^ $[ asParser , value , ($, asParser , value) star, $] asParser
+	^ $[ asParser , listContent, $] asParser
 ]
 
 { #category : #accessing }
@@ -125,6 +133,11 @@ PhanideGDBOutputGrammar >> result [
 { #category : #accessing }
 PhanideGDBOutputGrammar >> resultClass [
 	^ string
+]
+
+{ #category : #accessing }
+PhanideGDBOutputGrammar >> resultListContent [
+	^ result , ($, asParser , result) star
 ]
 
 { #category : #records }
@@ -175,6 +188,11 @@ PhanideGDBOutputGrammar >> tuple [
 { #category : #accessing }
 PhanideGDBOutputGrammar >> value [
 	^ const / tuple / list
+]
+
+{ #category : #accessing }
+PhanideGDBOutputGrammar >> valueListContent [
+	^ value , ($, asParser , value) star
 ]
 
 { #category : #accessing }

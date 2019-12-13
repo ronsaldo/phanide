@@ -68,7 +68,7 @@ PhanideGDB >> createBreakpointInFile: fileName atLine: line [
 
 { #category : #events }
 PhanideGDB >> dispatchEvent: event [
-	^ eventHandler processEvent: event
+	^ eventHandler dispatchEvent: event
 ]
 
 { #category : #accessing }
@@ -118,6 +118,24 @@ PhanideGDB >> finishProcessExecution [
 PhanideGDB >> gdbCommand [
 	^ 'gdb -q --interpreter=mi'
 	
+]
+
+{ #category : #'convenience commands' }
+PhanideGDB >> getLocals [
+	| variables |
+	variables := (self mi: '-stack-list-variables --thread 1 --frame 0 --simple-values') results.
+	^ (variables at: #variables) collect: [ :var | PhanideGDBVariable for: self from: var ]
+]
+
+{ #category : #'convenience commands' }
+PhanideGDB >> getStackTrace [
+	| trace frames |
+	trace := (self mi: '-stack-list-frames') results at: #stack.
+	frames := trace collect: [ :frame |
+		self assert: frame key = #frame.
+		PhanideGDBStackFrame for: self from: frame value
+	].
+	^ frames
 ]
 
 { #category : #initialization }

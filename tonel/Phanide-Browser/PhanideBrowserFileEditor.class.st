@@ -78,7 +78,7 @@ PhanideBrowserFileEditor >> fileReference: anObject [
 ]
 
 { #category : #'as yet unclassified' }
-PhanideBrowserFileEditor >> highlightLine: line forDebuggerStopReason: reason [
+PhanideBrowserFileEditor >> highlightLine: line forDebugStackFrame: stackFrame [
 	^ nil
 ]
 

@@ -46,6 +46,25 @@ PhanideGDBOutputParserTest >> sample [
 ]
 
 { #category : #tests }
+PhanideGDBOutputParserTest >> testParseStacktrace [
+	| record stack frame |
+	record := PhanideGDBOutputParser parse: '^done,stack=[frame={level="0",addr="0x0000555555555154",func="main",file="testExample.cpp",fullname="./testExample.cpp",line="5",arch="i386:x86-64"}]'.
+	self assert: record resultClass equals: 'done'.
+	stack := record results at: #stack.
+	self assert: stack size equals: 1.
+	self assert: stack first key equals: #frame.
+	frame := stack first value.
+	self assert: (frame at: #level) equals: '0'.
+	self assert: (frame at: #addr) equals: '0x0000555555555154'.
+	self assert: (frame at: #func) equals: 'main'.
+	self assert: (frame at: #file) equals: 'testExample.cpp'.
+	self assert: (frame at: #fullname) equals: './testExample.cpp'.
+	self assert: (frame at: #line) equals: '5'.
+	self assert: (frame at: #arch) equals: 'i386:x86-64'.
+
+]
+
+{ #category : #tests }
 PhanideGDBOutputParserTest >> testParser [
 	| records |
 	records := self sample lines collect: [:line | PhanideGDBOutputParser parse: line].

@@ -84,7 +84,7 @@ PhanideBrowserRubricTextFileEditor >> fileChanged [
 ]
 
 { #category : #'as yet unclassified' }
-PhanideBrowserRubricTextFileEditor >> highlightLine: lineIndex forDebuggerStopReason: reason [
+PhanideBrowserRubricTextFileEditor >> highlightLine: lineIndex forDebugStackFrame: stackFrame [
 	| line startPosition endPosition conf |
 	line := morph paragraph lines at: lineIndex.	
 	startPosition := line first.

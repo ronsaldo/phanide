@@ -4,8 +4,16 @@ I am event handler for events fired by gdb.
 Class {
 	#name : #PhanideGDBEventHandler,
 	#superclass : #Object,
-	#category : 'Phanide-GDB-FrontEnd'
+	#instVars : [
+		'announcer'
+	],
+	#category : #'Phanide-GDB-FrontEnd'
 }
+
+{ #category : #events }
+PhanideGDBEventHandler >> dispatchEvent: event [
+	UIManager default defer: [ self processEvent: event ]
+]
 
 { #category : #'as yet unclassified' }
 PhanideGDBEventHandler >> onConsoleOutput: aString [

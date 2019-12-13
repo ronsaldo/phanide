@@ -41,6 +41,16 @@ PhanideBrowserDebugger >> debuggerState [
 	^ browser debuggerState
 ]
 
+{ #category : #'debugging actions' }
+PhanideBrowserDebugger >> getLocals [
+	self subclassResponsibility
+]
+
+{ #category : #'debugging actions' }
+PhanideBrowserDebugger >> getStackTrace [
+	self subclassResponsibility
+]
+
 { #category : #initialization }
 PhanideBrowserDebugger >> initializeNewDebuggingSession [
 	self subclassResponsibility

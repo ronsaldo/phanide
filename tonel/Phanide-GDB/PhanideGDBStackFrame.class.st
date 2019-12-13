@@ -7,7 +7,8 @@ Class {
 		'file',
 		'line',
 		'args',
-		'arch'
+		'arch',
+		'level'
 	],
 	#category : #'Phanide-GDB-FrontEnd'
 }
@@ -44,6 +45,7 @@ PhanideGDBStackFrame >> args: anObject [
 
 { #category : #'as yet unclassified' }
 PhanideGDBStackFrame >> constructFromResult: data [
+	level := (data at: #level ifAbsent: [ '0' ]) asInteger.
 	addr := data at: #addr ifAbsent: [ nil ].
 	func := data at: #func ifAbsent: [ nil ].
 	file := data at: #file ifAbsent: [ nil ].
@@ -70,6 +72,16 @@ PhanideGDBStackFrame >> func [
 { #category : #accessing }
 PhanideGDBStackFrame >> func: anObject [
 	func := anObject
+]
+
+{ #category : #accessing }
+PhanideGDBStackFrame >> level [
+	^ level
+]
+
+{ #category : #accessing }
+PhanideGDBStackFrame >> level: anObject [
+	level := anObject
 ]
 
 { #category : #accessing }

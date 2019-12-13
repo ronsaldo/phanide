@@ -73,7 +73,7 @@ PhanideGDBOutputParser >> logStreamRecord [
 
 { #category : #accessing }
 PhanideGDBOutputParser >> nonEmptyList [
-	^ super nonEmptyList ==> [ :tok | { tok second } , (tok third collect: #second) ]
+	^ super nonEmptyList ==> [ :tok | tok second ]
 ]
 
 { #category : #accessing }
@@ -143,6 +143,11 @@ PhanideGDBOutputParser >> result [
 	]
 ]
 
+{ #category : #accessing }
+PhanideGDBOutputParser >> resultListContent [
+	^ super resultListContent ==> [ :tok | { tok first } , (tok second collect: #second) ]
+]
+
 { #category : #records }
 PhanideGDBOutputParser >> resultRecord [
 	^ super resultRecord ==> [ :tok |
@@ -175,6 +180,11 @@ PhanideGDBOutputParser >> statusAsyncRecord [
 { #category : #records }
 PhanideGDBOutputParser >> targetStreamRecord [
 	^ super targetStreamRecord ==> [ :tok | PhanideGDBTargetStreamRecord new value: tok second ]
+]
+
+{ #category : #accessing }
+PhanideGDBOutputParser >> valueListContent [
+	^ super valueListContent ==> [ :tok | { tok first } , (tok second collect: #second) ]
 ]
 
 { #category : #accessing }

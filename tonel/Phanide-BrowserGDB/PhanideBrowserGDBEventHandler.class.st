@@ -3,7 +3,8 @@ Class {
 	#superclass : #PhanideGDBEventHandler,
 	#instVars : [
 		'browser',
-		'targetConsoleComponent'
+		'targetConsoleComponent',
+		'debugConsoleComponent'
 	],
 	#category : #'Phanide-BrowserGDB'
 }
@@ -18,6 +19,11 @@ PhanideBrowserGDBEventHandler >> browser: anObject [
 	browser := anObject
 ]
 
+{ #category : #'as yet unclassified' }
+PhanideBrowserGDBEventHandler >> debugConsoleComponent [
+	^ debugConsoleComponent ifNil: [ debugConsoleComponent := browser getNamedComponent: #DebugConsoleOutput ]
+]
+
 { #category : #accessing }
 PhanideBrowserGDBEventHandler >> debugger [
 	^ browser debuggerState currentDebugger
@@ -25,8 +31,15 @@ PhanideBrowserGDBEventHandler >> debugger [
 
 { #category : #events }
 PhanideBrowserGDBEventHandler >> notifyStopWithReason: reason atFrame: frame [
-	browser debuggerState notifyDebugStopWithReason: reason file: frame file line: frame line pcAddress: frame addr pcFunction: frame func
+	browser debuggerState notifyDebugStopWithReason: reason atFrame: (self debugger convertGDBFrame: frame)
 
+]
+
+{ #category : #'as yet unclassified' }
+PhanideBrowserGDBEventHandler >> onConsoleOutput: aString [
+	self debugConsoleComponent ifNotNil: [ :comp |
+		comp appendText: aString
+	]
 ]
 
 { #category : #events }
@@ -45,6 +58,13 @@ PhanideBrowserGDBEventHandler >> onExecEndSteppingRange: event [
 PhanideBrowserGDBEventHandler >> onExecExitedEvent: event [
 	self debugger ifNotNil: #programExited.
 
+]
+
+{ #category : #'as yet unclassified' }
+PhanideBrowserGDBEventHandler >> onLogOutput: aString [
+	self debugConsoleComponent ifNotNil: [ :comp |
+		comp appendText: aString
+	]
 ]
 
 { #category : #'as yet unclassified' }
