@@ -8,14 +8,20 @@ Class {
 		'styles'
 	],
 	#classVars : [
+		'CurrentLightStyleTable',
 		'CurrentStyleTable'
 	],
-	#category : 'Phanide-SyntaxHighlighting-Style'
+	#category : #'Phanide-SyntaxHighlighting-Style'
 }
 
 { #category : #accessing }
 PhanideSyntaxStyleTable class >> current [
 	^ CurrentStyleTable ifNil: [ CurrentStyleTable := self parse: self findCurrentStyleTable ]
+]
+
+{ #category : #accessing }
+PhanideSyntaxStyleTable class >> currentLightTheme [
+	^ CurrentLightStyleTable ifNil: [ CurrentLightStyleTable := self parse: self lightStyleTableDefinition ]
 ]
 
 { #category : #'style tables' }
@@ -30,7 +36,7 @@ PhanideSyntaxStyleTable class >> darkStyleTableDefinition [
 	"
 	<styleTable: 'Dark'>
 
-	^ #(
+	^ self styleTableDefinitionFromEclipseTheme: #(
 			(searchResultIndication '616161')
 			(filteredSearchResultIndication '616161')
 			(occurrenceIndication '616161')
@@ -75,20 +81,6 @@ PhanideSyntaxStyleTable class >> darkStyleTableDefinition [
 			(lineNumber '81969A')
 			(selectionBackground '804000')
 			(selectionForeground 'E0E2E4')
-			
-			(type '00CC6E') "keyword"
-			(preprocessor 'B4DD6E') "annotation"
-			(module '40FFFF') "interface"
-			(struct 'C080FF') "class"
-			(patternDontCare '8040FF') "identifier"
-
-			(identifier '0080FF')
-			(symbol 'E38C1E') 
-			(callBracket 'FFE54B')
-			(methodBracket '7EE7FA')
-			(methodHeaderSelector white bold)
-			(localDefinition 'A7E2ED')
-			(bar white)
 	)
 
 ]
@@ -101,6 +93,65 @@ PhanideSyntaxStyleTable class >> defaultStyleTableDefinition [
 { #category : #'as yet unclassified' }
 PhanideSyntaxStyleTable class >> findCurrentStyleTable [
 	^ self defaultStyleTableDefinition
+]
+
+{ #category : #'as yet unclassified' }
+PhanideSyntaxStyleTable class >> lightStyleTableDefinition [
+	^ self mrStyleTableDefinition
+]
+
+{ #category : #'style tables' }
+PhanideSyntaxStyleTable class >> mrStyleTableDefinition [
+	"
+	This style is converted from the Mr. theme from Eclipse: http://www.eclipsecolorthemes.org/?view=theme&id=32.  
+	"
+	<styleTable: 'Mr'>
+
+	^ self styleTableDefinitionFromEclipseTheme: #(
+			(searchResultIndication 'D8D8D8')
+			(filteredSearchResultIndication 'D8D8D8')
+			(occurrenceIndication '000000')
+			(writeOccurrenceIndication '000000')
+			(sourceHoverBackground 'D8D8D8')
+			(singleLineComment 'FF9900')
+			(multiLineComment 'FF9900')
+			(commentTaskTag 'FF3300')
+			(javadoc 'FF3300')
+			(javadocLink '990099')
+			(javadocTag '990099')
+			(javadocKeyword '990099')
+			(class '006600')
+			(interface '666666')
+			(method '000099')
+			(methodDeclaration '000099')
+			(bracket '000099')
+			(number '0000FF')
+			(string 'CC0000')
+			(operator '0000FF')
+			(keyword '0000FF')
+			(annotation '990000')
+			(staticMethod '990000')
+			(localVariable '0066FF')
+			(localVariableDeclaration '000099')
+			(field '000099')
+			(staticField '552200')
+			(staticFinalField '552200')
+			(deprecatedMember 'D8D8D8')
+			(enum 'FF0000')
+			(inheritedMethod '000099')
+			(abstractMethod '000099')
+			(parameterVariable '0000FF')
+			(typeArgument '0000FF')
+			(typeParameter '006600')
+			(constant '552200')
+			(background 'FFFFFF')
+			(currentLine 'D8D8D8')
+			(foreground '333333')
+			(lineNumber 'D8D8D8')
+			(selectionBackground 'D8D8D8')
+			(selectionForeground '333333')
+	)
+
 ]
 
 { #category : #compiling }
@@ -121,7 +172,30 @@ PhanideSyntaxStyleTable class >> parse: aStyleTableDefinition [
 
 { #category : #accessing }
 PhanideSyntaxStyleTable class >> reset [
-	CurrentStyleTable := nil
+	<script>
+	CurrentStyleTable := nil.
+	CurrentLightStyleTable := nil.
+	
+]
+
+{ #category : #parsing }
+PhanideSyntaxStyleTable class >> styleTableDefinitionFromEclipseTheme: nameAndColorArray [
+	| nameAndColorDictionary |
+	nameAndColorDictionary := Dictionary newFrom: (nameAndColorArray collect: [:pair | pair first -> pair second]).
+	^ nameAndColorArray , {
+		{ #type. nameAndColorDictionary at: #keyword }.
+		{ #preprocessor. nameAndColorDictionary at: #annotation }.
+		{ #module. nameAndColorDictionary at: #interface }.
+		{ #struct. nameAndColorDictionary at: #class }.
+		{ #patternDontCare. nameAndColorDictionary at: #foreground }.
+		{ #identifier. nameAndColorDictionary at: #foreground }.
+		{ #symbol. nameAndColorDictionary at: #string . #bold}.
+		{ #callBracket. nameAndColorDictionary at: #bracket }.
+		{ #methodBracket. nameAndColorDictionary at: #bracket }.
+		{ #methodHeaderSelector. nameAndColorDictionary at: #methodDeclaration. #bold }.
+		{ #localDefinition. nameAndColorDictionary at: #constant }.
+		{ #bar. nameAndColorDictionary at: #methodDeclaration }.
+	}
 ]
 
 { #category : #'as yet unclassified' }

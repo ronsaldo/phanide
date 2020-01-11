@@ -10,7 +10,7 @@ Class {
 		'states',
 		'initialState'
 	],
-	#category : 'Phanide-SyntaxHighlighting-Regex'
+	#category : #'Phanide-SyntaxHighlighting-Regex'
 }
 
 { #category : #parsing }
@@ -26,12 +26,6 @@ PhanideRegexLexer >> initialState [
 { #category : #accessing }
 PhanideRegexLexer >> initialState: anObject [
 	initialState := anObject
-]
-
-{ #category : #initialization }
-PhanideRegexLexer >> initialize [
-	super initialize.
-	defaultStyle := #default
 ]
 
 { #category : #parsing }

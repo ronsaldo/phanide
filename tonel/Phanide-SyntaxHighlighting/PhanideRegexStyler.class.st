@@ -7,7 +7,7 @@ Class {
 	#instVars : [
 		'lexer'
 	],
-	#category : 'Phanide-SyntaxHighlighting-Styler'
+	#category : #'Phanide-SyntaxHighlighting-Styler'
 }
 
 { #category : #accessing }
@@ -21,6 +21,6 @@ PhanideRegexStyler >> lexer: anObject [
 ]
 
 { #category : #'as yet unclassified' }
-PhanideRegexStyler >> styleText: aText fromFileReference: aFileReference [
-	^ lexer styleText: aText
+PhanideRegexStyler >> styleText: aText fromFileReference: aFileReference withStyleTable: styleTable [
+	^ lexer styleText: aText withStyleTable: styleTable
 ]

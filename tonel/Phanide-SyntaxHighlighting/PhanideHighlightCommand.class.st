@@ -10,10 +10,10 @@ Class {
 		'start',
 		'stop'
 	],
-	#category : 'Phanide-SyntaxHighlighting-Commands'
+	#category : #'Phanide-SyntaxHighlighting-Commands'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 PhanideHighlightCommand >> executeOnSegmentTree: tree withStyleTable: styleTable [
 	self subclassResponsibility
 ]

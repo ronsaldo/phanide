@@ -12,7 +12,7 @@ Class {
 		'StylerDictionary',
 		'StylerExtensionDictionary'
 	],
-	#category : 'Phanide-SyntaxHighlighting-Styler'
+	#category : #'Phanide-SyntaxHighlighting-Styler'
 }
 
 { #category : #stylers }
@@ -503,6 +503,11 @@ PhanideStyler >> styleText: aText [
 
 { #category : #'as yet unclassified' }
 PhanideStyler >> styleText: aText fromFileReference: aFileReference [
+	^ self styleText: aText fromFileReference: aFileReference withStyleTable: PhanideSyntaxStyleTable current
+]
+
+{ #category : #'as yet unclassified' }
+PhanideStyler >> styleText: aText fromFileReference: aFileReference withStyleTable: styleTable [
 	self subclassResponsibility
 ]
 

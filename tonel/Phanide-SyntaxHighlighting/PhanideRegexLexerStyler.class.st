@@ -11,8 +11,14 @@ Class {
 	#classVars : [
 		'CStyler'
 	],
-	#category : 'Phanide-SyntaxHighlighting-Regex'
+	#category : #'Phanide-SyntaxHighlighting-Regex'
 }
+
+{ #category : #initialization }
+PhanideRegexLexerStyler >> initialize [
+	super initialize.
+	defaultStyle := #default
+]
 
 { #category : #'as yet unclassified' }
 PhanideRegexLexerStyler >> styleText: aStringOrText [

@@ -7,7 +7,7 @@ Class {
 	#instVars : [
 		'highlighter'
 	],
-	#category : 'Phanide-SyntaxHighlighting-Styler'
+	#category : #'Phanide-SyntaxHighlighting-Styler'
 }
 
 { #category : #accessing }
@@ -21,10 +21,10 @@ PhanideCommandHighlighterStyler >> highlighter: anObject [
 ]
 
 { #category : #'as yet unclassified' }
-PhanideCommandHighlighterStyler >> styleText: aText fromFileReference: aFileReference [
+PhanideCommandHighlighterStyler >> styleText: aText fromFileReference: aFileReference withStyleTable: styleTable [
 	| commands |
 	commands := highlighter new parse: aText; commands.
-	^ self styleText: aText withCommands: commands withStyleTable: PhanideSyntaxStyleTable current
+	^ self styleText: aText withCommands: commands withStyleTable: styleTable
 ]
 
 { #category : #'as yet unclassified' }
