@@ -7,14 +7,14 @@ Class {
 { #category : #baselines }
 BaselineOfPhanide >> baseline: spec [
 	<baseline>
+	| repository |
+	repository := self packageRepositoryURL ifEmpty: ['gitlocal://tonel'].
 
 	spec for: #common do: [
-		spec baseline: #'PhanideCore' with: [
-				spec
-					repository: 'github://ronsaldo/phanide/tonel' ].
+		spec baseline: #'PhanideCore' with: [ spec repository: repository ].
 		spec
 			package: 'Phanide-Browser' with: [
-				spec requires: #('Phanide-Bindings' 'Phanide-SyntaxHighlighting')
+				spec requires: #('PhanideCore' 'Phanide-SyntaxHighlighting')
 			].
 		spec
 			package: 'Phanide-BrowserGDB' with: [
