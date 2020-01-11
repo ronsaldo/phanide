@@ -5,7 +5,7 @@ Class {
 		'phanideStyler',
 		'fileReference'
 	],
-	#category : #'Phanide-SyntaxHighlightingBloc'
+	#category : #'Phanide-SyntaxHighlightingGToolkit'
 }
 
 { #category : #accessing }

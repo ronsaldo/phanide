@@ -1,6 +1,6 @@
 Extension { #name : #PhanideHighlightCommand }
 
-{ #category : #'*Phanide-SyntaxHighlightingBloc' }
+{ #category : #'*Phanide-SyntaxHighlightingGToolkit' }
 PhanideHighlightCommand >> executeOnBlocText: aBlText withStyleTable: styleTable [
 	self subclassResponsibility
 ]

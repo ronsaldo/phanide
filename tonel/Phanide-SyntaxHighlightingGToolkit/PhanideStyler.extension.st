@@ -1,18 +1,18 @@
 Extension { #name : #PhanideStyler }
 
-{ #category : #'*Phanide-SyntaxHighlightingBloc' }
+{ #category : #'*Phanide-SyntaxHighlightingGToolkit' }
 PhanideStyler >> asBlocStyler [
 	^ PhanideBlTextStylerAdapter new
 		phanideStyler: self;
 		yourself
 ]
 
-{ #category : #'*Phanide-SyntaxHighlightingBloc' }
+{ #category : #'*Phanide-SyntaxHighlightingGToolkit' }
 PhanideStyler >> styleBlocText: aText fromFileReference: fileReference [
 	^ self styleBlocText: aText fromFileReference: fileReference withStyleTable: PhanideSyntaxStyleTable current
 ]
 
-{ #category : #'*Phanide-SyntaxHighlightingBloc' }
+{ #category : #'*Phanide-SyntaxHighlightingGToolkit' }
 PhanideStyler >> styleBlocText: aText fromFileReference: fileReference withStyleTable: styleTable [
 	self subclassResponsibility
 ]

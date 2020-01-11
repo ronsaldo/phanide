@@ -1,6 +1,6 @@
 Extension { #name : #PhanideHighlightCommandStyle }
 
-{ #category : #'*Phanide-SyntaxHighlightingBloc' }
+{ #category : #'*Phanide-SyntaxHighlightingGToolkit' }
 PhanideHighlightCommandStyle >> executeOnBlocText: aBlText withStyleTable: styleTable [
 	| attributes |
 	attributes := styleTable textAttributesForStyle: style.
