@@ -8,7 +8,7 @@ Class {
 BaselineOfPhanideGT >> baseline: spec [
 	<baseline>
 	| repository |
-	repository := self packageRepositoryURL ifEmpty: ['gitlocal://tonel'].
+	repository := self packageRepositoryURL ifEmpty: ['github://ronsaldo/phanide/tonel'].
 	
 	spec for: #common do: [
 		spec baseline: #'PhanideCore' with: [ spec repository: repository ].
