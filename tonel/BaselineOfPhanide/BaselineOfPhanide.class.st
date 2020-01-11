@@ -13,12 +13,12 @@ BaselineOfPhanide >> baseline: spec [
 	spec for: #common do: [
 		spec baseline: #'PhanideCore' with: [ spec repository: repository ].
 		spec
-			package: 'Phanide-Browser' with: [
-				spec requires: #('PhanideCore' 'Phanide-SyntaxHighlighting')
+			package: #'Phanide-Browser' with: [
+				spec requires: #(#'PhanideCore')
 			].
 		spec
-			package: 'Phanide-BrowserGDB' with: [
-				spec requires: #('Phanide-GDB' 'Phanide-Browser')
+			package: #'Phanide-BrowserGDB' with: [
+				spec requires: #(#'Phanide-GDB' #'Phanide-Browser')
 			].
 	].
 ]

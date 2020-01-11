@@ -17,16 +17,16 @@ BaselineOfPhanideCore >> baseline: spec [
 					repository: 'http://smalltalkhub.com/mc/Moose/PetitParser/main/'
 		].
 		spec
-			package: 'Phanide-Bindings' with: [
-				spec requires: #('PetitParser')
+			package: #'Phanide-Bindings' with: [
+				spec requires: #(#'PetitParser')
 			].
 		spec
-			package: 'Phanide-SyntaxHighlighting' with: [
-				spec requires: #('PetitParser')
+			package: #'Phanide-SyntaxHighlighting' with: [
+				spec requires: #(#'PetitParser')
 			].
 		spec
-			package: 'Phanide-GDB' with: [
-				spec requires: #('Phanide-Bindings')
+			package: #'Phanide-GDB' with: [
+				spec requires: #(#'Phanide-Bindings')
 			].
 	].
 ]

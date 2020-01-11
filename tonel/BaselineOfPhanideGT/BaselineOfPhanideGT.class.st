@@ -13,7 +13,7 @@ BaselineOfPhanideGT >> baseline: spec [
 	spec for: #common do: [
 		spec baseline: #'PhanideCore' with: [ spec repository: repository ].
 		spec
-			package: 'Phanide-SyntaxHighlightingGToolkit' with: [
+			package: #'Phanide-SyntaxHighlightingGToolkit' with: [
 				spec requires: #('PhanideCore')
 			].
 	].
