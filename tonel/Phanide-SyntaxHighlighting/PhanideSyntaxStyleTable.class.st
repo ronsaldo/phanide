@@ -87,7 +87,7 @@ PhanideSyntaxStyleTable class >> darkStyleTableDefinition [
 
 { #category : #'style tables' }
 PhanideSyntaxStyleTable class >> defaultStyleTableDefinition [
-	^ self darkStyleTableDefinition
+	^ UITheme current phanideStyleTableDefinition
 ]
 
 { #category : #'as yet unclassified' }
