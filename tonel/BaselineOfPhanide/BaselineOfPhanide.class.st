@@ -18,7 +18,7 @@ BaselineOfPhanide >> baseline: spec [
 			].
 		spec
 			package: #'Phanide-BrowserGDB' with: [
-				spec requires: #(#'Phanide-GDB' #'Phanide-Browser')
+				spec requires: #(#'PhanideCore' #'Phanide-Browser')
 			].
 	].
 ]
