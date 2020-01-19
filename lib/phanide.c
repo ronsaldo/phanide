@@ -28,7 +28,7 @@ struct phanide_context_s
 
 static int phanide_processThreadEntry(void *arg);
 static int phanide_createContextIOPrimitives(phanide_context_t *context);
-static void phanide_wakeUpSelect(phanide_context_t *context);
+static void phanide_wakeUpSelectForShutdown(phanide_context_t *context);
 static void phanide_context_destroyIOData(phanide_context_t *context);
 
 PHANIDE_CORE_EXPORT phanide_context_t *
@@ -68,7 +68,7 @@ phanide_destroyContext(phanide_context_t *context)
         phanide_mutex_lock(&context->controlMutex);
         context->shuttingDown = 1;
         phanide_condition_broadcast(&context->pendingEventCondition);
-        phanide_wakeUpSelect(context);
+        phanide_wakeUpSelectForShutdown(context);
         phanide_mutex_unlock(&context->controlMutex);
     }
 
@@ -95,13 +95,6 @@ PHANIDE_CORE_EXPORT void
 phanide_free(void *pointer)
 {
     free(pointer);
-}
-
-/* Events */
-PHANIDE_CORE_EXPORT int
-phanide_canSignalExternalSemaphore(phanide_context_t *context)
-{
-    return context && context->signalSemaphoreWithIndex;
 }
 
 PHANIDE_CORE_EXPORT int

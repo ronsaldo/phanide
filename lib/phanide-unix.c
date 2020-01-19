@@ -164,6 +164,37 @@ phanide_createContextIOPrimitives(phanide_context_t *context)
     return 1;
 }
 
+PHANIDE_CORE_EXPORT int
+phanide_isCapabilitySupported(phanide_context_t* context, phanide_capability_t capability)
+{
+    if (!context)
+        return 0;
+
+    switch (capability)
+    {
+    case PHANIDE_CAPABILITY_EXTERNAL_SEMAPHORE_SIGNALING:
+        return context->signalSemaphoreWithIndex != NULL;
+    case PHANIDE_CAPABILITY_NUMBERED_EXTRA_PIPES: return 1;
+    case PHANIDE_CAPABILITY_NAMED_EXTRA_PIPES: return 0;
+
+#if defined(USE_KQUEUE)
+    case PHANIDE_CAPABILITY_FSMONITOR_WATCH_FILES:
+    case PHANIDE_CAPABILITY_FSMONITOR_WATCH_DIRECTORIES:
+        return 1;
+    case PHANIDE_CAPABILITY_FSMONITOR_COOKIE:
+    case PHANIDE_CAPABILITY_FSMONITOR_WATCH_DIRECTORY_FILE_MODIFICATIONS:
+        return 0;
+#elif defined(USE_INOTIFY)
+    case PHANIDE_CAPABILITY_FSMONITOR_WATCH_FILES:
+    case PHANIDE_CAPABILITY_FSMONITOR_WATCH_DIRECTORIES:
+    case PHANIDE_CAPABILITY_FSMONITOR_WATCH_DIRECTORY_FILE_MODIFICATIONS:
+    case PHANIDE_CAPABILITY_FSMONITOR_COOKIE:
+        return 1;
+#endif
+    default:
+        return 0;
+    }
+}
 static void
 phanide_context_destroyIOData(phanide_context_t *context)
 {
@@ -181,7 +212,7 @@ phanide_context_destroyIOData(phanide_context_t *context)
 }
 
 static
-void phanide_wakeUpSelect(phanide_context_t *context)
+void phanide_wakeUpSelectForShutdown(phanide_context_t *context)
 {
 #if USE_EVENT_FD
     uint64_t count = 1;
@@ -383,8 +414,6 @@ phanide_processThreadEntry(void *arg)
 /* Process spawning. */
 struct phanide_process_s
 {
-    phanide_linked_list_node_t header;
-
     phanide_context_t *context;
     int used;
     size_t index;
@@ -421,6 +450,7 @@ phanide_process_allocate(phanide_context_t *context)
         if(!process->used)
         {
             resultProcess = process;
+            memset(resultProcess, 0, sizeof(phanide_process_t));
             resultProcess->index = i;
         }
     }
@@ -962,6 +992,14 @@ phanide_process_pipe_write(phanide_process_t *process, phanide_pipe_index_t pipe
     return result;
 }
 
+PHANIDE_CORE_EXPORT const char*
+phanide_process_pipe_getNamedEndpoint(phanide_process_t* process, phanide_pipe_index_t pipe)
+{
+	(void)process;
+	(void)pipe;
+	return NULL;
+}
+
 static void
 phanide_process_destructor (void *arg)
 {
@@ -1058,6 +1096,39 @@ phanide_inotify_pendingEvents(phanide_context_t *context)
 }
 #endif
 
+PHANIDE_CORE_EXPORT uint32_t
+phanide_fsmonitor_getSupportedEventMask(phanide_fsmonitor_handle_t* handle)
+{
+#if defined(USE_KQUEUE)
+    return 
+        /*NOTE_DELETE */ PHANIDE_FSMONITOR_EVENT_DELETE |
+        PHANIDE_FSMONITOR_EVENT_DELETE_SELF |
+        /* NOTE_WRITE */ PHANIDE_FSMONITOR_EVENT_MODIFY |
+        /* NOTE_ATTRIB */ PHANIDE_FSMONITOR_EVENT_ATTRIB  |
+        /*NOTE_RENAME */ PHANIDE_FSMONITOR_EVENT_MOVED_FROM |
+        PHANIDE_FSMONITOR_EVENT_MOVED_TO |
+        
+        /* Deducted events*/
+        PHANIDE_FSMONITOR_EVENT_CREATE;
+#elif defined(USE_INOTIFY)
+    return
+        PHANIDE_FSMONITOR_EVENT_ACCESS |
+        PHANIDE_FSMONITOR_EVENT_ATTRIB |
+        PHANIDE_FSMONITOR_EVENT_CLOSE_WRITE |
+        PHANIDE_FSMONITOR_EVENT_CLOSE_NOWRITE |
+        PHANIDE_FSMONITOR_EVENT_CREATE |
+        PHANIDE_FSMONITOR_EVENT_DELETE |
+        PHANIDE_FSMONITOR_EVENT_DELETE_SELF |
+        PHANIDE_FSMONITOR_EVENT_MODIFY |
+        PHANIDE_FSMONITOR_EVENT_MOVE_SELF |
+        PHANIDE_FSMONITOR_EVENT_MOVED_FROM |
+        PHANIDE_FSMONITOR_EVENT_MOVED_TO |
+        PHANIDE_FSMONITOR_EVENT_OPEN;
+#else
+    return 0;
+#endif
+}
+
 PHANIDE_CORE_EXPORT phanide_fsmonitor_handle_t *
 phanide_fsmonitor_watchFile(phanide_context_t *context, const char *path)
 {
@@ -1081,7 +1152,6 @@ phanide_fsmonitor_handle_t *result = NULL;
         return NULL;
 
     result = (phanide_fsmonitor_handle_t*)(size_t)eventFD;
-    printf("Watch file %s %d\n", path, eventFD);
     
     uint64_t descriptor = PHANIDE_EVENT_DESCRIPTOR_FIELD_SET(0, TYPE, PHANIDE_FD_EVENT_FILE);
     descriptor = PHANIDE_EVENT_DESCRIPTOR_FIELD_SET(descriptor, FD, eventFD);
@@ -1089,7 +1159,7 @@ phanide_fsmonitor_handle_t *result = NULL;
     phanide_mutex_lock(&context->io.fsmonitorMutex);
     
     struct kevent event;
-    unsigned int fileEvents = NOTE_DELETE | NOTE_WRITE | NOTE_EXTEND | NOTE_ATTRIB | NOTE_LINK | NOTE_RENAME | NOTE_REVOKE;
+    unsigned int fileEvents = NOTE_DELETE | NOTE_WRITE | NOTE_ATTRIB | NOTE_LINK | NOTE_RENAME;
     EV_SET(&event, eventFD, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_CLEAR, fileEvents, 0, (void*)(uintptr_t)descriptor);
     kevent(context->io.kqueueFD, &event, 1, NULL, 0, NULL);
 
@@ -1126,7 +1196,7 @@ phanide_fsmonitor_watchDirectory(phanide_context_t *context, const char *path)
     phanide_mutex_lock(&context->io.fsmonitorMutex);
 
     struct kevent event;
-    unsigned int fileEvents = NOTE_DELETE | NOTE_WRITE | NOTE_EXTEND | NOTE_ATTRIB | NOTE_LINK | NOTE_RENAME | NOTE_REVOKE;
+    unsigned int fileEvents = NOTE_DELETE | NOTE_WRITE | NOTE_ATTRIB | NOTE_LINK | NOTE_RENAME;
     EV_SET(&event, eventFD, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_CLEAR, fileEvents, 0, (void*)(uintptr_t)descriptor);
     kevent(context->io.kqueueFD, &event, 1, NULL, 0, NULL);
     

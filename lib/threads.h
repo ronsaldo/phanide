@@ -36,7 +36,9 @@ phanide_thread_create(phanide_thread_t *thread, phanide_thread_entry_point_t ent
 	entryArgument->entryPoint = entryPoint;
 	entryArgument->argument = argument;
 
-	*thread = CreateThread(NULL, 0, phanide_thread_entry, entryArgument, 0, NULL);
+	/* 1 MB of stack seems overkill. */
+	SIZE_T stackSize = 128 * 1024;
+	*thread = CreateThread(NULL, stackSize, phanide_thread_entry, entryArgument, 0, NULL);
 	if (*thread == NULL)
 	{
 		free(entryArgument);

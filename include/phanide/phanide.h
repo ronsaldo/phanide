@@ -35,6 +35,18 @@ typedef struct phanide_process_s phanide_process_t;
 struct phanide_fsmonitor_handle_s;
 typedef struct phanide_fsmonitor_handle_s phanide_fsmonitor_handle_t;
 
+typedef enum phanide_capability_e
+{
+	PHANIDE_CAPABILITY_EXTERNAL_SEMAPHORE_SIGNALING = 0,
+	PHANIDE_CAPABILITY_NUMBERED_EXTRA_PIPES,
+	PHANIDE_CAPABILITY_NAMED_EXTRA_PIPES,
+
+	PHANIDE_CAPABILITY_FSMONITOR_COOKIE,
+	PHANIDE_CAPABILITY_FSMONITOR_WATCH_FILES,
+	PHANIDE_CAPABILITY_FSMONITOR_WATCH_DIRECTORIES,
+	PHANIDE_CAPABILITY_FSMONITOR_WATCH_DIRECTORY_FILE_MODIFICATIONS,
+} phanide_capability_t;
+
 typedef enum phanide_fsmonitor_event_bits_e
 {
     PHANIDE_FSMONITOR_EVENT_ACCESS = PHANIDE_BIT(0),
@@ -124,6 +136,9 @@ typedef union phanide_event_s
 PHANIDE_CORE_EXPORT phanide_context_t *phanide_createContext(intptr_t pendingEventsSemaphoreIndex);
 PHANIDE_CORE_EXPORT void phanide_destroyContext(phanide_context_t *context);
 
+/* Feature querying. */
+PHANIDE_CORE_EXPORT int phanide_isCapabilitySupported(phanide_context_t* context, phanide_capability_t capability);
+
 /* Memory allocation */
 PHANIDE_CORE_EXPORT void *phanide_malloc(size_t size);
 PHANIDE_CORE_EXPORT void phanide_free(void *pointer);
@@ -141,14 +156,15 @@ PHANIDE_CORE_EXPORT void phanide_process_kill(phanide_process_t *process);
 /* Process pipes */
 PHANIDE_CORE_EXPORT intptr_t phanide_process_pipe_read(phanide_process_t *process, phanide_pipe_index_t pipe, void *buffer, size_t offset, size_t count);
 PHANIDE_CORE_EXPORT intptr_t phanide_process_pipe_write(phanide_process_t *process, phanide_pipe_index_t pipe, const void *buffer, size_t offset, size_t count);
+PHANIDE_CORE_EXPORT const char *phanide_process_pipe_getNamedEndpoint(phanide_process_t* process, phanide_pipe_index_t pipe);
 
 /* File system monitors */
 PHANIDE_CORE_EXPORT phanide_fsmonitor_handle_t *phanide_fsmonitor_watchFile(phanide_context_t *context, const char *path);
 PHANIDE_CORE_EXPORT phanide_fsmonitor_handle_t *phanide_fsmonitor_watchFirectory(phanide_context_t *context, const char *path);
 PHANIDE_CORE_EXPORT void phanide_fsmonitor_destroy(phanide_context_t *context, phanide_fsmonitor_handle_t *handle);
+PHANIDE_CORE_EXPORT uint32_t phanide_fsmonitor_getSupportedEventMask(phanide_fsmonitor_handle_t* handle);
 
 /* Event queue */
-PHANIDE_CORE_EXPORT int phanide_canSignalExternalSemaphore(phanide_context_t *context);
 PHANIDE_CORE_EXPORT int phanide_pollEvent(phanide_context_t *context, phanide_event_t *event);
 PHANIDE_CORE_EXPORT int phanide_waitEvent(phanide_context_t *context, phanide_event_t *event);
 PHANIDE_CORE_EXPORT int phanide_pushEvent(phanide_context_t *context, phanide_event_t *event);
