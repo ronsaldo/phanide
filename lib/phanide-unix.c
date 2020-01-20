@@ -335,21 +335,45 @@ phanide_processKQueueEvent(phanide_context_t *context, struct kevent *event)
         }
         break;
     case PHANIDE_FD_EVENT_INOTIFY:
-        printf("TODO kqueue inotify");
+        // Kqueue does not support inotify.
         break;
         
     case PHANIDE_FD_EVENT_DIRECTORY:
     case PHANIDE_FD_EVENT_FILE:
         {
             int fd = PHANIDE_EVENT_DESCRIPTOR_FIELD_GET(descriptor, FD);
-            printf("Got watched FD event: %d\n", fd);
+            uint32_t fflags = event->fflags;
+            uint32_t convertedEventMask = 0;
+            if(fflags & NOTE_DELETE)
+                convertedEventMask |= PHANIDE_FSMONITOR_EVENT_DELETE_SELF;
+            if(fflags & NOTE_WRITE)
+                convertedEventMask |= PHANIDE_FSMONITOR_EVENT_MODIFY;
+            if(fflags & NOTE_ATTRIB)
+                convertedEventMask |= PHANIDE_FSMONITOR_EVENT_ATTRIB;
+            if(fflags & NOTE_RENAME)
+            {
+                fprintf(stderr, "TODO: Convert rename event\n");
+            }
+
+            if(convertedEventMask != 0)
+            {
+                phanide_event_t phevent = {
+                    .fsmonitor = {
+                        .type = PHANIDE_EVENT_TYPE_FSMONITOR,
+                        .handle = (phanide_fsmonitor_handle_t *)(intptr_t)fd,
+                        .mask = convertedEventMask,
+                        .cookie = 0,
+                        .nameLength = 0,
+                        .name = 0
+                    }
+                };
+                phanide_pushEvent(context, &phevent);
+            }
         }
         break;
-
     default:
         break;
     }
-
 }
 
 static void
@@ -1159,7 +1183,7 @@ phanide_fsmonitor_handle_t *result = NULL;
     phanide_mutex_lock(&context->io.fsmonitorMutex);
     
     struct kevent event;
-    unsigned int fileEvents = NOTE_DELETE | NOTE_WRITE | NOTE_ATTRIB | NOTE_LINK | NOTE_RENAME;
+    unsigned int fileEvents = NOTE_DELETE | NOTE_WRITE | NOTE_ATTRIB | NOTE_RENAME;
     EV_SET(&event, eventFD, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_CLEAR, fileEvents, 0, (void*)(uintptr_t)descriptor);
     kevent(context->io.kqueueFD, &event, 1, NULL, 0, NULL);
 
