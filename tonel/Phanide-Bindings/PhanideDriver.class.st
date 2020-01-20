@@ -148,6 +148,7 @@ PhanideDriver >> onFSMonitorEvent: event [
 		LibPhanide uniqueInstance free: namePointer
 	].
 
+	Transcript show: 'Got fs monitor event '; show: event; cr.
 	eventHandle := event handle.
 	fsmonitorMutex critical: [
 		handle := fsmonitorDictionary at: eventHandle getHandle ifAbsent: [ nil ].

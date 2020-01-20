@@ -15,8 +15,18 @@ LibPhanideContext class >> create: semaphoreIndex [
 ]
 
 { #category : #events }
+LibPhanideContext >> canCreateNamedExtraPipes [
+	^ self isCapabilitySupported: PHANIDE_CAPABILITY_NAMED_EXTRA_PIPES
+]
+
+{ #category : #events }
+LibPhanideContext >> canCreateNumberedExtraPipes [
+	^ self isCapabilitySupported: PHANIDE_CAPABILITY_NUMBERED_EXTRA_PIPES
+]
+
+{ #category : #events }
 LibPhanideContext >> canSignalExternalSemaphore [
-	^ self ffiCall: #(bool phanide_canSignalExternalSemaphore(self))
+	^ self isCapabilitySupported: PHANIDE_CAPABILITY_EXTERNAL_SEMAPHORE_SIGNALING
 ]
 
 { #category : #initialize }
@@ -24,11 +34,36 @@ LibPhanideContext >> destroy [
 	^ self ffiCall: #(void phanide_destroyContext(this))
 ]
 
+{ #category : #events }
+LibPhanideContext >> fsMonitorCanWatchDirectories [
+	^ self isCapabilitySupported: PHANIDE_CAPABILITY_FSMONITOR_WATCH_DIRECTORIES
+]
+
+{ #category : #events }
+LibPhanideContext >> fsMonitorCanWatchFileModifications [
+	^ self isCapabilitySupported: PHANIDE_CAPABILITY_FSMONITOR_WATCH_DIRECTORY_FILE_MODIFICATIONS
+]
+
+{ #category : #events }
+LibPhanideContext >> fsMonitorCanWatchFiles [
+	^ self isCapabilitySupported: PHANIDE_CAPABILITY_FSMONITOR_WATCH_FILES
+]
+
+{ #category : #events }
+LibPhanideContext >> fsMonitorHasCookie [
+	^ self isCapabilitySupported: PHANIDE_CAPABILITY_FSMONITOR_COOKIE
+]
+
 { #category : #initialization }
 LibPhanideContext >> initialize [ 
 	handle value = 0 ifTrue: [ 
 		self error: 'Error creating new context' ].
 	FFIExternalResourceManager addResource: self data: handle
+]
+
+{ #category : #events }
+LibPhanideContext >> isCapabilitySupported: capability [
+	^ self ffiCall: #(bool phanide_isCapabilitySupported(self, int capability))
 ]
 
 { #category : #events }
