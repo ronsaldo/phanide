@@ -1,3 +1,6 @@
+"
+I am a libphanide FS monitor event.
+"
 Class {
 	#name : #LibPhanideEventFSMonitor,
 	#superclass : #FFIExternalStructure,
@@ -12,7 +15,7 @@ Class {
 	#pools : [
 		'LibPhanidePool'
 	],
-	#category : 'Phanide-Bindings-Bindings'
+	#category : #'Phanide-Bindings-Bindings'
 }
 
 { #category : #'field definition' }

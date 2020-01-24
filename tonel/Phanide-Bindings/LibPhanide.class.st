@@ -1,10 +1,13 @@
+"
+I have bindings to global libphanide functions.
+"
 Class {
 	#name : #LibPhanide,
 	#superclass : #FFILibrary,
 	#pools : [
 		'LibPhanidePool'
 	],
-	#category : 'Phanide-Bindings-Bindings'
+	#category : #'Phanide-Bindings-Bindings'
 }
 
 { #category : #testing }

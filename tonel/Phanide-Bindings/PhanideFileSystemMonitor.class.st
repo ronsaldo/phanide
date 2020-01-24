@@ -35,6 +35,38 @@ PhanideFileSystemMonitor >> checkSession [
 	]
 ]
 
+{ #category : #'as yet unclassified' }
+PhanideFileSystemMonitor >> destroyWatcher: watcher [
+	PhanideDriver isAvailable ifFalse: [ ^ nil ].
+
+	registeredFilesMutex critical: [
+		registeredFiles at: watcher fileReference ifPresent: [ :registeredWatcher |
+			registeredWatcher == watcher ifTrue: [
+				registeredFiles removeKey: watcher fileReference
+			]
+		]
+	].
+
+	PhanideDriver uniqueInstance destroyFSMonitor: watcher handle
+]
+
+{ #category : #'event subscriptions' }
+PhanideFileSystemMonitor >> for: aPath [
+	| watchedFileReference watchedElement |
+	PhanideDriver isAvailable ifFalse: [ ^ nil ].
+	
+	watchedFileReference := aPath asFileReference asAbsolute.
+	self checkSession.
+	watchedFileReference exists ifFalse: [ ^ nil ].
+	
+	registeredFilesMutex critical: [
+		watchedElement := registeredFiles at: watchedFileReference
+			ifAbsentPut: [ PhanideFileSystemMonitorWatchedElement for: watchedFileReference ]
+	].
+
+	^ watchedElement
+]
+
 { #category : #initialization }
 PhanideFileSystemMonitor >> initialize [
 	super initialize.
@@ -50,39 +82,24 @@ PhanideFileSystemMonitor >> initializeForNewSession [
 
 { #category : #'event subscriptions' }
 PhanideFileSystemMonitor >> on: aPath element: basename when: anEvent do: aBlock [
-	| watchedFileReference watchedElement |
-	PhanideDriver isAvailable ifFalse: [ ^ self ].
-	
-	self checkSession.
-	watchedFileReference := aPath asFileReference asAbsolute.	
-	watchedFileReference exists ifFalse: [ ^ self ].
-	
-	registeredFilesMutex critical: [
-		watchedElement := registeredFiles at: watchedFileReference
-			ifAbsentPut: [ PhanideFileSystemMonitorWatchedElement for: watchedFileReference ]
-	].
-
-	(watchedElement announcerForElement: basename) when: anEvent do: aBlock
+	^ (self for: aPath)
+		ifNil: [ PhanideNullEventSubscription uniqueInstance ]
+		ifNotNil: [ :watcher | watcher onChild: basename subscribeEvent: anEvent withAction: aBlock]
 ]
 
 { #category : #'event subscriptions' }
 PhanideFileSystemMonitor >> on: aPath when: anEvent do: aBlock [
-	| watchedFileReference watchedElement parent |
-	PhanideDriver isAvailable ifFalse: [ ^ self ].
+	| watchedFileReference parent |
+	PhanideDriver isAvailable ifFalse: [ ^ PhanideNullEventSubscription uniqueInstance ].
 	
 	watchedFileReference := aPath asFileReference asAbsolute.
-	(watchedFileReference isFile and: [anEvent isPreferredInParentFolder]) ifTrue: [
+	(watchedFileReference isFile and: [anEvent isPreferredInParentFolder or:
+		[ PhanideDriver uniqueInstance fsMonitorCanWatchFiles not]]) ifTrue: [
 		parent := watchedFileReference parent.
 		^ self on: parent element: watchedFileReference basename when: anEvent do: aBlock
 	].
 	
-	self checkSession.
-	watchedFileReference exists ifFalse: [ ^ self ].
-	
-	registeredFilesMutex critical: [
-		watchedElement := registeredFiles at: watchedFileReference
-			ifAbsentPut: [ PhanideFileSystemMonitorWatchedElement for: watchedFileReference ]
-	].
-
-	watchedElement announcer when: anEvent do: aBlock
+	^ (self for: aPath)
+		ifNil: [ PhanideNullEventSubscription uniqueInstance ]
+		ifNotNil: [ :watcher | watcher subscribeEvent: anEvent withAction: aBlock]
 ]

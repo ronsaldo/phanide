@@ -30,3 +30,8 @@ PhanideFSMonitorWatchHandle >> handle [
 PhanideFSMonitorWatchHandle >> handle: anObject [
 	handle := anObject
 ]
+
+{ #category : #'initialize-release' }
+PhanideFSMonitorWatchHandle >> supportedEventMask [
+	^ handle supportedEventMask
+]

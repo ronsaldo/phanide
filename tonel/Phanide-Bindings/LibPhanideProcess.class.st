@@ -1,7 +1,10 @@
+"
+I am a handle to a subprocess that is created by using libphanide.
+"
 Class {
 	#name : #LibPhanideProcess,
 	#superclass : #LibPhanideHandle,
-	#category : 'Phanide-Bindings-Bindings'
+	#category : #'Phanide-Bindings-Bindings'
 }
 
 { #category : #actions }

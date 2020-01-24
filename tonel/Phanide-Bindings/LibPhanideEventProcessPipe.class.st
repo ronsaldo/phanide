@@ -1,3 +1,6 @@
+"
+I am a libphanide process event that notifies that a pipe is ready for sending or receiving data from a child process.
+"
 Class {
 	#name : #LibPhanideEventProcessPipe,
 	#superclass : #FFIExternalStructure,
@@ -9,7 +12,7 @@ Class {
 	#pools : [
 		'LibPhanidePool'
 	],
-	#category : 'Phanide-Bindings-Bindings'
+	#category : #'Phanide-Bindings-Bindings'
 }
 
 { #category : #'field definition' }

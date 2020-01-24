@@ -1,10 +1,13 @@
+"
+I am a generic handle from libphanide.
+"
 Class {
 	#name : #LibPhanideHandle,
 	#superclass : #FFIExternalObject,
 	#pools : [
 		'LibPhanidePool'
 	],
-	#category : 'Phanide-Bindings-Bindings'
+	#category : #'Phanide-Bindings-Bindings'
 }
 
 { #category : #'library path' }

@@ -1,7 +1,10 @@
+"
+I am handle to a context object in libphanide.
+"
 Class {
 	#name : #LibPhanideContext,
 	#superclass : #LibPhanideHandle,
-	#category : 'Phanide-Bindings-Bindings'
+	#category : #'Phanide-Bindings-Bindings'
 }
 
 { #category : #operations }
@@ -40,7 +43,7 @@ LibPhanideContext >> fsMonitorCanWatchDirectories [
 ]
 
 { #category : #events }
-LibPhanideContext >> fsMonitorCanWatchFileModifications [
+LibPhanideContext >> fsMonitorCanWatchDirectoryFileModifications [
 	^ self isCapabilitySupported: PHANIDE_CAPABILITY_FSMONITOR_WATCH_DIRECTORY_FILE_MODIFICATIONS
 ]
 

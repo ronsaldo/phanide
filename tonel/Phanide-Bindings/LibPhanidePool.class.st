@@ -1,3 +1,6 @@
+"
+I hold constants that are used for calling libPhanide
+"
 Class {
 	#name : #LibPhanidePool,
 	#superclass : #SharedPool,

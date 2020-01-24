@@ -1,3 +1,6 @@
+"
+I am a libphanide process finished event.
+"
 Class {
 	#name : #LibPhanideEventProcessFinished,
 	#superclass : #FFIExternalStructure,
@@ -9,7 +12,7 @@ Class {
 	#pools : [
 		'LibPhanidePool'
 	],
-	#category : 'Phanide-Bindings-Bindings'
+	#category : #'Phanide-Bindings-Bindings'
 }
 
 { #category : #'field definition' }

@@ -18,7 +18,13 @@ Class {
 		'pendingEventsSemaphore',
 		'pendingEventsSemaphoreIndex',
 		'fsmonitorMutex',
-		'fsmonitorDictionary'
+		'fsmonitorDictionary',
+		'pendingCoalescingWatcherMutex',
+		'pendingCoalescingWatcher',
+		'eventCoalescingProcess',
+		'fsMonitorCanWatchFiles',
+		'fsMonitorCanWatchDirectories',
+		'fsMonitorCanWatchDirectoryFileModifications'
 	],
 	#classVars : [
 		'EventDispatchMap'
@@ -29,7 +35,7 @@ Class {
 	#classInstVars : [
 		'uniqueInstance'
 	],
-	#category : 'Phanide-Bindings-Driver'
+	#category : #'Phanide-Bindings-Driver'
 }
 
 { #category : #initialization }
@@ -60,6 +66,14 @@ PhanideDriver >> checkSession [
 ]
 
 { #category : #events }
+PhanideDriver >> createEventCoalescingProcess [
+	eventCoalescingProcess := [
+		self eventCoalescingProcessEntry
+	] forkAt: Processor lowIOPriority named: 'PhanideDriver event loop'.
+
+]
+
+{ #category : #events }
 PhanideDriver >> createEventFetchingProcess [
 	context canSignalExternalSemaphore ifTrue: [ 
 		eventFetchingProcess := [
@@ -71,6 +85,48 @@ PhanideDriver >> createEventFetchingProcess [
 		] forkAt: Processor lowIOPriority named: 'PhanideDriver event loop'.
 	]
 
+]
+
+{ #category : #'file system' }
+PhanideDriver >> destroyFSMonitor: handle [
+	| handleValue |
+	handleValue := handle handle handle getHandle.
+	fsmonitorMutex critical: [
+		fsmonitorDictionary at: handleValue ifPresent: [
+			handle handle destroyOnContext: context.
+			fsmonitorDictionary removeKey: handleValue ifAbsent: []
+		]
+	]
+
+]
+
+{ #category : #events }
+PhanideDriver >> eventCoalescingIteration [
+	| currentTime toProcess allPendingWatchers |
+	currentTime := Time microsecondClockValue.
+	toProcess := OrderedCollection new.
+	pendingCoalescingWatcherMutex critical: [
+		allPendingWatchers := pendingCoalescingWatcher asArray.
+		allPendingWatchers do: [ :watcher |
+			watcher nextEventCoalescingTime >= currentTime ifTrue: [
+				pendingCoalescingWatcher remove: watcher.
+				toProcess add: watcher.
+			]
+		].
+	].
+
+	toProcess ifNotEmpty: [
+		toProcess do: [ :watcher | watcher coalesceAndDispatchEvents ]
+	]
+]
+
+{ #category : #events }
+PhanideDriver >> eventCoalescingProcessEntry [
+	[
+		(session ~~ Smalltalk session or: [context isNil or: [context isNull]]) ifTrue: [ ^ self ].
+		self eventCoalescingIteration.
+		(Delay forMilliseconds: 100) wait 
+	] repeat
 ]
 
 { #category : #events }
@@ -96,6 +152,24 @@ PhanideDriver >> eventFetchingProcessEntry [
 	] ensure: [ Smalltalk unregisterExternalObject: pendingEventsSemaphore ]
 ]
 
+{ #category : #accessing }
+PhanideDriver >> fsMonitorCanWatchDirectories [
+	self checkSession.
+	^ fsMonitorCanWatchDirectories
+]
+
+{ #category : #accessing }
+PhanideDriver >> fsMonitorCanWatchDirectoryFileModifications [
+	self checkSession.
+	^ fsMonitorCanWatchDirectoryFileModifications
+]
+
+{ #category : #accessing }
+PhanideDriver >> fsMonitorCanWatchFiles [
+	self checkSession.
+	^ fsMonitorCanWatchFiles
+]
+
 { #category : #events }
 PhanideDriver >> getProcessFromHandle: aHandle [
 	| process |
@@ -112,10 +186,14 @@ PhanideDriver >> initialize [
 { #category : #'session checking' }
 PhanideDriver >> initializeForNewSession [
 	eventFetchingProcess ifNotNil: [ eventFetchingProcess terminate ].
+	eventCoalescingProcess ifNotNil: [ eventCoalescingProcess terminate ].
 	pendingEventsSemaphore ifNotNil: [ 
 		Smalltalk unregisterExternalObject: pendingEventsSemaphore
 	].
 	pendingEventsSemaphore := nil.
+	fsMonitorCanWatchFiles := false.
+	fsMonitorCanWatchDirectories := false.
+	fsMonitorCanWatchDirectoryFileModifications := false.
 	
 	self isAvailable ifFalse: [ ^ self ].
 
@@ -123,13 +201,20 @@ PhanideDriver >> initializeForNewSession [
 	pendingEventsSemaphoreIndex := Smalltalk registerExternalObject: pendingEventsSemaphore.
 	
 	context := LibPhanideContext create: pendingEventsSemaphoreIndex.
+	fsMonitorCanWatchFiles := context fsMonitorCanWatchFiles.
+	fsMonitorCanWatchDirectories := context fsMonitorCanWatchDirectories.
+	fsMonitorCanWatchDirectoryFileModifications := context fsMonitorCanWatchDirectoryFileModifications.
 	session := Smalltalk session.
 	processDictionaryMutex := Semaphore forMutualExclusion.
 	processDictionary := WeakValueDictionary new.
 
 	fsmonitorMutex := Semaphore forMutualExclusion.
 	fsmonitorDictionary := WeakValueDictionary new.
+	
+	pendingCoalescingWatcherMutex := Semaphore forMutualExclusion.
+	pendingCoalescingWatcher := WeakSet new.
 	self createEventFetchingProcess.
+	self createEventCoalescingProcess.
 	
 ]
 
@@ -148,7 +233,6 @@ PhanideDriver >> onFSMonitorEvent: event [
 		LibPhanide uniqueInstance free: namePointer
 	].
 
-	Transcript show: 'Got fs monitor event '; show: event; cr.
 	eventHandle := event handle.
 	fsmonitorMutex critical: [
 		handle := fsmonitorDictionary at: eventHandle getHandle ifAbsent: [ nil ].
@@ -212,6 +296,14 @@ PhanideDriver >> processEvent: anEvent [
 	] on: Error do: [ :err |
 		err freeze.
 		[ err debug ] fork
+	]
+]
+
+{ #category : #'as yet unclassified' }
+PhanideDriver >> queueWatcherForEventCoalescing: watcher in: targetTime [
+	pendingCoalescingWatcherMutex critical: [
+		watcher nextEventCoalescingTime: Time microsecondClockValue + targetTime.
+		pendingCoalescingWatcher add: watcher.
 	]
 ]
 

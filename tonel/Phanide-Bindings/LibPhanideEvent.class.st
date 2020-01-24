@@ -1,3 +1,6 @@
+"
+I am an union of libphanide events.
+"
 Class {
 	#name : #LibPhanideEvent,
 	#superclass : #FFIExternalUnion,
@@ -7,7 +10,7 @@ Class {
 	#pools : [
 		'LibPhanidePool'
 	],
-	#category : 'Phanide-Bindings-Bindings'
+	#category : #'Phanide-Bindings-Bindings'
 }
 
 { #category : #'field definition' }
