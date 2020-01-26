@@ -195,7 +195,8 @@ phanide_iocp_handle_fsmonitorNotification(phanide_context_t* context, phanide_fs
 		return;
 
 	// Convert the file name.
-	int requiredBufferSize = WideCharToMultiByte(CP_UTF8, 0, notification->FileName, notification->FileNameLength, NULL, 0, NULL, NULL);
+	DWORD fileNameLength = notification->FileNameLength / 2;
+	int requiredBufferSize = WideCharToMultiByte(CP_UTF8, 0, notification->FileName, fileNameLength, NULL, 0, NULL, NULL);
 	if (requiredBufferSize < 0)
 		return;
 
@@ -203,25 +204,30 @@ phanide_iocp_handle_fsmonitorNotification(phanide_context_t* context, phanide_fs
 	if (!fileNameBuffer)
 		return;
 
-	WideCharToMultiByte(CP_UTF8, 0, notification->FileName, notification->FileNameLength, fileNameBuffer, requiredBufferSize, NULL, NULL);
+	WideCharToMultiByte(CP_UTF8, 0, notification->FileName, fileNameLength, fileNameBuffer, requiredBufferSize, NULL, NULL);
 	fileNameBuffer[requiredBufferSize] = 0;
 
-	DWORD action = notification->Action;
 	uint32_t convertedEventMask = 0;
-	if (action & FILE_ACTION_ADDED)
-		convertedEventMask |= PHANIDE_FSMONITOR_EVENT_CREATE;
-
-	if (action & FILE_ACTION_REMOVED)
-		convertedEventMask |= PHANIDE_FSMONITOR_EVENT_DELETE;
-
-	if (action & FILE_ACTION_MODIFIED)
-		convertedEventMask |= PHANIDE_FSMONITOR_EVENT_MODIFY;
-
-	if (action & FILE_ACTION_RENAMED_OLD_NAME)
-		convertedEventMask |= PHANIDE_FSMONITOR_EVENT_MOVED_FROM;
-
-	if (action & FILE_ACTION_RENAMED_NEW_NAME)
-		convertedEventMask |= PHANIDE_FSMONITOR_EVENT_MOVED_TO;
+	switch (notification->Action)
+	{
+	case FILE_ACTION_ADDED:
+		convertedEventMask = PHANIDE_FSMONITOR_EVENT_CREATE;
+		break;
+	case FILE_ACTION_REMOVED:
+		convertedEventMask = PHANIDE_FSMONITOR_EVENT_DELETE;
+		break;
+	case FILE_ACTION_MODIFIED:
+		convertedEventMask = PHANIDE_FSMONITOR_EVENT_MODIFY;
+		break;
+	case FILE_ACTION_RENAMED_OLD_NAME:
+		convertedEventMask = PHANIDE_FSMONITOR_EVENT_MOVED_FROM;
+		break;
+	case FILE_ACTION_RENAMED_NEW_NAME:
+		convertedEventMask = PHANIDE_FSMONITOR_EVENT_MOVED_TO;
+		break;
+	default:
+		break;
+	}
 
 	if (convertedEventMask != 0)
 	{
@@ -231,7 +237,7 @@ phanide_iocp_handle_fsmonitorNotification(phanide_context_t* context, phanide_fs
 				.handle = fsmonitor,
 				.mask = convertedEventMask,
 				.cookie = 0,
-				.nameLength = (uint32_t)strlen(fileNameBuffer),
+				.nameLength = (uint32_t)requiredBufferSize,
 				.name = phanide_strdup(fileNameBuffer)
 			}
 		};
@@ -957,6 +963,17 @@ phanide_fsmonitor_watchDirectory(phanide_context_t *context, const char *path)
 	}
 
 	return result;
+}
+
+PHANIDE_CORE_EXPORT uint32_t
+phanide_fsmonitor_getSupportedEventMask(phanide_fsmonitor_handle_t* handle)
+{
+	return 
+		PHANIDE_FSMONITOR_EVENT_CREATE |
+		PHANIDE_FSMONITOR_EVENT_DELETE |
+		PHANIDE_FSMONITOR_EVENT_MODIFY |
+		PHANIDE_FSMONITOR_EVENT_MOVED_FROM |
+		PHANIDE_FSMONITOR_EVENT_MOVED_TO;
 }
 
 PHANIDE_CORE_EXPORT void
