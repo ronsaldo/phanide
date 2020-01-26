@@ -9,6 +9,12 @@ BaselineOfPhanideCore >> baseline: spec [
 	<baseline>
 
 	spec for: #common do: [
+		spec postLoadDoIt: #postLoadActions.
+		spec
+			baseline: #'PhaNAPI' with: [
+				spec
+					repository: 'github://ronsaldo/phanapi' ].
+
 		spec project: 'PetitParser' with: [
 				spec
 					className: #ConfigurationOfPetitParser;
@@ -16,9 +22,10 @@ BaselineOfPhanideCore >> baseline: spec [
 					loads: #('Core' );
 					repository: 'http://smalltalkhub.com/mc/Moose/PetitParser/main/'
 		].
+				
 		spec
 			package: #'Phanide-Bindings' with: [
-				spec requires: #(#'PetitParser')
+				spec requires: #(#'PhaNAPI' #'PetitParser')
 			].
 		spec
 			package: #'Phanide-SyntaxHighlighting' with: [
@@ -29,4 +36,9 @@ BaselineOfPhanideCore >> baseline: spec [
 				spec requires: #(#'Phanide-Bindings')
 			].
 	].
+]
+
+{ #category : #doits }
+BaselineOfPhanideCore >> postLoadActions [
+	(Smalltalk globals at: #LibPhanideBindings) fetchLibrary
 ]

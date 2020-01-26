@@ -3,7 +3,7 @@ I have bindings to global libphanide functions.
 "
 Class {
 	#name : #LibPhanide,
-	#superclass : #FFILibrary,
+	#superclass : #PhaNAPILibrary,
 	#pools : [
 		'LibPhanidePool'
 	],
@@ -13,6 +13,11 @@ Class {
 { #category : #testing }
 LibPhanide class >> isAvailable [
 	^ self uniqueInstance isAvailable
+]
+
+{ #category : #'library path' }
+LibPhanide >> findLibraryPath [
+	^ PhaNAPI fullLibraryPathForCurrentPlatform: 'phanide' package: 'phanide'
 ]
 
 { #category : #'libgit-finalization' }
@@ -28,19 +33,4 @@ LibPhanide >> isAvailable [
 		ExternalAddress loadSymbol: 'phanide_createContext' from: self
 	] on: Error do: [ :e | result := false ].
 	^ result
-]
-
-{ #category : #'accessing platform' }
-LibPhanide >> macModuleName [
-	^ 'libphanide.dylib'
-]
-
-{ #category : #'accessing platform' }
-LibPhanide >> unixModuleName [
-	^ 'libphanide.so'
-]
-
-{ #category : #'accessing platform' }
-LibPhanide >> win32ModuleName [
-	^ 'phanide.dll'
 ]
