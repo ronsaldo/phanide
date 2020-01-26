@@ -15,6 +15,12 @@ LibPhanide class >> isAvailable [
 	^ self uniqueInstance isAvailable
 ]
 
+{ #category : #'library downloading' }
+LibPhanide >> fetchLibrary [
+	PhaNAPIBintray fetchLibrary: 'phanide' fromUser: 'ronsaldo' repository: 'phanide' package: 'lib'.
+
+]
+
 { #category : #'library path' }
 LibPhanide >> findLibraryPath [
 	^ PhaNAPI fullLibraryPathForCurrentPlatform: 'phanide' package: 'phanide'
