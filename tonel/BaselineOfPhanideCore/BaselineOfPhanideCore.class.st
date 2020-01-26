@@ -40,5 +40,5 @@ BaselineOfPhanideCore >> baseline: spec [
 
 { #category : #doits }
 BaselineOfPhanideCore >> postLoadActions [
-	(Smalltalk globals at: #LibPhanideBindings) fetchLibrary
+	(Smalltalk globals at: #LibPhanide) fetchLibrary
 ]
