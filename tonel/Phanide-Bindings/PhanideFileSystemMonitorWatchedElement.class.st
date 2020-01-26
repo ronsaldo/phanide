@@ -110,7 +110,9 @@ PhanideFileSystemMonitorWatchedElement >> deliverProcessedEvent: processedEvent 
 
 	"Synthesize additional events, in case there are not supported by the underlying platform."
 	processedEvent isModify ifTrue: [ 
-		(isDirectory not and: [ (supportedEventMask anyMask: PHANIDE_FSMONITOR_EVENT_CLOSE_WRITE) not ]) ifFalse: [
+		(processedEvent fileReference exists
+		and: [ processedEvent fileReference isDirectory not
+		and: [ (supportedEventMask anyMask: PHANIDE_FSMONITOR_EVENT_CLOSE_WRITE) not ]]) ifTrue: [
 			self deliverProcessedEvent: processedEvent asCloseWriteEvent
 		]
 	].
