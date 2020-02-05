@@ -10,7 +10,7 @@ Class {
 
 { #category : #testing }
 PhanideBrowserGDBDebugger class >> isAvailable [
-	^ LibPhanide isAvailable
+	^ LibOSIOEvents isAvailable
 ]
 
 { #category : #'as yet unclassified' }

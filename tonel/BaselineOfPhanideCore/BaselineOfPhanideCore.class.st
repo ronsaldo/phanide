@@ -9,11 +9,10 @@ BaselineOfPhanideCore >> baseline: spec [
 	<baseline>
 
 	spec for: #common do: [
-		spec postLoadDoIt: #postLoadActions.
 		spec
-			baseline: #'PhaNAPI' with: [
+			baseline: #'OSIOEvents' with: [
 				spec
-					repository: 'github://ronsaldo/phanapi' ].
+					repository: 'github://ronsaldo/os-ioevents' ].
 
 		spec project: 'PetitParser' with: [
 				spec
@@ -24,21 +23,12 @@ BaselineOfPhanideCore >> baseline: spec [
 		].
 				
 		spec
-			package: #'Phanide-Bindings' with: [
-				spec requires: #(#'PhaNAPI' #'PetitParser')
-			].
-		spec
 			package: #'Phanide-SyntaxHighlighting' with: [
 				spec requires: #(#'PetitParser')
 			].
 		spec
 			package: #'Phanide-GDB' with: [
-				spec requires: #(#'Phanide-Bindings')
+				spec requires: #(#'OSIOEvents')
 			].
 	].
-]
-
-{ #category : #doits }
-BaselineOfPhanideCore >> postLoadActions [
-	(Smalltalk globals at: #LibPhanide) fetchLibrary
 ]

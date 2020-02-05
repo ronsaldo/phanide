@@ -30,7 +30,7 @@ Class {
 		'AsyncNotificationHandlingMap'
 	],
 	#pools : [
-		'LibPhanidePool'
+		'LibOSIOEventsPool'
 	],
 	#category : #'Phanide-GDB-FrontEnd'
 }
@@ -349,7 +349,7 @@ PhanideGDB >> setProgramFileAndSymbols: programFileName [
 { #category : #commands }
 PhanideGDB >> start [
 	| programStdin |
-	process := PhanideDriver uniqueInstance spawnShell: self gdbCommand flags: PHANIDE_SPAWN_FLAGS_OPEN_EXTRA_PIPES.
+	process := OSIOEventsDriver uniqueInstance spawnShell: self gdbCommand flags: OS_IOEVENTS_SPAWN_FLAGS_OPEN_EXTRA_PIPES.
 	session := Smalltalk session.
 	
 	mutex := Semaphore forMutualExclusion.
