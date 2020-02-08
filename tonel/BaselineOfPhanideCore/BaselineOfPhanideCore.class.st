@@ -22,9 +22,5 @@ BaselineOfPhanideCore >> baseline: spec [
 			package: #'Phanide-SyntaxHighlighting' with: [
 				spec requires: conditionalDeps
 			].
-		spec
-			package: #'Phanide-GDB' with: [
-				spec requires: #(#'OSIOEvents')
-			].
 	].
 ]
