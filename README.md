@@ -11,7 +11,7 @@
 ```smalltalk
 Metacello new
   baseline: 'Phanide';
-  repository: 'github://ronsaldo/phanide/filetree';
+  repository: 'github://ronsaldo/phanide';
   load.
 ```
 
