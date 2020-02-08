@@ -12,13 +12,16 @@ BaselineOfPhanide >> baseline: spec [
 
 	spec for: #common do: [
 		spec baseline: #'PhanideCore' with: [ spec repository: repository ].
+		spec baseline: #'GDBBindings' with: [
+			spec repository: 'github://ronsaldo/gdb-bindings'
+		].
 		spec
 			package: #'Phanide-Browser' with: [
 				spec requires: #(#'PhanideCore')
 			].
 		spec
 			package: #'Phanide-BrowserGDB' with: [
-				spec requires: #(#'PhanideCore' #'Phanide-Browser')
+				spec requires: #(#'PhanideCore' #'GDBBindings' #'Phanide-Browser')
 			].
 	].
 ]

@@ -8,23 +8,19 @@ Class {
 BaselineOfPhanideCore >> baseline: spec [
 	<baseline>
 
+	| conditionalDeps |
 	spec for: #common do: [
-		spec
-			baseline: #'OSIOEvents' with: [
-				spec
-					repository: 'github://ronsaldo/os-ioevents' ].
-
-		spec project: 'PetitParser' with: [
-				spec
-					className: #ConfigurationOfPetitParser;
-					versionString: #'development';
-					loads: #('Core' );
-					repository: 'http://smalltalkhub.com/mc/Moose/PetitParser/main/'
+		conditionalDeps := #().
+		Smalltalk globals at: #PP2CompositeNode ifAbsent: [ 
+			conditionalDeps := { #'PetitParser2Core' }.
+			spec baseline: #'PetitParser2Core' with: [
+					spec
+						repository: 'github://kursjan/petitparser2' ].
 		].
 				
 		spec
 			package: #'Phanide-SyntaxHighlighting' with: [
-				spec requires: #(#'PetitParser')
+				spec requires: conditionalDeps
 			].
 		spec
 			package: #'Phanide-GDB' with: [

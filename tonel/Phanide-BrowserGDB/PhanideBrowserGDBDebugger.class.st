@@ -87,7 +87,7 @@ PhanideBrowserGDBDebugger >> initialize [
 
 { #category : #initialization }
 PhanideBrowserGDBDebugger >> initializeNewDebuggingSession [
-	gdb := PhanideGDB new.
+	gdb := GDBMIClient new.
 	gdb eventHandler: (PhanideBrowserGDBEventHandler new browser: browser).
 	gdb start
 ]

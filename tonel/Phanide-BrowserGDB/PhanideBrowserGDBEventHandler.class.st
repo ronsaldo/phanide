@@ -1,6 +1,6 @@
 Class {
 	#name : #PhanideBrowserGDBEventHandler,
-	#superclass : #PhanideGDBEventHandler,
+	#superclass : #GDBEventHandler,
 	#instVars : [
 		'browser',
 		'targetConsoleComponent',

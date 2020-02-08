@@ -6,7 +6,7 @@ I am a transcription of the grammar defined at: https://www.json.org/
 "
 Class {
 	#name : #PhanideJSONGrammar,
-	#superclass : #PPCompositeParser,
+	#superclass : #PP2CompositeNode,
 	#instVars : [
 		'value',
 		'string',
@@ -29,7 +29,7 @@ Class {
 		'fractionalPart',
 		'exponent'
 	],
-	#category : 'Phanide-SyntaxHighlighting-Styler'
+	#category : #'Phanide-SyntaxHighlighting-Styler'
 }
 
 { #category : #accessing }
@@ -39,17 +39,17 @@ PhanideJSONGrammar >> array [
 
 { #category : #accessing }
 PhanideJSONGrammar >> colon [
-	^ self token: $: asParser
+	^ self token: $: asPParser
 ]
 
 { #category : #accessing }
 PhanideJSONGrammar >> comma [
-	^ self token: $, asParser
+	^ self token: $, asPParser
 ]
 
 { #category : #accessing }
 PhanideJSONGrammar >> exponent [
-	^ ($e asParser / $E asParser), ($+ asParser / $- asParser) optional , #digit asParser plus
+	^ ($e asPParser / $E asPParser), ($+ asPParser / $- asPParser) optional , #digit asPParser plus
 ]
 
 { #category : #accessing }
@@ -59,28 +59,28 @@ PhanideJSONGrammar >> falseLiteral [
 
 { #category : #accessing }
 PhanideJSONGrammar >> fractionalPart [
-	^ $. asParser, #digit asParser plus
+	^ $. asPParser, #digit asPParser plus
 ]
 
 { #category : #accessing }
 PhanideJSONGrammar >> integerPart [
-	^ $- asParser optional , ($0 asParser / (($1 to: $9) asParser , #digit asParser star))
+	^ $- asPParser optional , #digit asPParser plus
 ]
 
 { #category : #accessing }
 PhanideJSONGrammar >> keyword: aString [
-	^ self token: aString asParser
+	^ self token: aString asPParser
 	
 ]
 
 { #category : #accessing }
 PhanideJSONGrammar >> lbracket [
-	^ self token: $[ asParser
+	^ self token: $[ asPParser
 ]
 
 { #category : #accessing }
 PhanideJSONGrammar >> lcbracket [
-	^ self token: ${ asParser
+	^ self token: ${ asPParser
 ]
 
 { #category : #accessing }
@@ -110,17 +110,17 @@ PhanideJSONGrammar >> pair [
 
 { #category : #accessing }
 PhanideJSONGrammar >> rbracket [
-	^ self token: $] asParser
+	^ self token: $] asPParser
 ]
 
 { #category : #accessing }
 PhanideJSONGrammar >> rcbracket [
-	^ self token: $} asParser
+	^ self token: $} asPParser
 ]
 
 { #category : #accessing }
 PhanideJSONGrammar >> space [
-	^ #space asParser plus
+	^ #space asPParser plus
 ]
 
 { #category : #accessing }
@@ -131,9 +131,9 @@ PhanideJSONGrammar >> start [
 { #category : #accessing }
 PhanideJSONGrammar >> string [
 	^ self token:
-	($" asParser ,
-		(($\ asParser , #any asParser) / ($" asParser negate) ) star,
-	$" asParser)
+	($" asPParser ,
+		(($\ asPParser , #any asPParser) / ($" asPParser negate) ) star,
+	$" asPParser)
 ]
 
 { #category : #accessing }
