@@ -3,7 +3,7 @@ A grammar for Regular expressions..
 "
 Class {
 	#name : #PhanideRegexGrammar,
-	#superclass : #PPCompositeParser,
+	#superclass : #PP2CompositeNode,
 	#instVars : [
 		'alternations',
 		'sequence',
@@ -23,27 +23,27 @@ Class {
 		'characterClassEscapeSequence',
 		'characterClassSingleCharacter'
 	],
-	#category : 'Phanide-SyntaxHighlighting-Regex'
+	#category : #'Phanide-SyntaxHighlighting-Regex'
 }
 
 { #category : #accessing }
 PhanideRegexGrammar >> alternations [
-	^ sequence, ($| asParser , sequence) star
+	^ sequence, ($| asPParser , sequence) star
 ]
 
 { #category : #accessing }
 PhanideRegexGrammar >> anyMetaCharacter [
-	^ $. asParser
+	^ $. asPParser
 ]
 
 { #category : #accessing }
 PhanideRegexGrammar >> characterClass [
-	^ $[ asParser, $^ asParser optional, characterClassElement plus , $] asParser
+	^ $[ asPParser, $^ asPParser optional, characterClassElement plus , $] asPParser
 ]
 
 { #category : #accessing }
 PhanideRegexGrammar >> characterClassCharacter [
-	^ ($- asParser / $] asParser) negate
+	^ ($- asPParser / $] asPParser) negate
 ]
 
 { #category : #accessing }
@@ -53,7 +53,7 @@ PhanideRegexGrammar >> characterClassElement [
 
 { #category : #accessing }
 PhanideRegexGrammar >> characterClassEscapeSequence [
-	^ $\ asParser , #any asParser
+	^ $\ asPParser , #any asPParser
 ]
 
 { #category : #accessing }
@@ -63,7 +63,7 @@ PhanideRegexGrammar >> characterClassSingleCharacter [
 
 { #category : #accessing }
 PhanideRegexGrammar >> characterRange [
-	^ characterRangeBound , $- asParser , characterRangeBound
+	^ characterRangeBound , $- asPParser , characterRangeBound
 ]
 
 { #category : #accessing }
@@ -73,22 +73,22 @@ PhanideRegexGrammar >> characterRangeBound [
 
 { #category : #accessing }
 PhanideRegexGrammar >> characterTerm [
-	^ ($| asParser / $[ asParser / $( asParser / $) asParser) negate
+	^ ($| asPParser / $[ asPParser / $( asPParser / $) asPParser) negate
 ]
 
 { #category : #accessing }
 PhanideRegexGrammar >> escapeSequence [
-	^ ($\ asParser , #any asParser) flatten
+	^ ($\ asPParser , #any asPParser) flatten
 ]
 
 { #category : #accessing }
 PhanideRegexGrammar >> namedCharacterClass [
-	^ '[:' asParser, #letter asParser plus flatten , ':]' asParser
+	^ '[:' asPParser, #letter asPParser plus flatten , ':]' asPParser
 ]
 
 { #category : #accessing }
 PhanideRegexGrammar >> parent [
-	^ $( asParser , alternations , $) asParser
+	^ $( asPParser , alternations , $) asPParser
 ]
 
 { #category : #accessing }
@@ -98,7 +98,7 @@ PhanideRegexGrammar >> repetition [
 
 { #category : #accessing }
 PhanideRegexGrammar >> repetitionOperator [
-	^ $* asParser | $+ asParser | $? asParser
+	^ $* asPParser | $+ asPParser | $? asPParser
 ]
 
 { #category : #accessing }
