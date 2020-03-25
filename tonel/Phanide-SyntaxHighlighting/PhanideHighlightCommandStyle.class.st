@@ -143,6 +143,11 @@ PhanideHighlightCommandStyle class >> symbol [
 ]
 
 { #category : #'accessing comment' }
+PhanideHighlightCommandStyle class >> syntaxError [
+	^ self style: #error
+]
+
+{ #category : #'accessing comment' }
 PhanideHighlightCommandStyle class >> typeExpression [
 	^ self keyword
 ]

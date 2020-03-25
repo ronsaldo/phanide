@@ -183,6 +183,7 @@ PhanideSyntaxStyleTable class >> styleTableDefinitionFromEclipseTheme: nameAndCo
 	| nameAndColorDictionary |
 	nameAndColorDictionary := Dictionary newFrom: (nameAndColorArray collect: [:pair | pair first -> pair second]).
 	^ nameAndColorArray , {
+		{ #error. 'FF4040' }.
 		{ #type. nameAndColorDictionary at: #keyword }.
 		{ #preprocessor. nameAndColorDictionary at: #annotation }.
 		{ #module. nameAndColorDictionary at: #interface }.
