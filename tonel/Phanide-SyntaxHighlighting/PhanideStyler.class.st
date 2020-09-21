@@ -18,7 +18,7 @@ Class {
 { #category : #stylers }
 PhanideStyler class >> c [
 	<styler>
-	^ self styler: 'C' extensions: #(c) regex: #(init
+	^ self styler: 'C' extensions: #(c m mm) regex: #(init
 		(init foreground
 			('/\*' multiLineComment -> multiLineComment)
 			('//.*' singleLineComment)
@@ -56,6 +56,7 @@ PhanideStyler class >> c [
 			('unsigned' keyword)
 
 			('void' type)
+			('bool' type)
 			('char' type)
 			('short' type)
 			('int' type)
@@ -454,6 +455,11 @@ PhanideStyler class >> stylerDictionary [
 { #category : #'as yet unclassified' }
 PhanideStyler class >> stylerExtensionDictionary [
 	^ StylerExtensionDictionary ifNil: [ StylerExtensionDictionary := Dictionary new ]
+]
+
+{ #category : #'as yet unclassified' }
+PhanideStyler >> asSpTextStyler [
+	^ PhanideSpTextStylerAdapter new phanideStyler: self
 ]
 
 { #category : #accessing }

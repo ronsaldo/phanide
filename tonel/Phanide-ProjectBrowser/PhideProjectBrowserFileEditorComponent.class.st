@@ -2,7 +2,8 @@ Class {
 	#name : #PhideProjectBrowserFileEditorComponent,
 	#superclass : #PhideProjectBrowserComponent,
 	#instVars : [
-		'isTemporary'
+		'isTemporary',
+		'hasUnsavedChanges'
 	],
 	#category : #'Phanide-ProjectBrowser'
 }
@@ -32,6 +33,22 @@ PhideProjectBrowserFileEditorComponent class >> isSuitableEditorFor: aFileRefere
 	^ false
 ]
 
+{ #category : #actions }
+PhideProjectBrowserFileEditorComponent >> connectPresenters [
+	self loadContentFromFile
+]
+
+{ #category : #accessing }
+PhideProjectBrowserFileEditorComponent >> hasUnsavedChanges [
+	^ hasUnsavedChanges ifNil: [ hasUnsavedChanges := false ]
+]
+
+{ #category : #accessing }
+PhideProjectBrowserFileEditorComponent >> hasUnsavedChanges: aBoolean [
+	hasUnsavedChanges := aBoolean.
+	self titleChanged
+]
+
 { #category : #accessing }
 PhideProjectBrowserFileEditorComponent >> installLocation [
 	^ #contentTabs
@@ -52,7 +69,16 @@ PhideProjectBrowserFileEditorComponent >> isTemporary: anObject [
 	isTemporary := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
+PhideProjectBrowserFileEditorComponent >> loadContentFromFile [
+	self model fileReference ifNotNil: [ :fileReference | self loadContentFromFile: fileReference ]
+]
+
+{ #category : #hooks }
+PhideProjectBrowserFileEditorComponent >> loadContentFromFile: fileReference [
+]
+
+{ #category : #actions }
 PhideProjectBrowserFileEditorComponent >> makeNonTemporaryEditor [
 	self isTemporary ifFalse: [ ^ false ].
 	isTemporary := false.
@@ -60,7 +86,24 @@ PhideProjectBrowserFileEditorComponent >> makeNonTemporaryEditor [
 	self titleChanged
 ]
 
-{ #category : #TOREMOVE }
+{ #category : #actions }
+PhideProjectBrowserFileEditorComponent >> save [
+	| fileReference |
+	fileReference := self model fileReference.
+	fileReference ifNil: [ ^ self saveAs ].
+	self saveInto: fileReference.
+	self hasUnsavedChanges: false.
+	^ true
+]
+
+{ #category : #actions }
+PhideProjectBrowserFileEditorComponent >> saveInto: targetFileReference [
+	self subclassResponsibility
+]
+
+{ #category : #accessing }
 PhideProjectBrowserFileEditorComponent >> title [
-	^ (self isTemporary ifTrue: [ '*' ] ifFalse: [ '' ]) , self model name
+	^ (self hasUnsavedChanges ifTrue: [ '*' ] ifFalse: [ '' ]) ,
+		self model name ,
+		(self isTemporary ifTrue: [ ' -' ] ifFalse: [ '' ])
 ]

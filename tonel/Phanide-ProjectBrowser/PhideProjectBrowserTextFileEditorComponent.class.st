@@ -27,8 +27,20 @@ PhideProjectBrowserTextFileEditorComponent class >> isFallbackEditorFor: aFileRe
 
 { #category : #initialization }
 PhideProjectBrowserTextFileEditorComponent >> initializePresenters [
-	textEditor := self newText.
+	textEditor := self newRichText
+		beEditable;
+		textStyler: SpNullTextStyler new;
+		yourself
+]
 
+{ #category : #hooks }
+PhideProjectBrowserTextFileEditorComponent >> loadContentFromFile: fileReference [
+	textEditor text: fileReference contents.
+	(PhanideStyler forFileReference: fileReference) ifNotNil: [ :styler |
+		textEditor textStyler: (styler asSpTextStyler fileReference: fileReference; yourself).
+	].
+	
+	self hasUnsavedChanges: false.
 ]
 
 { #category : #accessing }

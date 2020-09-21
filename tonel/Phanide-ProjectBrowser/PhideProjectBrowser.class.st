@@ -182,6 +182,7 @@ PhideProjectBrowser >> openNewFileEditorFor: aFileProjectElement temporary: isTe
 	editorClass ifNil: [ ^ nil ].
 	
 	editor := editorClass on: aFileProjectElement.
+	editor browserComponentKey: aFileProjectElement.
 	isTemporary ifTrue: [ 
 		editor isTemporary: isTemporary.
 		activeTemporaryEditor ifNotNil: [ activeTemporaryEditor close ].
