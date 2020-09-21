@@ -23,5 +23,23 @@ BaselineOfPhanide >> baseline: spec [
 			package: #'Phanide-BrowserGDB' with: [
 				spec requires: #(#'PhanideCore' #'GDBBindings' #'Phanide-Browser')
 			].
+
+		spec
+			package: #'Phanide-ProjectModel' with: [
+				spec requires: #(#'PhanideCore')
+			].
+
+		spec
+			package: #'Phanide-ProjectModel-Tests' with: [
+				spec requires: #(#'Phanide-ProjectModel')
+			].
+		spec
+			package: #'Phanide-ProjectBrowser' with: [
+				spec requires: #(#'Phanide-ProjectModel')
+			].
+		spec
+			package: #'Phanide-ProjectBrowser-Tests' with: [
+				spec requires: #(#'Phanide-ProjectBrowser')
+			].
 	].
 ]
