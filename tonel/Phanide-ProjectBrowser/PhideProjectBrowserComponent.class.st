@@ -36,11 +36,13 @@ PhideProjectBrowserComponent >> browserComponentKey: anObject [
 
 { #category : #'initialize-release' }
 PhideProjectBrowserComponent >> close [
-	projectBrowserAnchor ifNotNil: [
-		projectBrowserAnchor removeFromNotebook.
-		projectBrowserAnchor := nil.
-	].
+	projectBrowserAnchor ifNotNil: [ projectBrowserAnchor removeFromNotebook ].
 
+]
+
+{ #category : #'initialize-release' }
+PhideProjectBrowserComponent >> closed [
+	projectBrowserAnchor := nil.
 	projectBrowser ifNotNil: [
 		projectBrowser componentClosed: self.
 		projectBrowser := nil
@@ -80,4 +82,9 @@ PhideProjectBrowserComponent >> projectBrowserAnchor: anObject [
 { #category : #'as yet unclassified' }
 PhideProjectBrowserComponent >> titleChanged [
 	projectBrowserAnchor ifNotNil: [ projectBrowserAnchor title: self title ]
+]
+
+{ #category : #'as yet unclassified' }
+PhideProjectBrowserComponent >> validateCloseRequestAndCommitWith: aBlock [
+	^ aBlock value
 ]
