@@ -22,7 +22,8 @@ PhideProjectBuildMode >> buildMethod [
 
 { #category : #accessing }
 PhideProjectBuildMode >> buildMethod: anObject [
-	buildMethod := anObject
+	buildMethod := anObject.
+	buildMethod buildMode: self.
 ]
 
 { #category : #initialization }
@@ -56,6 +57,31 @@ PhideProjectBuildMode >> name: anObject [
 	name := anObject
 ]
 
+{ #category : #'as yet unclassified' }
+PhideProjectBuildMode >> newBuildAllSession [
+	^ buildMethod ifNotNil: [ buildMethod newBuildAllSession ]
+]
+
+{ #category : #'as yet unclassified' }
+PhideProjectBuildMode >> newCleanAllSession [
+	^ buildMethod ifNotNil: [ buildMethod newCleanAllSession ]
+]
+
+{ #category : #'as yet unclassified' }
+PhideProjectBuildMode >> newConfigureSession [
+	^ buildMethod ifNotNil: [ buildMethod newConfigureSession ]
+]
+
+{ #category : #'as yet unclassified' }
+PhideProjectBuildMode >> newInstallAllSession [
+	^ buildMethod ifNotNil: [ buildMethod newInstallAllSession ]
+]
+
+{ #category : #'as yet unclassified' }
+PhideProjectBuildMode >> newRebuildAllSession [
+	^ buildMethod ifNotNil: [ buildMethod newRebuildAllSession ]
+]
+
 { #category : #accessing }
 PhideProjectBuildMode >> platform [
 	^ platform
@@ -64,4 +90,9 @@ PhideProjectBuildMode >> platform [
 { #category : #accessing }
 PhideProjectBuildMode >> platform: anObject [
 	platform := anObject
+]
+
+{ #category : #accessing }
+PhideProjectBuildMode >> project [
+	^ platform project
 ]

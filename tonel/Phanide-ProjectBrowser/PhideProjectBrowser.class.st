@@ -65,6 +65,21 @@ PhideProjectBrowser >> actionAbout [
 ]
 
 { #category : #commands }
+PhideProjectBrowser >> actionBuildAll [
+	self model actionBuildAll
+]
+
+{ #category : #commands }
+PhideProjectBrowser >> actionCleanAll [
+	self model actionCleanAll
+]
+
+{ #category : #commands }
+PhideProjectBrowser >> actionConfigureBuild [
+	self model actionConfigureBuild
+]
+
+{ #category : #commands }
 PhideProjectBrowser >> actionCopy [
 	self inform: 'TODO: Copy'.
 ]
@@ -110,6 +125,11 @@ PhideProjectBrowser >> actionExit [
 ]
 
 { #category : #commands }
+PhideProjectBrowser >> actionInstallBuild [
+	self model actionInstallBuild
+]
+
+{ #category : #commands }
 PhideProjectBrowser >> actionOpenFile [
 	self inform: 'TODO: open file'.
 ]
@@ -122,6 +142,11 @@ PhideProjectBrowser >> actionOpenFolder [
 { #category : #commands }
 PhideProjectBrowser >> actionPaste [
 	self inform: 'TODO: Paste'.
+]
+
+{ #category : #commands }
+PhideProjectBrowser >> actionRebuildAll [
+	self model actionRebuildAll
 ]
 
 { #category : #commands }
@@ -352,8 +377,18 @@ PhideProjectBrowser >> buildMenu [
 			group
 				addItem: [ :item |
 					item
+						name: 'Configure Build';
+						action: [ self actionConfigureBuild ].
+				];
+				addItem: [ :item |
+					item
 						name: 'Build All';
 						action: [ self actionBuildAll ].
+				];
+				addItem: [ :item |
+					item
+						name: 'Install All';
+						action: [ self actionInstallBuild ].
 				];
 				addItem: [ :item |
 					item
@@ -367,13 +402,6 @@ PhideProjectBrowser >> buildMenu [
 				]
 		];
 		yourself
-]
-
-{ #category : #interactions }
-PhideProjectBrowser >> buildPlatformsChanged [
-	activePlatformDropList
-		items: (self model buildPlatforms values sort: [:a :b | a name < b name]);
-		selectItem: self model activeBuildPlatform
 ]
 
 { #category : #accessing }
@@ -620,6 +648,9 @@ PhideProjectBrowser >> modelChanged [
 		whenActiveBuildPlatformChangedDo: [ self activeBuildPlatformChanged ];
 		whenActiveBuildModeChangedDo: [ self activeBuildModeChanged ];
 		whenActiveLaunchProgramChangedDo: [ self activeLaunchProgramChanged ].
+	self activeBuildPlatformChanged.
+	
+		
 ]
 
 { #category : #commands }

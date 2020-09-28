@@ -6,7 +6,10 @@ Class {
 		'buildPlatforms',
 		'activeBuildPlatform',
 		'activeBuildMode',
-		'activeLaunchProgram'
+		'activeLaunchProgram',
+		'activeBuildSession',
+		'activeLaunchSession',
+		'activeDebugSession'
 	],
 	#category : #'Phanide-ProjectModel'
 }
@@ -18,9 +21,39 @@ PhideProject class >> forDirectory: aDirectoryNameOrFileReference [
 		yourself
 ]
 
-{ #category : #'as yet unclassified' }
-PhideProject >> activateLaunchProgramNamed: launchProgramName [
-	self halt
+{ #category : #commands }
+PhideProject >> actionBuildAll [
+	self activeBuildMode ifNotNil: [:buildMode |
+		self startNewBuildSession: buildMode newBuildAllSession
+	]
+]
+
+{ #category : #commands }
+PhideProject >> actionCleanAll [
+	self activeBuildMode ifNotNil: [:buildMode |
+		self startNewBuildSession: buildMode newCleanAllSession
+	]
+]
+
+{ #category : #commands }
+PhideProject >> actionConfigureBuild [
+	self activeBuildMode ifNotNil: [:buildMode |
+		self startNewBuildSession: buildMode newConfigureSession
+	]
+]
+
+{ #category : #commands }
+PhideProject >> actionInstallBuild [
+	self activeBuildMode ifNotNil: [:buildMode |
+		self startNewBuildSession: buildMode newInstallAllSession
+	]
+]
+
+{ #category : #commands }
+PhideProject >> actionRebuildAll [
+	self activeBuildMode ifNotNil: [:buildMode |
+		self startNewBuildSession: buildMode newRebuildAllSession
+	]
 ]
 
 { #category : #accessing }
@@ -44,6 +77,26 @@ PhideProject >> activeBuildPlatform: anObject [
 ]
 
 { #category : #accessing }
+PhideProject >> activeBuildSession [
+	^ activeBuildSession value
+]
+
+{ #category : #accessing }
+PhideProject >> activeBuildSession: anObject [
+	activeBuildSession value: anObject
+]
+
+{ #category : #accessing }
+PhideProject >> activeDebugSession [
+	^ activeDebugSession value
+]
+
+{ #category : #accessing }
+PhideProject >> activeDebugSession: anObject [
+	activeDebugSession value: anObject
+]
+
+{ #category : #accessing }
 PhideProject >> activeLaunchProgram [
 	^ activeLaunchProgram value
 ]
@@ -51,6 +104,16 @@ PhideProject >> activeLaunchProgram [
 { #category : #accessing }
 PhideProject >> activeLaunchProgram: anObject [
 	activeLaunchProgram value: anObject
+]
+
+{ #category : #accessing }
+PhideProject >> activeLaunchSession [
+	^ activeLaunchSession value
+]
+
+{ #category : #accessing }
+PhideProject >> activeLaunchSession: anObject [
+	activeLaunchSession value: anObject
 ]
 
 { #category : #adding }
@@ -98,6 +161,9 @@ PhideProject >> initialize [
 	activeBuildMode := nil asValueHolder.
 	activeBuildPlatform := nil asValueHolder.
 	activeLaunchProgram := nil asValueHolder.
+	activeBuildSession := nil asValueHolder.
+	activeLaunchSession := nil asValueHolder.
+	activeDebugSession := nil asValueHolder
 ]
 
 { #category : #testing }
@@ -118,6 +184,32 @@ PhideProject >> openBrowser [
 { #category : #accessing }
 PhideProject >> project [
 	^ self
+]
+
+{ #category : #'as yet unclassified' }
+PhideProject >> projectRootDirectoryElement [
+	^ topLevelElements first
+]
+
+{ #category : #'as yet unclassified' }
+PhideProject >> resolveProjectRelativePath: path [
+	| rootFileReference |
+	rootFileReference := self projectRootDirectoryElement fileReference.
+	path isEmpty ifTrue: [ ^ rootFileReference asAbsolute canonicalize fullName ].
+	^ (rootFileReference resolve: path asFileReference) asAbsolute canonicalize fullName
+]
+
+{ #category : #commands }
+PhideProject >> startNewBuildSession: newBuildSession [
+	newBuildSession ifNil: [ ^ newBuildSession ].
+	
+	self activeBuildSession ifNotNil: [ :oldSession |
+		oldSession terminate.
+		self activeBuildSession: nil
+	].
+
+	self activeBuildSession: newBuildSession.
+	newBuildSession start
 ]
 
 { #category : #initialization }
@@ -152,8 +244,23 @@ PhideProject >> whenActiveBuildPlatformChangedDo: aBlock [
 ]
 
 { #category : #enumerating }
+PhideProject >> whenActiveBuildSessionChangedDo: aBlock [
+	activeBuildSession whenChangedDo: aBlock
+]
+
+{ #category : #enumerating }
+PhideProject >> whenActiveDebugSessionChangedDo: aBlock [
+	activeDebugSession whenChangedDo: aBlock
+]
+
+{ #category : #enumerating }
 PhideProject >> whenActiveLaunchProgramChangedDo: aBlock [
 	activeLaunchProgram whenChangedDo: aBlock
+]
+
+{ #category : #enumerating }
+PhideProject >> whenActiveLaunchSessionChangedDo: aBlock [
+	activeLaunchSession whenChangedDo: aBlock
 ]
 
 { #category : #initialization }

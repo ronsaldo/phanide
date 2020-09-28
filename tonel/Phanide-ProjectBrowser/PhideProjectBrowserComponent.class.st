@@ -59,6 +59,12 @@ PhideProjectBrowserComponent >> isCloseable [
 	^ false
 ]
 
+{ #category : #'as yet unclassified' }
+PhideProjectBrowserComponent >> makeActivePage [	
+	projectBrowserAnchor ifNil: [ ^ self ].
+	projectBrowserAnchor owner selectPage: projectBrowserAnchor
+]
+
 { #category : #accessing }
 PhideProjectBrowserComponent >> projectBrowser [
 	^ projectBrowser
