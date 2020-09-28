@@ -23,7 +23,22 @@ PhideProjectFileSystemElement >> initializeWith: aFileReference [
 	fileReference := aFileReference.
 ]
 
+{ #category : #testing }
+PhideProjectFileSystemElement >> isFileSystemElement [
+	^ true
+]
+
 { #category : #accessing }
 PhideProjectFileSystemElement >> name [
 	^ fileReference basename
+]
+
+{ #category : #'as yet unclassified' }
+PhideProjectFileSystemElement >> projectRootDirectoryElement [
+	^ parent projectRootDirectoryElement
+]
+
+{ #category : #'as yet unclassified' }
+PhideProjectFileSystemElement >> projectRootRelativeFileReference [
+	^ self fileReference relativeTo: self projectRootDirectoryElement fileReference
 ]

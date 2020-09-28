@@ -21,11 +21,6 @@ PhideProjectBrowserProjectTreeComponent class >> isPermanentComponent [
 ]
 
 { #category : #initialization }
-PhideProjectBrowserProjectTreeComponent >> connectPresenters [
-	treeView roots: self model topLevelElements.
-]
-
-{ #category : #initialization }
 PhideProjectBrowserProjectTreeComponent >> initializePresenters [
 	treeView := self newTreeTable.
 	treeView
@@ -39,6 +34,7 @@ PhideProjectBrowserProjectTreeComponent >> initializePresenters [
 		);
 		hideColumnHeaders;
 		children: [ :node | node children ];
+		contextMenu: [ self treeViewMenu ];
 		whenSelectionChangedDo: [ :selection | self treeViewItemSelected: selection selectedItem ];
 		whenActivatedDo: [ :selection | self treeViewItemActivated: selection selectedItem ]
 	
@@ -49,7 +45,21 @@ PhideProjectBrowserProjectTreeComponent >> installLocation [
 	^ #leftTabs
 ]
 
-{ #category : #TOREMOVE }
+{ #category : #initialization }
+PhideProjectBrowserProjectTreeComponent >> loadTopLevelElements [
+	treeView roots: self model topLevelElements
+
+]
+
+{ #category : #initialization }
+PhideProjectBrowserProjectTreeComponent >> modelChanged [
+	| project |
+	project := self model ifNil: [^self].
+	self loadTopLevelElements.
+	project whenTopLevelElementsChangedDo: [ self loadTopLevelElements ].
+]
+
+{ #category : #accessing }
 PhideProjectBrowserProjectTreeComponent >> title [
 	^ 'Project'
 ]
@@ -69,4 +79,15 @@ PhideProjectBrowserProjectTreeComponent >> treeViewItemActivated: selectedItem [
 PhideProjectBrowserProjectTreeComponent >> treeViewItemSelected: selectedItem [
 	selectedItem ifNil: [ ^ self ].
 	selectedItem openTemporaryEditorOn: projectBrowser.
+]
+
+{ #category : #initialization }
+PhideProjectBrowserProjectTreeComponent >> treeViewMenu [
+	| presenter |
+	presenter := SpMenuPresenter new.
+	treeView selectedItem ifNotNil: [ :selectedItem |
+		selectedItem buildProjectTree: self menuOnPresenter: presenter
+	].
+
+	^ presenter
 ]

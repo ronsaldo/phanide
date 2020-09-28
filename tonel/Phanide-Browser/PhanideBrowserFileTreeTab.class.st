@@ -9,7 +9,7 @@ Class {
 		'fileReferenceToNodeDictionary',
 		'treeMorph'
 	],
-	#category : 'Phanide-Browser-UI'
+	#category : #'Phanide-Browser-UI'
 }
 
 { #category : #specs }
@@ -138,13 +138,14 @@ PhanideBrowserFileTreeTab >> fileTreeMenu: menu shifted: shifted [
 
 { #category : #initialization }
 PhanideBrowserFileTreeTab >> initializePresenter [
-	treeMorph onAnnouncement: FTSelectionChanged do: [ :ann |
-		self onNewTreeSelection: ann newSelectedRowIndexes
-	].
 
-	treeMorph onAnnouncement: FTStrongSelectionChanged do: [ :ann |
-		self onDoubleClick: ann selectedRowIndex
-	].
+	treeMorph
+		onAnnouncement: FTSelectionChanged
+		do: [ :ann | self onNewTreeSelection: ann newSelectedIndexes ].
+
+	treeMorph
+		onAnnouncement: FTStrongSelectionChanged
+		do: [ :ann | self onDoubleClick: ann selectedRowIndex ]
 ]
 
 { #category : #initialization }
@@ -174,20 +175,19 @@ PhanideBrowserFileTreeTab >> installLocation [
 
 { #category : #menus }
 PhanideBrowserFileTreeTab >> menuForElementIndex: anElementIndex [
+
 	| menu file |
-	treeMorph selectedRowIndexes ifEmpty: [ ^ nil ].
-	
+	treeMorph selectedIndexes ifEmpty: [ ^ nil ].
+
 	menu := MenuMorph new.
-	treeMorph selectedRowIndexes size > 1 ifTrue: [		
-		menu addAllFromPragma: 'fileTreeFilesMenu' target: self.
-	] ifFalse: [ 
-		file := (treeMorph dataSource elementAt: anElementIndex) data.
-		file isDirectory ifTrue: [ 
-			menu addAllFromPragma: 'fileTreeDirectoryMenu' target: self.
-		] ifFalse: [
-			menu addAllFromPragma: 'fileTreeFileMenu' target: self.
-		].
-	].
+	treeMorph selectedIndexes size > 1
+		ifTrue: [ menu addAllFromPragma: 'fileTreeFilesMenu' target: self ]
+		ifFalse: [ 
+			file := (treeMorph dataSource elementAt: anElementIndex) data.
+			file isDirectory
+				ifTrue: [ 
+				menu addAllFromPragma: 'fileTreeDirectoryMenu' target: self ]
+				ifFalse: [ menu addAllFromPragma: 'fileTreeFileMenu' target: self ] ].
 
 	^ menu
 ]

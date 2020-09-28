@@ -14,7 +14,10 @@ Class {
 		'statusBar',
 		'browserComponents',
 		'activeTemporaryEditor',
-		'debugToolbarProgramDropList'
+		'buildToolbar',
+		'activePlatformDropList',
+		'activeBuildModeDropList',
+		'activeLaunchProgramDropList'
 	],
 	#category : #'Phanide-ProjectBrowser'
 }
@@ -24,8 +27,9 @@ PhideProjectBrowser class >> defaultSpec [
 
 	^ SpBoxLayout newVertical
 		add: #menu withConstraints: [ :constraints | constraints height: self toolbarHeight ];
-		add: (SpPanedLayout newHorizontal
+		add: (SpBoxLayout newHorizontal
 			add: #mainToolbar;
+			add: #buildToolbar;
 			add: #debugToolbar;
 			yourself
 		) withConstraints: [ :constraints | constraints height: self toolbarHeight ];
@@ -145,6 +149,64 @@ PhideProjectBrowser >> actionUndo [
 	self inform: 'TODO: Undo'.
 ]
 
+{ #category : #interactions }
+PhideProjectBrowser >> activeBuildModeChanged [
+	| activeBuildPlatform newBuildModes newActiveBuildMode |
+
+	activeBuildPlatform := self model activeBuildPlatform.
+	activeBuildPlatform ifNil: [
+		activeBuildModeDropList items: #().
+		^ self
+	].
+
+	newBuildModes := activeBuildPlatform buildModes values sort: [:a :b | a name < b name].
+	activeBuildModeDropList items: newBuildModes.
+
+	newActiveBuildMode := self model activeBuildPlatform.
+	(newActiveBuildMode isNil or: [ newBuildModes includes: newActiveBuildMode ]) ifTrue: [
+		activeBuildModeDropList selectItem: newActiveBuildMode
+	].
+
+	self activeLaunchProgramChanged.
+	
+]
+
+{ #category : #interactions }
+PhideProjectBrowser >> activeBuildPlatformChanged [
+	| newActivePlatform newBuildPlatforms |
+
+	newBuildPlatforms := self model buildPlatforms values sort: [:a :b | a name < b name].
+	activePlatformDropList items: newBuildPlatforms.
+
+	newActivePlatform := self model activeBuildPlatform.
+	(newActivePlatform isNil or: [ newBuildPlatforms includes: newActivePlatform ]) ifTrue: [
+		activePlatformDropList selectItem: newActivePlatform
+	].
+	
+	self activeBuildModeChanged
+
+]
+
+{ #category : #interactions }
+PhideProjectBrowser >> activeLaunchProgramChanged [
+	| activeBuildMode newLaunchSettings newActiveLaunchProgram |
+
+	activeBuildMode := self model activeBuildMode.
+	activeBuildMode ifNil: [
+		activeLaunchProgramDropList items: #().
+		^ self
+	].
+
+	newLaunchSettings := activeBuildMode launchSettings values sort: [:a :b | a name < b name].
+	activeLaunchProgramDropList items: newLaunchSettings.
+
+	newActiveLaunchProgram := self model activeLaunchProgram.
+	(newActiveLaunchProgram isNil or: [ newLaunchSettings includes: newActiveLaunchProgram ]) ifTrue: [
+		activeLaunchProgramDropList selectItem: newActiveLaunchProgram
+	].
+
+]
+
 { #category : #adding }
 PhideProjectBrowser >> addBrowserComponent: browserComponent inLocation: installLocation [
 	^ self addBrowserComponent: browserComponent inLocation: installLocation makeActive: false
@@ -183,9 +245,22 @@ PhideProjectBrowser >> browserComponents [
 ]
 
 { #category : #initialization }
-PhideProjectBrowser >> buildDebugToolbar [
+PhideProjectBrowser >> buildBuildToolbar [
 	^ self newToolbar
-		addItem: (debugToolbarProgramDropList := SpDropListPresenter new
+		addItem: (activePlatformDropList := SpDropListPresenter new
+			display: [ :element | element name ];
+			yourself);
+		addItem: (activeBuildModeDropList := SpDropListPresenter new
+			display: [ :element | element name ];
+			yourself);
+		yourself
+]
+
+{ #category : #initialization }
+PhideProjectBrowser >> buildDebugToolbar [	
+	^ self newToolbar
+		addItem: (activeLaunchProgramDropList := SpDropListPresenter new
+			display: [ :element | element name ];
 			yourself);
 		addItem: (SpToolbarButtonPresenter new
 			icon: (self iconNamed: #smallDoIt);
@@ -270,6 +345,42 @@ PhideProjectBrowser >> buildMainToolbar [
 		yourself
 ]
 
+{ #category : #menu }
+PhideProjectBrowser >> buildMenu [
+	^ self newMenu
+		addGroup: [ :group |
+			group
+				addItem: [ :item |
+					item
+						name: 'Build All';
+						action: [ self actionBuildAll ].
+				];
+				addItem: [ :item |
+					item
+						name: 'Rebuild All';
+						action: [ self actionRebuildAll ].
+				];
+				addItem: [ :item |
+					item
+						name: 'Clean All';
+						action: [ self actionCleanAll ].
+				]
+		];
+		yourself
+]
+
+{ #category : #interactions }
+PhideProjectBrowser >> buildPlatformsChanged [
+	activePlatformDropList
+		items: (self model buildPlatforms values sort: [:a :b | a name < b name]);
+		selectItem: self model activeBuildPlatform
+]
+
+{ #category : #accessing }
+PhideProjectBrowser >> buildToolbar [
+	^ buildToolbar
+]
+
 { #category : #events }
 PhideProjectBrowser >> componentClosed: aComponent [
 	self browserComponents removeKey: aComponent browserComponentKey ifAbsent: [  ].
@@ -324,11 +435,6 @@ PhideProjectBrowser >> debugMenu [
 { #category : #accessing }
 PhideProjectBrowser >> debugToolbar [
 	^ debugToolbar
-]
-
-{ #category : #accessing }
-PhideProjectBrowser >> debugToolbarProgramDropList [
-	^ debugToolbarProgramDropList
 ]
 
 { #category : #menu }
@@ -431,6 +537,7 @@ PhideProjectBrowser >> helpMenu [
 PhideProjectBrowser >> initializePresenters [
 	menu := self mainMenu.
 	mainToolbar := self buildMainToolbar.
+	buildToolbar := self buildBuildToolbar.
 	debugToolbar := self buildDebugToolbar.
 	leftTabs := self newNotebook.
 	contentTabs := self newNotebook.
@@ -470,6 +577,11 @@ PhideProjectBrowser >> mainMenu [
 				];
 				addItem: [ :item |
 					item
+						name: 'Build';
+						subMenu: self buildMenu
+				];
+				addItem: [ :item |
+					item
 						name: 'Debug';
 						subMenu: self debugMenu
 				];
@@ -495,6 +607,19 @@ PhideProjectBrowser >> mainToolbar [
 { #category : #accessing }
 PhideProjectBrowser >> menu [
 	^ menu
+]
+
+{ #category : #interactions }
+PhideProjectBrowser >> modelChanged [
+	| project |
+	super modelChanged.
+	project := self model ifNil: [ ^ self ].
+
+	project
+		whenBuildPlatformsChangedDo: [ self activeBuildPlatformChanged ];
+		whenActiveBuildPlatformChangedDo: [ self activeBuildPlatformChanged ];
+		whenActiveBuildModeChangedDo: [ self activeBuildModeChanged ];
+		whenActiveLaunchProgramChangedDo: [ self activeLaunchProgramChanged ].
 ]
 
 { #category : #commands }

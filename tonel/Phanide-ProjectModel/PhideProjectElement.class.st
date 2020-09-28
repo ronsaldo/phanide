@@ -1,6 +1,9 @@
 Class {
 	#name : #PhideProjectElement,
 	#superclass : #Object,
+	#instVars : [
+		'parent'
+	],
 	#category : #'Phanide-ProjectModel'
 }
 
@@ -26,9 +29,29 @@ PhideProjectElement >> iconName [
 	^ nil
 ]
 
+{ #category : #testing }
+PhideProjectElement >> isFileSystemElement [
+	^ false
+]
+
 { #category : #accessing }
 PhideProjectElement >> name [
 	^ self subclassResponsibility
+]
+
+{ #category : #accessing }
+PhideProjectElement >> parent [
+	^ parent
+]
+
+{ #category : #accessing }
+PhideProjectElement >> parent: anObject [
+	parent := anObject
+]
+
+{ #category : #accessing }
+PhideProjectElement >> project [
+	^ parent project
 ]
 
 { #category : #sorting }
