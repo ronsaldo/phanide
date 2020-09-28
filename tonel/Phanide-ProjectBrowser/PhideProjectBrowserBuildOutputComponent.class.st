@@ -46,6 +46,7 @@ PhideProjectBrowserBuildOutputComponent >> modelChanged [
 		newSession ifNotNil: [
 			| messageBlock |
 			self makeActivePage.
+			textView text: ''.
 			messageBlock := [ :message |
 				textMutex critical: [
 					textView

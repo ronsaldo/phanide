@@ -102,7 +102,7 @@ PhanideBrowserModel >> actionDebugPause [
 
 { #category : #'main actions' }
 PhanideBrowserModel >> actionDebugRun [
-	self debuggerState runStartupProgramWithDebugger
+	^ self model actionDebugRun
 ]
 
 { #category : #'main actions' }

@@ -156,7 +156,7 @@ PhideProjectBrowser >> actionRedo [
 
 { #category : #commands }
 PhideProjectBrowser >> actionRunWithoutDebugging [
-	self inform: 'TODO: run without debugging'.
+	^ self model actionRunWithoutDebugging
 ]
 
 { #category : #commands }

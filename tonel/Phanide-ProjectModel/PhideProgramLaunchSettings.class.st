@@ -12,6 +12,16 @@ Class {
 	#category : #'Phanide-ProjectModel'
 }
 
+{ #category : #'as yet unclassified' }
+PhideProgramLaunchSettings >> absoluteProgramName [
+	^ self resolveProjectRelativePath: program
+]
+
+{ #category : #'as yet unclassified' }
+PhideProgramLaunchSettings >> absoluteWorkingDirectory [
+	^ self resolveProjectRelativePath: workingDirectory
+]
+
 { #category : #accessing }
 PhideProgramLaunchSettings >> buildMode [
 	^ buildMode
@@ -42,6 +52,11 @@ PhideProgramLaunchSettings >> environmentVariables: anObject [
 	environmentVariables := anObject
 ]
 
+{ #category : #'instance creation' }
+PhideProgramLaunchSettings >> formatShellCommand [
+	^ self absoluteProgramName , ' ' , commandLineArguments
+]
+
 { #category : #initialization }
 PhideProgramLaunchSettings >> initialize [
 	super initialize.
@@ -59,6 +74,13 @@ PhideProgramLaunchSettings >> name: anObject [
 	name := anObject
 ]
 
+{ #category : #'instance creation' }
+PhideProgramLaunchSettings >> newLaunchSession [
+	^ PhideProgramLaunchSession new
+		shellCommand: self formatShellCommand inWorkingDirectory: self absoluteWorkingDirectory;
+		yourself
+]
+
 { #category : #accessing }
 PhideProgramLaunchSettings >> program [
 	^ program
@@ -67,6 +89,16 @@ PhideProgramLaunchSettings >> program [
 { #category : #accessing }
 PhideProgramLaunchSettings >> program: anObject [
 	program := anObject
+]
+
+{ #category : #'as yet unclassified' }
+PhideProgramLaunchSettings >> project [
+	^ buildMode project
+]
+
+{ #category : #'as yet unclassified' }
+PhideProgramLaunchSettings >> resolveProjectRelativePath: path [
+	^ self project resolveProjectRelativePath: path
 ]
 
 { #category : #accessing }

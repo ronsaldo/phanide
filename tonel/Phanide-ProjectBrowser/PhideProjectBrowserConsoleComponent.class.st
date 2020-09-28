@@ -2,7 +2,8 @@ Class {
 	#name : #PhideProjectBrowserConsoleComponent,
 	#superclass : #PhideProjectBrowserComponent,
 	#instVars : [
-		'textView'
+		'textView',
+		'textMutex'
 	],
 	#category : #'Phanide-ProjectBrowser'
 }
@@ -21,6 +22,12 @@ PhideProjectBrowserConsoleComponent class >> isPermanentComponent [
 ]
 
 { #category : #initialization }
+PhideProjectBrowserConsoleComponent >> initialize [
+	super initialize.
+	textMutex := Semaphore forMutualExclusion.
+]
+
+{ #category : #initialization }
 PhideProjectBrowserConsoleComponent >> initializePresenters [
 	textView := self newText.
 
@@ -29,6 +36,32 @@ PhideProjectBrowserConsoleComponent >> initializePresenters [
 { #category : #accessing }
 PhideProjectBrowserConsoleComponent >> installLocation [
 	^ #bottomTabs
+]
+
+{ #category : #initialization }
+PhideProjectBrowserConsoleComponent >> modelChanged [
+	| project sessionChangeBlock |
+	project := self model project.
+	sessionChangeBlock := [ :newSession |
+		newSession ifNotNil: [
+			| messageBlock |
+			self makeActivePage.
+			textView text: ''.
+			messageBlock := [ :message |
+				textMutex critical: [
+					textView
+						text: textView text , message
+				]
+			].
+		
+			newSession
+				onStdoutMessageDo: messageBlock;
+				onStderrMessageDo: messageBlock
+		]
+	].
+	project
+		whenActiveLaunchSessionChangedDo: sessionChangeBlock;
+		whenActiveDebugSessionChangedDo: sessionChangeBlock
 ]
 
 { #category : #accessing }

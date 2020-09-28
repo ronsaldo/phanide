@@ -2,7 +2,8 @@ Class {
 	#name : #PhideProjectBrowserDebuggerConsole,
 	#superclass : #PhideProjectBrowserComponent,
 	#instVars : [
-		'textView'
+		'textView',
+		'textMutex'
 	],
 	#category : #'Phanide-ProjectBrowser'
 }
@@ -18,6 +19,12 @@ PhideProjectBrowserDebuggerConsole class >> defaultSpec [
 { #category : #testing }
 PhideProjectBrowserDebuggerConsole class >> isPermanentComponent [
 	^ true
+]
+
+{ #category : #initialization }
+PhideProjectBrowserDebuggerConsole >> initialize [
+	super initialize.
+	textMutex := Semaphore forMutualExclusion.
 ]
 
 { #category : #initialization }

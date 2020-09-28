@@ -43,6 +43,12 @@ PhideProject >> actionConfigureBuild [
 ]
 
 { #category : #commands }
+PhideProject >> actionDebugRun [
+	self activeLaunchProgram ifNil: [ ^ self ].
+	self startNewDebugSession: self activeLaunchProgram newDebugSession
+]
+
+{ #category : #commands }
 PhideProject >> actionInstallBuild [
 	self activeBuildMode ifNotNil: [:buildMode |
 		self startNewBuildSession: buildMode newInstallAllSession
@@ -54,6 +60,12 @@ PhideProject >> actionRebuildAll [
 	self activeBuildMode ifNotNil: [:buildMode |
 		self startNewBuildSession: buildMode newRebuildAllSession
 	]
+]
+
+{ #category : #commands }
+PhideProject >> actionRunWithoutDebugging [
+	self activeLaunchProgram ifNil: [ ^ self ].
+	self startNewLaunchSession: self activeLaunchProgram newLaunchSession
 ]
 
 { #category : #accessing }
@@ -203,13 +215,53 @@ PhideProject >> resolveProjectRelativePath: path [
 PhideProject >> startNewBuildSession: newBuildSession [
 	newBuildSession ifNil: [ ^ newBuildSession ].
 	
+	self terminateCurrentBuildSession.
+	self activeBuildSession: newBuildSession.
+	newBuildSession start
+]
+
+{ #category : #commands }
+PhideProject >> startNewDebugSession: newDebugSession [
+	newDebugSession ifNil: [ ^ self ].
+	
+	self terminateCurrentLaunchSession.
+	self terminateCurrentDebugSession.
+	self activeLaunchSession: newDebugSession.
+	newDebugSession start
+]
+
+{ #category : #commands }
+PhideProject >> startNewLaunchSession: newLaunchSession [
+	newLaunchSession ifNil: [ ^ self ].
+	
+	self terminateCurrentLaunchSession.
+	self terminateCurrentDebugSession.
+	self activeLaunchSession: newLaunchSession.
+	newLaunchSession start
+]
+
+{ #category : #commands }
+PhideProject >> terminateCurrentBuildSession [
 	self activeBuildSession ifNotNil: [ :oldSession |
 		oldSession terminate.
 		self activeBuildSession: nil
 	].
+]
 
-	self activeBuildSession: newBuildSession.
-	newBuildSession start
+{ #category : #commands }
+PhideProject >> terminateCurrentDebugSession [
+	self activeDebugSession ifNotNil: [ :oldSession |
+		oldSession terminate.
+		self activeDebugSession: nil
+	].
+]
+
+{ #category : #commands }
+PhideProject >> terminateCurrentLaunchSession [
+	self activeLaunchSession ifNotNil: [ :oldSession |
+		oldSession terminate.
+		self activeLaunchSession: nil
+	].
 ]
 
 { #category : #initialization }
