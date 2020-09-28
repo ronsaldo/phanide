@@ -38,12 +38,37 @@ PhideProjectBrowserDebuggerConsole >> installLocation [
 	^ #rightBottomTabs
 ]
 
+{ #category : #initialization }
+PhideProjectBrowserDebuggerConsole >> modelChanged [
+	| project sessionChangeBlock |
+	project := self model project.
+	sessionChangeBlock := [ :newSession |
+		newSession ifNotNil: [
+			| messageBlock |
+			self makeActivePage.
+			textView text: ''.
+			messageBlock := [ :message |
+				textMutex critical: [
+					textView
+						text: textView text , message
+				]
+			].
+		
+			newSession
+				onDebuggerStdoutMessageDo: messageBlock;
+				onDebuggerStderrMessageDo: messageBlock
+		]
+	].
+	project
+		whenActiveDebugSessionChangedDo: sessionChangeBlock
+]
+
 { #category : #accessing }
 PhideProjectBrowserDebuggerConsole >> textView [
 	^ textView
 ]
 
-{ #category : #TOREMOVE }
+{ #category : #accessing }
 PhideProjectBrowserDebuggerConsole >> title [
 	^ 'Debugger Console'
 ]

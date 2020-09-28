@@ -77,8 +77,8 @@ PhideProcessLaunchSession >> shellCommand: anObject [
 ]
 
 { #category : #'as yet unclassified' }
-PhideProcessLaunchSession >> shellCommand: buildCommand inWorkingDirectory: workingDirectory [
-	self shellCommand: ('cd "{1}" && {2}' format: {workingDirectory . buildCommand})
+PhideProcessLaunchSession >> shellCommand: command inWorkingDirectory: workingDirectory [
+	self shellCommand: ('unset LD_LIBRARY_PATH && unset DYLD_LIBRARY_PATH && cd "{1}" && {2}' format: {workingDirectory . command})
 ]
 
 { #category : #'as yet unclassified' }

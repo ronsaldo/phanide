@@ -34,7 +34,7 @@ PhideProgramLaunchSettings >> buildMode: anObject [
 
 { #category : #accessing }
 PhideProgramLaunchSettings >> commandLineArguments [
-	^ commandLineArguments
+	^ commandLineArguments ifNil: [ commandLineArguments := '' ]
 ]
 
 { #category : #accessing }
@@ -44,24 +44,17 @@ PhideProgramLaunchSettings >> commandLineArguments: anObject [
 
 { #category : #accessing }
 PhideProgramLaunchSettings >> environmentVariables [
-	^ environmentVariables
+	^ environmentVariables ifNil: [ environmentVariables := OrderedDictionary new ]
 ]
 
 { #category : #accessing }
 PhideProgramLaunchSettings >> environmentVariables: anObject [
-	environmentVariables := anObject
+	environmentVariables := anObject as: OrderedDictionary
 ]
 
 { #category : #'instance creation' }
 PhideProgramLaunchSettings >> formatShellCommand [
 	^ self absoluteProgramName , ' ' , commandLineArguments
-]
-
-{ #category : #initialization }
-PhideProgramLaunchSettings >> initialize [
-	super initialize.
-	commandLineArguments := ''.
-	
 ]
 
 { #category : #accessing }
@@ -72,6 +65,16 @@ PhideProgramLaunchSettings >> name [
 { #category : #accessing }
 PhideProgramLaunchSettings >> name: anObject [
 	name := anObject
+]
+
+{ #category : #'instance creation' }
+PhideProgramLaunchSettings >> newDebugSession [
+	^ PhideProgramGDBDebugSession new
+		programFileName: self absoluteProgramName;
+		commandLineArguments: self commandLineArguments;
+		workingDirectory: self absoluteWorkingDirectory;
+		environmentVariables: self environmentVariables;
+		yourself
 ]
 
 { #category : #'instance creation' }

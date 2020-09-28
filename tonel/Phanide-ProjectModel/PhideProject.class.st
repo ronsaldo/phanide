@@ -43,9 +43,44 @@ PhideProject >> actionConfigureBuild [
 ]
 
 { #category : #commands }
+PhideProject >> actionDebugContinue [
+	self activeDebugSession ifNotNil: [ :s |
+		s debugContinue
+	]
+]
+
+{ #category : #commands }
+PhideProject >> actionDebugPause [
+	self activeDebugSession ifNotNil: [ :s |
+		s debugPause
+	]
+]
+
+{ #category : #commands }
 PhideProject >> actionDebugRun [
 	self activeLaunchProgram ifNil: [ ^ self ].
 	self startNewDebugSession: self activeLaunchProgram newDebugSession
+]
+
+{ #category : #commands }
+PhideProject >> actionDebugStepInto [
+	self activeDebugSession ifNotNil: [ :s |
+		s debugStepInto
+	]
+]
+
+{ #category : #commands }
+PhideProject >> actionDebugStepOver [
+	self activeDebugSession ifNotNil: [ :s |
+		s debugStepOver
+	]
+]
+
+{ #category : #commands }
+PhideProject >> actionDebugStop [
+	self activeDebugSession ifNotNil: [ :s |
+		s debugStop
+	]
 ]
 
 { #category : #commands }
@@ -226,7 +261,7 @@ PhideProject >> startNewDebugSession: newDebugSession [
 	
 	self terminateCurrentLaunchSession.
 	self terminateCurrentDebugSession.
-	self activeLaunchSession: newDebugSession.
+	self activeDebugSession: newDebugSession.
 	newDebugSession start
 ]
 

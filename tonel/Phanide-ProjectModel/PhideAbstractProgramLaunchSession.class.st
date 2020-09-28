@@ -4,6 +4,11 @@ Class {
 	#category : #'Phanide-ProjectModel'
 }
 
+{ #category : #testing }
+PhideAbstractProgramLaunchSession class >> isAbstract [
+	^ self == PhideAbstractProgramLaunchSession
+]
+
 { #category : #actions }
 PhideAbstractProgramLaunchSession >> isRunning [
 	self subclassResponsibility

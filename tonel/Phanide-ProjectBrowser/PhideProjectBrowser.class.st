@@ -91,32 +91,32 @@ PhideProjectBrowser >> actionCut [
 
 { #category : #commands }
 PhideProjectBrowser >> actionDebugContinue [
-	self inform: 'TODO: debug continue'.
+	^ self model actionDebugContinue
 ]
 
 { #category : #commands }
 PhideProjectBrowser >> actionDebugPause [
-	self inform: 'TODO: debug pause'.
+	^ self model actionDebugPause
 ]
 
 { #category : #commands }
 PhideProjectBrowser >> actionDebugRun [
-	self inform: 'TODO: debug run'.
+	^ self model actionDebugRun
 ]
 
 { #category : #commands }
 PhideProjectBrowser >> actionDebugStepInto [
-	self inform: 'TODO: debug step into'.
+	^ self model actionDebugStepInto
 ]
 
 { #category : #commands }
 PhideProjectBrowser >> actionDebugStepOver [
-	self inform: 'TODO: debug step over'.
+	^ self model actionDebugStepOver
 ]
 
 { #category : #commands }
 PhideProjectBrowser >> actionDebugStop [
-	self inform: 'TODO: debug stop'.
+	^ self model actionDebugStop
 ]
 
 { #category : #commands }

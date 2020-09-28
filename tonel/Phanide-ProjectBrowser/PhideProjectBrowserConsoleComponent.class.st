@@ -69,7 +69,7 @@ PhideProjectBrowserConsoleComponent >> textView [
 	^ textView
 ]
 
-{ #category : #TOREMOVE }
+{ #category : #accessing }
 PhideProjectBrowserConsoleComponent >> title [
 	^ 'Console'
 ]
