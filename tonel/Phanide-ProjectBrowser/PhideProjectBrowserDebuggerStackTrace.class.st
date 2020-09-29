@@ -48,19 +48,21 @@ PhideProjectBrowserDebuggerStackTrace >> modelChanged [
 	| project |
 	project := self model.
 	project whenActiveDebugSessionChangedDo: [ :debugSession |
-		debugSession whenCurrentStopPointChangedDo: [ :stopPoint |
-			|stackTrace|
-			(stopPoint isNil or: [stopPoint frame isNil]) ifTrue: [
-				listView
-					items: #()
-			] ifFalse: [ 
-				stackTrace := debugSession stackTrace.
-				listView
-					items: stackTrace.
-				(stackTrace includes: stopPoint frame) ifFalse: [
-					listView selectItem: stopPoint frame
-				]
-			].
+		debugSession ifNotNil: [
+			debugSession whenCurrentStopPointChangedDo: [ :stopPoint |
+				|stackTrace|
+				(stopPoint isNil or: [stopPoint frame isNil]) ifTrue: [
+					listView
+						items: #()
+				] ifFalse: [ 
+					stackTrace := debugSession stackTrace.
+					listView
+						items: stackTrace.
+					(stackTrace includes: stopPoint frame) ifFalse: [
+						listView selectItem: stopPoint frame
+					]
+				].
+			]
 		]
 	]
 ]

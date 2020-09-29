@@ -44,11 +44,13 @@ PhideProjectBrowserDebuggerLocals >> modelChanged [
 	| project |
 	project := self model.
 	project whenActiveDebugSessionChangedDo: [ :debugSession |
-		debugSession whenCurrentStackFrameChangedDo: [ :newFrame |
-			newFrame ifNil: [
-				listView items: #()
-			] ifNotNil: [
-				listView items: (debugSession localsInFrame: newFrame)
+		debugSession ifNotNil: [ 
+			debugSession whenCurrentStackFrameChangedDo: [ :newFrame |
+				newFrame ifNil: [
+					listView items: #()
+				] ifNotNil: [
+					listView items: (debugSession localsInFrame: newFrame)
+				]
 			]
 		]
 	]
