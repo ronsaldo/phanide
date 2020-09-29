@@ -7,6 +7,28 @@ Class {
 	#category : #'Phanide-ProjectModel'
 }
 
+{ #category : #'debugging actions' }
+PhideProgramGDBDebugSession >> convertGDBFrame: gdbFrame [
+	^ PhideDebugSessionStackFrame new
+		threadId: gdbFrame thread;
+		level: gdbFrame level;
+		address: gdbFrame addr;
+		function: gdbFrame func;
+		file: gdbFrame file;
+		line: gdbFrame line;
+		yourself
+]
+
+{ #category : #'debugging actions' }
+PhideProgramGDBDebugSession >> convertGDBLocal: gdbLocal inStackFrame: stackFrame [
+	^ PhideDebugSessionLocal new
+		stackFrame: stackFrame;
+		name: gdbLocal name;
+		value: gdbLocal value;
+		argumentIndex: gdbLocal arg;
+		yourself
+]
+
 { #category : #'debug actions' }
 PhideProgramGDBDebugSession >> debugContinue [
 	gdb ifNil: [ ^ self ].
@@ -34,6 +56,24 @@ PhideProgramGDBDebugSession >> debugStepOver [
 { #category : #'debug actions' }
 PhideProgramGDBDebugSession >> debugStop [
 	self terminate
+]
+
+{ #category : #'as yet unclassified' }
+PhideProgramGDBDebugSession >> localsInFrame: frame [
+	^ (gdb getLocalsInThread: frame threadId frameLevel: frame level)
+		collect: [ :each | self convertGDBLocal: each inStackFrame: frame ]
+]
+
+{ #category : #notifications }
+PhideProgramGDBDebugSession >> notifyDebugStopWithReason: reason atFrame: frame [
+	self currentThreadId: frame threadId.
+	^ super notifyDebugStopWithReason: reason atFrame: frame
+]
+
+{ #category : #'as yet unclassified' }
+PhideProgramGDBDebugSession >> stackTrace [
+	gdb ifNil: [ ^ nil ].
+	^ (gdb getStackTraceForThread: self currentThreadId) collect: [ :each | self convertGDBFrame: each ]
 ]
 
 { #category : #accessing }

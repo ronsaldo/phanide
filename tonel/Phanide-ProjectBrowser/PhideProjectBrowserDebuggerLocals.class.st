@@ -23,7 +23,10 @@ PhideProjectBrowserDebuggerLocals class >> isPermanentComponent [
 { #category : #initialization }
 PhideProjectBrowserDebuggerLocals >> initializePresenters [
 	listView := self newTable.
-
+	listView
+		beResizable;
+		addColumn: (SpStringTableColumn title: 'Name' evaluated: [ :item | item name ]);
+		addColumn: (SpStringTableColumn title: 'Value' evaluated: [ :item | item value ])
 ]
 
 { #category : #accessing }
@@ -34,6 +37,21 @@ PhideProjectBrowserDebuggerLocals >> installLocation [
 { #category : #accessing }
 PhideProjectBrowserDebuggerLocals >> listView [
 	^ listView
+]
+
+{ #category : #initialization }
+PhideProjectBrowserDebuggerLocals >> modelChanged [
+	| project |
+	project := self model.
+	project whenActiveDebugSessionChangedDo: [ :debugSession |
+		debugSession whenCurrentStackFrameChangedDo: [ :newFrame |
+			newFrame ifNil: [
+				listView items: #()
+			] ifNotNil: [
+				listView items: (debugSession localsInFrame: newFrame)
+			]
+		]
+	]
 ]
 
 { #category : #TOREMOVE }

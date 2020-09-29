@@ -11,7 +11,9 @@ Class {
 		'debuggerStderrHandlingBlock',
 		'debuggerStdoutHandlingBlock',
 		'finishedHandlingBlock',
-		'currentStopPoint'
+		'currentStopPoint',
+		'currentThreadId',
+		'currentStackFrame'
 	],
 	#category : #'Phanide-ProjectModel'
 }
@@ -32,6 +34,16 @@ PhideProgramDebugSession >> commandLineArguments: anObject [
 ]
 
 { #category : #accessing }
+PhideProgramDebugSession >> currentStackFrame [
+	^ currentStackFrame value
+]
+
+{ #category : #accessing }
+PhideProgramDebugSession >> currentStackFrame: aFrame [
+	currentStackFrame value: aFrame
+]
+
+{ #category : #accessing }
 PhideProgramDebugSession >> currentStopPoint [
 	^ currentStopPoint value
 ]
@@ -39,6 +51,16 @@ PhideProgramDebugSession >> currentStopPoint [
 { #category : #accessing }
 PhideProgramDebugSession >> currentStopPoint: aStopPoint [
 	currentStopPoint value: aStopPoint
+]
+
+{ #category : #accessing }
+PhideProgramDebugSession >> currentThreadId [
+	^ currentThreadId value
+]
+
+{ #category : #accessing }
+PhideProgramDebugSession >> currentThreadId: newThreadId [
+	currentThreadId value: newThreadId
 ]
 
 { #category : #'debug actions' }
@@ -85,6 +107,28 @@ PhideProgramDebugSession >> initialize [
 	debuggerStderrHandlingBlock := [ :v | ].
 	finishedHandlingBlock := [ :v | ].
 	currentStopPoint := nil asValueHolder.
+	currentStackFrame := nil asValueHolder.
+	currentThreadId := 0 asValueHolder.
+]
+
+{ #category : #'as yet unclassified' }
+PhideProgramDebugSession >> localsInFrame: frame [
+	^ #()
+]
+
+{ #category : #notifications }
+PhideProgramDebugSession >> notifyDebugStopWithReason: reason atFrame: frame [
+	self
+		currentStopPoint: (PhideDebugSessionStopFrame new
+			reason: reason;
+			frame: frame;
+			yourself);
+		currentStackFrame: frame
+]
+
+{ #category : #events }
+PhideProgramDebugSession >> notifyProgramIsRunning [
+	self currentStopPoint: nil
 ]
 
 { #category : #enumerating }
@@ -105,6 +149,10 @@ PhideProgramDebugSession >> onStderrMessageDo: aBlock [
 { #category : #enumerating }
 PhideProgramDebugSession >> onStdoutMessageDo: aBlock [
 	stdoutHandlingBlock := aBlock
+]
+
+{ #category : #'as yet unclassified' }
+PhideProgramDebugSession >> programExited [
 ]
 
 { #category : #accessing }
@@ -135,6 +183,21 @@ PhideProgramDebugSession >> receiveStderrMessage: message [
 { #category : #pipes }
 PhideProgramDebugSession >> receiveStdoutMessage: message [
 	stderrHandlingBlock value: message
+]
+
+{ #category : #'as yet unclassified' }
+PhideProgramDebugSession >> stackTrace [
+	^ #()
+]
+
+{ #category : #enumerating }
+PhideProgramDebugSession >> whenCurrentStackFrameChangedDo: aBlock [
+	currentStackFrame whenChangedDo: aBlock
+]
+
+{ #category : #enumerating }
+PhideProgramDebugSession >> whenCurrentStopPointChangedDo: aBlock [
+	currentStopPoint whenChangedDo: aBlock
 ]
 
 { #category : #enumerating }
