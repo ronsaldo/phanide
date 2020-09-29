@@ -213,6 +213,16 @@ PhideProjectBrowser >> activeBuildPlatformChanged [
 ]
 
 { #category : #interactions }
+PhideProjectBrowser >> activeDebugSessionChangedInto: debugSession [
+	debugSession ifNil: [ ^ self ].
+	debugSession whenCurrentStackFrameChangedDo: [ :newFrame |
+		newFrame ifNotNil: [
+			self openTemporaryEditorForFileNamed: newFrame file andHighlightLine: newFrame line
+		]
+	]
+]
+
+{ #category : #interactions }
 PhideProjectBrowser >> activeLaunchProgramChanged [
 	| activeBuildMode newLaunchSettings newActiveLaunchProgram |
 
@@ -647,7 +657,8 @@ PhideProjectBrowser >> modelChanged [
 		whenBuildPlatformsChangedDo: [ self activeBuildPlatformChanged ];
 		whenActiveBuildPlatformChangedDo: [ self activeBuildPlatformChanged ];
 		whenActiveBuildModeChangedDo: [ self activeBuildModeChanged ];
-		whenActiveLaunchProgramChangedDo: [ self activeLaunchProgramChanged ].
+		whenActiveLaunchProgramChangedDo: [ self activeLaunchProgramChanged ];
+		whenActiveDebugSessionChangedDo: [ :debugSession | self activeDebugSessionChangedInto: debugSession ].
 	self activeBuildPlatformChanged.
 	
 		
@@ -657,16 +668,16 @@ PhideProjectBrowser >> modelChanged [
 PhideProjectBrowser >> openFileEditorFor: aFileProjectElement [
 	self browserComponents at: aFileProjectElement ifPresent: [ :existent |
 		existent makeNonTemporaryEditor.
-		^ self
+		^ existent
 	].
 
-	self openNewFileEditorFor: aFileProjectElement temporary: false.
+	^ self openNewFileEditorFor: aFileProjectElement temporary: false.
 ]
 
 { #category : #commands }
 PhideProjectBrowser >> openFileTemporaryEditorFor: aFileProjectElement [
-	self browserComponents at: aFileProjectElement ifPresent: [ ^ self ].
-	self openNewFileEditorFor: aFileProjectElement temporary: true.
+	self browserComponents at: aFileProjectElement ifPresent: [ :found | ^ found ].
+	^ self openNewFileEditorFor: aFileProjectElement temporary: true.
 ]
 
 { #category : #commands }
@@ -684,7 +695,17 @@ PhideProjectBrowser >> openNewFileEditorFor: aFileProjectElement temporary: isTe
 		activeTemporaryEditor := editor.
 	].
 
-	editor addToProjectBrowser: self makeActive: true
+	editor addToProjectBrowser: self makeActive: true.
+	^ editor
+]
+
+{ #category : #commands }
+PhideProjectBrowser >> openTemporaryEditorForFileNamed: fileName andHighlightLine: line [
+	(self model findOrCreateProjectElementForExistentFile: fileName) ifNotNil: [ :projectElement |
+		(self openFileTemporaryEditorFor: projectElement) ifNotNil: [ :editor |
+			editor highlightLine: line
+		]
+	]
 ]
 
 { #category : #accessing }

@@ -25,6 +25,11 @@ PhideProjectBrowserTextFileEditorComponent class >> isFallbackEditorFor: aFileRe
 	^ true
 ]
 
+{ #category : #'as yet unclassified' }
+PhideProjectBrowserTextFileEditorComponent >> highlightLine: lineNumber [
+	self inform: 'TODO: highlightLine: ' , lineNumber asString
+]
+
 { #category : #initialization }
 PhideProjectBrowserTextFileEditorComponent >> initializePresenters [
 	textEditor := self newRichText

@@ -33,6 +33,12 @@ PhideProjectFileSystemElement >> name [
 	^ fileReference basename
 ]
 
+{ #category : #accessing }
+PhideProjectFileSystemElement >> parent: aParent [
+	super parent: aParent.
+	self project ifNotNil: [:p | p mapFileReference: fileReference toElement: self ].
+]
+
 { #category : #'as yet unclassified' }
 PhideProjectFileSystemElement >> projectRootDirectoryElement [
 	^ parent projectRootDirectoryElement

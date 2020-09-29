@@ -49,6 +49,10 @@ PhideProjectBrowserFileEditorComponent >> hasUnsavedChanges: aBoolean [
 	self titleChanged
 ]
 
+{ #category : #'as yet unclassified' }
+PhideProjectBrowserFileEditorComponent >> highlightLine: lineNumber [
+]
+
 { #category : #accessing }
 PhideProjectBrowserFileEditorComponent >> installLocation [
 	^ #contentTabs

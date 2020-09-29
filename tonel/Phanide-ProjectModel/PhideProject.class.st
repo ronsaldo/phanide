@@ -9,7 +9,8 @@ Class {
 		'activeLaunchProgram',
 		'activeBuildSession',
 		'activeLaunchSession',
-		'activeDebugSession'
+		'activeDebugSession',
+		'fileReferenceToElementMap'
 	],
 	#category : #'Phanide-ProjectModel'
 }
@@ -195,6 +196,17 @@ PhideProject >> defaultValidBuildPlatform [
 	^ self activeBuildPlatform: buildPlatforms anyOne
 ]
 
+{ #category : #'as yet unclassified' }
+PhideProject >> findOrCreateProjectElementForExistentFile: fileName [
+	| fileReference |
+	fileReference := fileName asFileReference asAbsolute canonicalize.
+	fileReference exists ifFalse: [ ^ nil ].
+	fileReference isFile ifFalse: [ ^ nil ].
+	^ fileReferenceToElementMap
+		at: fileReference
+		ifAbsent: [ PhideProjectFileReference for: fileReference ]
+]
+
 { #category : #initialization }
 PhideProject >> getProgramLaunchSettingsFor: programName ifAbsentCreateWith: aBlock [
 	^ self validActiveBuildMode getProgramLaunchSettingsFor: programName ifAbsentCreateWith: aBlock
@@ -203,6 +215,7 @@ PhideProject >> getProgramLaunchSettingsFor: programName ifAbsentCreateWith: aBl
 { #category : #initialization }
 PhideProject >> initialize [
 	super initialize.
+	fileReferenceToElementMap := Dictionary new.
 	topLevelElements := OrderedCollection new asValueHolder.
 	buildPlatforms := Dictionary new asValueHolder.
 	activeBuildMode := nil asValueHolder.
@@ -216,6 +229,11 @@ PhideProject >> initialize [
 { #category : #testing }
 PhideProject >> isEmpty [
 	^ topLevelElements isEmpty
+]
+
+{ #category : #'as yet unclassified' }
+PhideProject >> mapFileReference: fileReference toElement: anElement [
+	fileReferenceToElementMap at: fileReference asAbsolute canonicalize put: anElement
 ]
 
 { #category : #accessing }
