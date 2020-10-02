@@ -55,7 +55,7 @@ PhideProcessLaunchSession >> outputReadingProcessEntry [
 	| stdout message |
 	stdout := process stdout.
 	[(message := stdout next: 4096) size > 0] whileTrue: [ 
-		stdoutHandlingBlock value: message
+		stdoutHandlingBlock value: message utf8Decoded
 	]
 
 ]
