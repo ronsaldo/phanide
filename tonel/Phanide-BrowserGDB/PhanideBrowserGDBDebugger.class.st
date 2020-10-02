@@ -111,7 +111,7 @@ PhanideBrowserGDBDebugger >> runProgramLocally [
 PhanideBrowserGDBDebugger >> setProgramSettings: programSettings [
 	gdb
 		setProgramFileAndSymbols: programSettings programFileReference fullName;
-		workingDirectory: programSettings workingDirectory fullName;
+		setWorkingDirectory: programSettings workingDirectory fullName;
 		setProgramArguments: programSettings arguments.
 ]
 

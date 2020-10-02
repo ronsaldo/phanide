@@ -2,8 +2,7 @@ Class {
 	#name : #PhideProjectBrowserDebuggerConsole,
 	#superclass : #PhideProjectBrowserComponent,
 	#instVars : [
-		'textView',
-		'textMutex'
+		'textView'
 	],
 	#category : #'Phanide-ProjectBrowser'
 }
@@ -19,12 +18,6 @@ PhideProjectBrowserDebuggerConsole class >> defaultSpec [
 { #category : #testing }
 PhideProjectBrowserDebuggerConsole class >> isPermanentComponent [
 	^ true
-]
-
-{ #category : #initialization }
-PhideProjectBrowserDebuggerConsole >> initialize [
-	super initialize.
-	textMutex := Semaphore forMutualExclusion.
 ]
 
 { #category : #initialization }
@@ -48,7 +41,7 @@ PhideProjectBrowserDebuggerConsole >> modelChanged [
 			self makeActivePage.
 			textView text: ''.
 			messageBlock := [ :message |
-				textMutex critical: [
+				self defer: [
 					textView
 						text: textView text , message
 				]

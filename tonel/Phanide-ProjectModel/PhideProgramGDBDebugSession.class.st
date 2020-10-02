@@ -81,10 +81,12 @@ PhideProgramGDBDebugSession >> start [
 	gdb := GDBMIClient new.
 	gdb
 		eventHandler: (PhideProgramGDBDebugSessionEventHandler new debugSession: self);
+		startProgramInPseudoTerminal: true;
+		separateStdoutFromStderr: false;
 		start;
 		setProgramFileAndSymbols: programFileName;
 		setProgramArguments: commandLineArguments;
-		workingDirectory: workingDirectory;
+		setWorkingDirectory: workingDirectory;
 		execRun
 ]
 

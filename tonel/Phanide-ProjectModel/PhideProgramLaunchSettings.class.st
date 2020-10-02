@@ -54,7 +54,7 @@ PhideProgramLaunchSettings >> environmentVariables: anObject [
 
 { #category : #'instance creation' }
 PhideProgramLaunchSettings >> formatShellCommand [
-	^ self absoluteProgramName , ' ' , commandLineArguments
+	^ self absoluteProgramName , ' ' , self commandLineArguments
 ]
 
 { #category : #accessing }
