@@ -1,49 +1,48 @@
 Class {
-	#name : #PhideProjectBrowserConsoleComponent,
+	#name : #PhideProjectBrowserProgramConsoleComponent,
 	#superclass : #PhideProjectBrowserComponent,
 	#instVars : [
-		'textView'
+		'terminal'
 	],
 	#category : #'Phanide-ProjectBrowser'
 }
 
 { #category : #specs }
-PhideProjectBrowserConsoleComponent class >> defaultSpec [
+PhideProjectBrowserProgramConsoleComponent class >> defaultSpec [
 
 	^ SpBoxLayout newVertical
-		add: #textView;
+		add: #terminal;
 		yourself
 ]
 
 { #category : #testing }
-PhideProjectBrowserConsoleComponent class >> isPermanentComponent [
+PhideProjectBrowserProgramConsoleComponent class >> isPermanentComponent [
 	^ true
 ]
 
 { #category : #initialization }
-PhideProjectBrowserConsoleComponent >> initializePresenters [
-	textView := self newText.
+PhideProjectBrowserProgramConsoleComponent >> initializePresenters [
+	terminal := self newTerminal.
 
 ]
 
 { #category : #accessing }
-PhideProjectBrowserConsoleComponent >> installLocation [
+PhideProjectBrowserProgramConsoleComponent >> installLocation [
 	^ #bottomTabs
 ]
 
 { #category : #initialization }
-PhideProjectBrowserConsoleComponent >> modelChanged [
+PhideProjectBrowserProgramConsoleComponent >> modelChanged [
 	| project sessionChangeBlock |
 	project := self model project.
 	sessionChangeBlock := [ :newSession |
 		newSession ifNotNil: [
 			| messageBlock |
 			self makeActivePage.
-			textView text: ''.
+			terminal reset.
 			messageBlock := [ :message |
 				self defer: [
-					textView
-						text: textView text , message
+					terminal receiveTextMessage: message
 				]
 			].
 		
@@ -58,11 +57,11 @@ PhideProjectBrowserConsoleComponent >> modelChanged [
 ]
 
 { #category : #accessing }
-PhideProjectBrowserConsoleComponent >> textView [
-	^ textView
+PhideProjectBrowserProgramConsoleComponent >> terminal [
+	^ terminal
 ]
 
 { #category : #accessing }
-PhideProjectBrowserConsoleComponent >> title [
-	^ 'Console'
+PhideProjectBrowserProgramConsoleComponent >> title [
+	^ 'Program Console'
 ]

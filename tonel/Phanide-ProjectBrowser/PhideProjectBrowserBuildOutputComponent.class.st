@@ -2,7 +2,7 @@ Class {
 	#name : #PhideProjectBrowserBuildOutputComponent,
 	#superclass : #PhideProjectBrowserComponent,
 	#instVars : [
-		'textView'
+		'terminal'
 	],
 	#category : #'Phanide-ProjectBrowser'
 }
@@ -11,7 +11,7 @@ Class {
 PhideProjectBrowserBuildOutputComponent class >> defaultSpec [
 
 	^ SpBoxLayout newVertical
-		add: #textView;
+		add: #terminal;
 		yourself
 ]
 
@@ -22,7 +22,7 @@ PhideProjectBrowserBuildOutputComponent class >> isPermanentComponent [
 
 { #category : #initialization }
 PhideProjectBrowserBuildOutputComponent >> initializePresenters [
-	textView := self newText.
+	terminal := self newTerminal.
 
 ]
 
@@ -39,11 +39,10 @@ PhideProjectBrowserBuildOutputComponent >> modelChanged [
 		newSession ifNotNil: [
 			| messageBlock |
 			self makeActivePage.
-			textView text: ''.
+			terminal reset.
 			messageBlock := [ :message |
 				self defer: [
-					textView
-						text: textView text , message
+					terminal receiveTextMessage: message
 				]
 			].
 		
@@ -55,8 +54,8 @@ PhideProjectBrowserBuildOutputComponent >> modelChanged [
 ]
 
 { #category : #accessing }
-PhideProjectBrowserBuildOutputComponent >> textView [
-	^ textView
+PhideProjectBrowserBuildOutputComponent >> terminal [
+	^ terminal
 ]
 
 { #category : #accessing }
