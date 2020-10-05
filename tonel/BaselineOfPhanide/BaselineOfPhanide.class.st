@@ -16,7 +16,7 @@ BaselineOfPhanide >> baseline: spec [
 			spec repository: 'github://ronsaldo/gdb-bindings'
 		].
 		spec baseline: #'Spec2Terminal' with: [
-			spec repository: 'https://github.com/ronsaldo/spec2-terminal'
+			spec repository: 'github://ronsaldo/spec2-terminal'
 		].
 		spec
 			package: #'Phanide-Browser' with: [
