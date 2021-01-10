@@ -18,18 +18,10 @@ BaselineOfPhanide >> baseline: spec [
 		spec baseline: #'Spec2Terminal' with: [
 			spec repository: 'github://ronsaldo/spec2-terminal'
 		].
-		spec
-			package: #'Phanide-Browser' with: [
-				spec requires: #(#'PhanideCore')
-			].
-		spec
-			package: #'Phanide-BrowserGDB' with: [
-				spec requires: #(#'PhanideCore' #'GDBBindings' #'Phanide-Browser')
-			].
 
 		spec
 			package: #'Phanide-ProjectModel' with: [
-				spec requires: #(#'PhanideCore')
+				spec requires: #(#'PhanideCore' #GDBBindings)
 			].
 
 		spec
