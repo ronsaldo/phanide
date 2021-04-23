@@ -1,29 +1,18 @@
 Extension { #name : #FileReference }
 
 { #category : #'*Phanide-SyntaxHighlighting' }
-FileReference >> gtInspectorPhanideIn: composite [
+FileReference >> inspectionPhanide [
+	<inspectorPresentationOrder: 0 title: 'Phanide'>
+	
+	^ SpRichTextPresenter new
+		text: self contents;
+		textStyler: ((PhanideStyler forFileReference: self) asSpTextStyler fileReference: self; yourself);
+		yourself
+]
 
-	<gtInspectorPresentationOrder: 0>
-	| styler |
-	self exists ifFalse: [ ^ self ].
-	styler := PhanideStyler forFileReference: self.
-	styler ifNil: [ ^ self ].
-
-	^ composite custom: (GLMRubricHighlightedTextPresentation new
-			   title: styler name;
-			   font: StandardFonts codeFont;
-			   editingMode: [ :rubPresentation | 
-				   GLMHighlighterTextRubEditingMode withStylerDecorator: (styler
-							    textDecoratorInPresentation: rubPresentation
-							    fileReference: self) ];
-			   display: [ 
-				   (self readStreamDo: #contents) withInternalLineEndings ];
-			   act: [ :rub | 
-				   self
-					   ensureDelete;
-					   writeStreamDo: [ :s | 
-						   s nextPutAll: rub text asString copy withUnixLineEndings ] ]
-			   icon: GLMUIThemeExtraIcons glamorousSave
-			   on: $s
-			   entitled: 'Save')
+{ #category : #'*Phanide-SyntaxHighlighting' }
+FileReference >> inspectionPhanideContext: aContext [	
+	self exists ifFalse: [ ^ aContext beInactive ].
+	(PhanideStyler forFileReference: self) ifNil: [ ^ aContext beInactive ].
+	aContext beActive
 ]

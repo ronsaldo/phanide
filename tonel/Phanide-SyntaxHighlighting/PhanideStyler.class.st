@@ -482,26 +482,6 @@ PhanideStyler >> name: anObject [
 	name := anObject
 ]
 
-{ #category : #'instance creation' }
-PhanideStyler >> newStyleDecorator [
-	^ PhanideTextStylerDecorator new
-			phanideStyler: self;
-			yourself
-]
-
-{ #category : #'as yet unclassified' }
-PhanideStyler >> rubricEditingModeForFileReference: aFileReference browserComponent: browserComponent [
-	^ PhanideHighlighterTextRubEditingMode new
-		browserComponent: browserComponent;
-		stylerDecorator: (
-			PhanideTextStylerDecorator new
-				phanideStyler: self;
-				fileReference: aFileReference;
-				yourself
-		);
-		yourself
-]
-
 { #category : #'as yet unclassified' }
 PhanideStyler >> styleText: aText [
 	^ self styleText: aText fromFileReference: nil
@@ -515,12 +495,4 @@ PhanideStyler >> styleText: aText fromFileReference: aFileReference [
 { #category : #'as yet unclassified' }
 PhanideStyler >> styleText: aText fromFileReference: aFileReference withStyleTable: styleTable [
 	self subclassResponsibility
-]
-
-{ #category : #'as yet unclassified' }
-PhanideStyler >> textDecoratorInPresentation: rubPresentation fileReference: aFileReference [
-	^ PhanideTextStylerDecorator new
-			phanideStyler: self;
-			fileReference: aFileReference;
-			yourself
 ]
